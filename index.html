@@ -2,6 +2,7 @@
 <html lang="en">
 <head>
 <meta charset="utf-8">
+<meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'sha256-3Tf0ACEgaL+Ac0LVnWEDwRdz4yRtATRdw0wz69CcS9c=' 'sha256-8UVo9YOKXOCLtUFCQc4bBo5c48NveruKLwuhvmlFMqw='; style-src 'self' 'unsafe-inline'; img-src 'self' data: blob: https://cdn.discordapp.com; font-src 'self' data:; media-src 'self' data: blob:; connect-src 'self' https://zwhsmstbntuwgcgfqhzl.supabase.co wss://zwhsmstbntuwgcgfqhzl.supabase.co; object-src 'none'; base-uri 'none'; form-action 'none'">
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
 <meta name="theme-color" content="#0a0706">
 <meta name="mobile-web-app-capable" content="yes">
@@ -1109,6 +1110,30 @@ small.sync.st-conflict { color: #ff7b6b; }
 .portrait .signin-panel { gap: 12px; } .portrait .si-opt .btn { min-width: 0; width: 100%; }
 .portrait .title-screen > .acct-pop { position: fixed; left: 12px; right: 12px; width: auto; bottom: 12px; transform: none; }
 .portrait .chip.acct { max-width: 100%; }
+/* ---- cloud saves, after the review: more states, the window that must be answered, earlier saves */
+.st-outdated .sync-dot, .st-rejected .sync-dot, .st-blocked .sync-dot { background: #ff7b6b; box-shadow: 0 0 6px #ff7b6b88; }
+small.sync.st-outdated, small.sync.st-rejected, small.sync.st-blocked { color: #ff9b8b; }
+small.sync.st-browser { color: var(--dim); }
+.chip.acct.st-browser { opacity: .85; }
+.choice.small { width: min(520px, 100%); text-align: center; }
+.choice.small .row { justify-content: center; flex-wrap: wrap; gap: 10px; margin-top: 6px; }
+.ch-sides.one { grid-template-columns: minmax(0, 420px); justify-content: center; }
+.ch-side .btn.ghost { margin-top: 0; }
+.ch-warn { color: #ffb39b; font-size: 13px; line-height: 1.35; }
+.bk-list { list-style: none; margin: 4px 0 0; padding: 0; display: grid; gap: 6px; }
+.bk-list li { display: flex; align-items: center; justify-content: space-between; gap: 12px; padding: 6px 8px; border: 1px solid var(--line); border-radius: 4px; background: #0004; text-align: left; }
+.bk-list li > div { display: grid; gap: 2px; min-width: 0; }
+.bk-list li small { font-size: 13px; line-height: 1.35; overflow-wrap: anywhere; }
+.bk-list li .btn { flex: none; }
+.bk-rows { gap: 6px; } .bk-rows p { margin: 0; }
+.bk-pop summary { cursor: pointer; color: #cdbb96; font-size: 14px; }
+.bk-pop[open] { max-height: 260px; overflow-y: auto; }
+.bk-pop .bk-list li { flex-wrap: wrap; }
+/* a message never covers the head of an open window: it sits in the top strip between the hero's name and the gold, its
+   button beside the text (on a phone, where the window fills the screen, at the foot of the screen) */
+.stage:not(.portrait):has(.win) .toast { top: 4px; max-width: calc(100% - 400px); flex-wrap: nowrap; padding: 6px 14px; font-size: 14px; }
+.stage:not(.portrait):has(.win) .toast .chip { flex: none; }
+.portrait:has(.win) .toast { top: auto; bottom: 12px; }
 
 </style>
 </head>
@@ -5355,24 +5380,541 @@ small.sync.st-conflict { color: #ff7b6b; }
     return { ok: true, price };
   }
 
-  // src/client/api.js
-  var KEY = "cursewake.save.v1";
-  function loadSave() {
+  // src/client/version.js
+  var CONTENT_VERSION = 1;
+  var contentVersionOf = (save) => save && typeof save === "object" && Number.isFinite(save.contentVersion) ? save.contentVersion : 0;
+
+  // src/client/sync.js
+  var SAVE_KEY = "cursewake.save.v1";
+  var META_KEY = "cursewake.save.v1.cloud";
+  var LOCAL_AT_KEY = "cursewake.save.v1.at";
+  var BACKUP_PREFIX = "cursewake.save.backup.";
+  var LEGACY_BACKUP = /^cursewake\.save\.v1\.backup(\d*)$/;
+  var MAX_BYTES = 4e5;
+  var DEBOUNCE_MS = 2e3;
+  var BACKUPS_KEPT = 5;
+  function cloudSize(json) {
+    if (!json) return 0;
+    let bytes = 0;
+    for (let i = 0; i < json.length; i++) {
+      const c = json.charCodeAt(i);
+      if (c < 128) bytes += c === 44 || c === 58 ? 2 : 1;
+      else if (c < 2048) bytes += 2;
+      else if (c >= 55296 && c <= 56319 && i + 1 < json.length) {
+        bytes += 4;
+        i++;
+      } else bytes += 3;
+    }
+    return bytes;
+  }
+  function stableStringify(v) {
+    if (v === null || typeof v !== "object") return JSON.stringify(v) ?? "null";
+    if (Array.isArray(v)) return `[${v.map((x) => x === void 0 || typeof x === "function" ? "null" : stableStringify(x)).join(",")}]`;
+    return `{${Object.keys(v).sort().filter((k) => v[k] !== void 0 && typeof v[k] !== "function").map((k) => `${JSON.stringify(k)}:${stableStringify(v[k])}`).join(",")}}`;
+  }
+  function hashOf(save) {
+    const s = stableStringify(save ?? null);
+    let h1 = 3735928559;
+    let h2 = 1103547991;
+    for (let i = 0; i < s.length; i++) {
+      const c = s.charCodeAt(i);
+      h1 = Math.imul(h1 ^ c, 2654435761);
+      h2 = Math.imul(h2 ^ c, 1597334677);
+    }
+    h1 = Math.imul(h1 ^ h1 >>> 16, 2246822507) ^ Math.imul(h2 ^ h2 >>> 13, 3266489909);
+    h2 = Math.imul(h2 ^ h2 >>> 16, 2246822507) ^ Math.imul(h1 ^ h1 >>> 13, 3266489909);
+    return (4294967296 * (2097151 & h2) + (h1 >>> 0)).toString(36);
+  }
+  var isObj = (v) => !!v && typeof v === "object" && !Array.isArray(v);
+  var slotsOf = (save) => isObj(save) && Array.isArray(save.slots) ? save.slots : save?.hero ? [{ hero: save.hero, name: save.name }] : [];
+  var heroSlots = (save) => slotsOf(save).filter((sl) => isObj(sl) && isObj(sl.hero));
+  var hasHeroes = (save) => heroSlots(save).length > 0;
+  function hasProgress(save) {
+    if (hasHeroes(save)) return true;
+    if (!isObj(save)) return false;
+    const items = (l) => Array.isArray(l) && l.length > 0;
+    const mats = (m) => isObj(m) && Object.values(m).some((n) => Number(n) > 0);
+    return items(save.stash) || items(save.hcStash) || mats(save.stashMats) || mats(save.hcStashMats);
+  }
+  function heroSummary(save) {
+    return heroSlots(save).map((sl) => ({
+      name: String(sl.name ?? ""),
+      classId: String(sl.hero.classId ?? ""),
+      level: Number(sl.hero.level) || 1,
+      difficulty: typeof sl.hero.difficulty === "string" ? sl.hero.difficulty : "normal",
+      hardcore: !!sl.hero.hardcore,
+      dead: !!sl.hero.dead
+    }));
+  }
+  function sameHero(a, b) {
+    const ia = typeof a.hero.id === "string" ? a.hero.id : null;
+    const ib = typeof b.hero.id === "string" ? b.hero.id : null;
+    if (ia && ib && ia === ib) return true;
+    const legacy = (id) => !id || id.startsWith("l");
+    return legacy(ia) && legacy(ib) && String(a.name ?? "") === String(b.name ?? "") && a.hero.classId === b.hero.classId && !!a.hero.hardcore === !!b.hero.hardcore;
+  }
+  function keepFallen(target, ...others) {
+    const kept = [];
+    if (!isObj(target) || !Array.isArray(target.slots)) return { data: target, kept };
+    const own = heroSlots(target);
+    const fallen = others.flatMap(heroSlots).filter((sl) => sl.hero.hardcore && sl.hero.dead && !own.some((o) => o.hero.dead && sameHero(o, sl)));
+    let out = null;
+    target.slots.forEach((sl, i) => {
+      if (!isObj(sl) || !isObj(sl.hero) || !sl.hero.hardcore || sl.hero.dead) return;
+      const at = fallen.findIndex((f) => sameHero(sl, f));
+      if (at < 0) return;
+      out ?? (out = structuredClone(target));
+      out.slots[i] = structuredClone(fallen[at]);
+      fallen.splice(at, 1);
+      kept.push(String(sl.name ?? ""));
+    });
+    return { data: out ?? target, kept };
+  }
+  function decideSync({ local, cloud, meta, uid, contentVersion = CONTENT_VERSION }) {
+    const cloudRev = cloud?.rev ?? null;
+    if (cloud && contentVersionOf(cloud.data) > contentVersion || contentVersionOf(local) > contentVersion) return { action: "outdated", baseRev: cloudRev };
+    const localHas = hasProgress(local);
+    const cloudHas = !!cloud && hasProgress(cloud.data);
+    const foreign = !!meta?.uid && meta.uid !== uid;
+    if (!localHas && !cloudHas) return { action: "none", baseRev: cloudRev };
+    if (!cloudHas) return foreign ? { action: "ask", baseRev: cloudRev, foreign: true, cloudEmpty: true } : { action: "upload", baseRev: cloudRev };
+    if (!localHas) return { action: "useCloud", baseRev: cloudRev };
+    const localHash = hashOf(local);
+    if (localHash === hashOf(cloud.data)) return { action: "same", baseRev: cloudRev };
+    if (foreign) return { action: "ask", baseRev: cloudRev, foreign: true, cloudEmpty: false };
+    const known = !!meta && meta.uid === uid && meta.rev != null;
+    const playedHere = !known || meta.hash !== localHash;
+    if (known && meta.rev === cloudRev && playedHere) return { action: "upload", baseRev: cloudRev };
+    if (known && !playedHere) return { action: "useCloud", baseRev: cloudRev };
+    return { action: "ask", baseRev: cloudRev, foreign: false, cloudEmpty: false };
+  }
+  function writeBackup(storage, data, at = Date.now()) {
+    let ts = Math.floor(Number(at) || Date.now());
+    const text = typeof data === "string" ? data : JSON.stringify(data);
     try {
-      const raw = localStorage.getItem(KEY);
-      return raw ? JSON.parse(raw) : null;
+      while (storage.getItem(`${BACKUP_PREFIX}${ts}`) != null) ts++;
+      const key = `${BACKUP_PREFIX}${ts}`;
+      storage.setItem(key, text);
+      if (storage.getItem(key) !== text) return null;
+      const keys = [];
+      for (let i = 0; i < storage.length; i++) {
+        const k = storage.key(i);
+        if (k?.startsWith(BACKUP_PREFIX)) keys.push(k);
+      }
+      keys.sort((a, b) => Number(b.slice(BACKUP_PREFIX.length)) - Number(a.slice(BACKUP_PREFIX.length)));
+      for (const k of keys.slice(BACKUPS_KEPT)) storage.removeItem(k);
+      return key;
     } catch {
       return null;
     }
   }
+  function backupAsSave(key, raw) {
+    const m = LEGACY_BACKUP.exec(key);
+    if (m && m[1] !== "") return isObj(raw) && isObj(raw.hero) ? { version: 2, slots: [raw, null, null], active: null, contentVersion: contentVersionOf(raw.hero) } : null;
+    return isObj(raw) ? raw : null;
+  }
+  function listBackups(storage, contentVersion = CONTENT_VERSION) {
+    const out = [];
+    try {
+      for (let i = 0; i < storage.length; i++) {
+        const key = storage.key(i);
+        if (!key || !(key.startsWith(BACKUP_PREFIX) || LEGACY_BACKUP.test(key))) continue;
+        let raw = null;
+        try {
+          raw = JSON.parse(storage.getItem(key));
+        } catch {
+          continue;
+        }
+        const save = backupAsSave(key, raw);
+        if (!save) continue;
+        const at = key.startsWith(BACKUP_PREFIX) ? Number(key.slice(BACKUP_PREFIX.length)) || null : null;
+        out.push({ key, at, save, heroes: heroSummary(save), newer: contentVersionOf(save) > contentVersion });
+      }
+    } catch {
+    }
+    return out.sort((a, b) => (b.at ?? -1) - (a.at ?? -1));
+  }
+  function browserStore(api2, storage = globalThis.localStorage) {
+    const get2 = (k) => {
+      try {
+        return storage.getItem(k);
+      } catch {
+        return null;
+      }
+    };
+    const set = (k, v) => {
+      try {
+        storage.setItem(k, v);
+        return true;
+      } catch {
+        return false;
+      }
+    };
+    return {
+      /** This tab's own save text (what it last wrote or loaded), never another tab's. */
+      readJson: () => api2.savedJson(),
+      writeLocal: (data) => api2.replaceSave(data),
+      readMeta: () => {
+        try {
+          const m = JSON.parse(get2(META_KEY));
+          return isObj(m) ? m : null;
+        } catch {
+          return null;
+        }
+      },
+      writeMeta: (m) => {
+        if (m) set(META_KEY, JSON.stringify(m));
+        else {
+          try {
+            storage.removeItem(META_KEY);
+          } catch {
+          }
+        }
+      },
+      localAt: () => get2(LOCAL_AT_KEY),
+      setLocalAt: (iso) => set(LOCAL_AT_KEY, iso),
+      /** Keeps the save that was not picked. Returns the key, or null if it could not be kept. */
+      backup: (data, now) => writeBackup(storage, data, now)
+    };
+  }
+  function createSync({ cloud, store, ui, now = () => Date.now(), timers = globalThis, debounceMs = DEBOUNCE_MS }) {
+    let uid = null;
+    let guest = false;
+    let meta = null;
+    let settled = false;
+    let outdated = false;
+    let frozen = false;
+    let status = "idle";
+    let timer = null;
+    let retry = null;
+    let retryMs = 15e3;
+    let pushing = null;
+    let again = false;
+    let asking = false;
+    let lastJson = store.readJson();
+    const setStatus = (s) => {
+      if (s !== status) {
+        status = s;
+        ui.status(s);
+      }
+    };
+    const parse = (json) => {
+      try {
+        return json ? JSON.parse(json) : null;
+      } catch {
+        return null;
+      }
+    };
+    const clearTimers = () => {
+      timers.clearTimeout(timer);
+      timers.clearTimeout(retry);
+      timer = null;
+      retry = null;
+    };
+    const later = (fn) => {
+      timers.clearTimeout(retry);
+      retry = timers.setTimeout(() => {
+        retry = null;
+        fn();
+      }, retryMs);
+      retryMs = Math.min(retryMs * 2, 12e4);
+    };
+    const remember = (rev, hash) => {
+      meta = { uid, rev, hash, guest };
+      if (!frozen) store.writeMeta(meta);
+    };
+    const backoffReset = () => {
+      retryMs = 15e3;
+    };
+    const halted = () => !uid || frozen || outdated;
+    function failed(e, me, retryFn) {
+      if (uid !== me) return void 0;
+      const kind = e?.kind ?? "offline";
+      if (kind === "wrong_user") return void 0;
+      setStatus(kind === "rejected" ? "rejected" : "offline");
+      if (kind === "auth") {
+        ui.authLost?.();
+        return void 0;
+      }
+      if (kind === "offline") later(() => {
+        if (uid === me && !halted()) retryFn();
+      });
+      return void 0;
+    }
+    function goOutdated() {
+      outdated = true;
+      clearTimers();
+      setStatus("outdated");
+      ui.outdated?.();
+    }
+    function backupFailed() {
+      settled = false;
+      setStatus("conflict");
+      ui.error?.("backup");
+    }
+    async function settle(cloudSave, me) {
+      const json = store.readJson();
+      const local = parse(json);
+      const d = decideSync({ local, cloud: cloudSave, meta, uid: me });
+      if (d.action === "outdated") return goOutdated();
+      if (d.action === "none" || d.action === "same") {
+        remember(d.baseRev, hashOf(local));
+        settled = true;
+        return setStatus("saved");
+      }
+      if (d.action === "useCloud") return takeCloud(cloudSave, me);
+      if (d.action === "upload") {
+        settled = true;
+        return upload(json, d.baseRev, me);
+      }
+      asking = true;
+      setStatus("conflict");
+      const cloudData = cloudSave?.data ?? null;
+      let pick;
+      try {
+        pick = await ui.ask({
+          local,
+          cloud: cloudData,
+          localAt: store.localAt(),
+          cloudAt: cloudSave?.updated_at ?? null,
+          foreign: !!d.foreign,
+          foreignGuest: !!d.foreign && !!meta?.guest,
+          cloudEmpty: !!d.cloudEmpty,
+          // Fallen hardcore heroes that stay fallen whichever is picked (shown on the side that would bring them back).
+          fallen: { cloud: keepFallen(cloudData, local).kept, local: keepFallen(local, cloudData).kept }
+        });
+      } finally {
+        asking = false;
+      }
+      if (uid !== me || halted()) return void 0;
+      const nowJson = store.readJson();
+      const nowLocal = parse(nowJson);
+      if (pick === "cloud") return takeCloud(cloudSave, me);
+      if (pick === "fresh") {
+        if (hasProgress(nowLocal) && !store.backup(nowJson, now())) return backupFailed();
+        store.writeLocal({ version: 2, slots: [], lang: nowLocal?.lang ?? null, sound: nowLocal?.sound !== false });
+        lastJson = store.readJson();
+        store.setLocalAt(new Date(now()).toISOString());
+        ui.replaced?.();
+        settled = true;
+        remember(cloudSave?.rev ?? null, null);
+        return upload(store.readJson(), cloudSave?.rev ?? null, me);
+      }
+      if (hasProgress(cloudData) && !store.backup(cloudData, now())) return backupFailed();
+      const { data, kept } = keepFallen(nowLocal, cloudData);
+      if (kept.length) {
+        store.writeLocal(data);
+        lastJson = store.readJson();
+      }
+      settled = true;
+      return upload(store.readJson(), cloudSave?.rev ?? null, me);
+    }
+    function takeCloud(cloudSave, me) {
+      const json = store.readJson();
+      const local = parse(json);
+      const cloudHash = hashOf(cloudSave.data);
+      if (hasProgress(local) && hashOf(local) !== cloudHash && !store.backup(json, now())) return backupFailed();
+      store.writeLocal(keepFallen(cloudSave.data, local).data);
+      lastJson = store.readJson();
+      store.setLocalAt(cloudSave.updated_at ?? new Date(now()).toISOString());
+      remember(cloudSave.rev, cloudHash);
+      settled = true;
+      if (uid === me) ui.replaced?.();
+      setStatus("saved");
+      if (hashOf(parse(lastJson)) !== cloudHash) schedule();
+      return void 0;
+    }
+    async function upload(json, baseRev, me) {
+      if (!json) return setStatus("saved");
+      if (cloudSize(json) >= MAX_BYTES) return setStatus("tooBig");
+      const data = parse(json);
+      if (contentVersionOf(data) > CONTENT_VERSION) return goOutdated();
+      setStatus("saving");
+      let res;
+      try {
+        res = await cloud.pushSave(data, baseRev, me);
+      } catch (e) {
+        return failed(e, me, () => sync2.flush());
+      }
+      if (uid !== me) return void 0;
+      backoffReset();
+      if (res.ok) {
+        remember(res.rev, hashOf(data));
+        return setStatus(store.readJson() === json ? "saved" : (schedule(), "saving"));
+      }
+      if (res.outdated) return goOutdated();
+      if (res.conflict) return conflict(me);
+      return setStatus("rejected");
+    }
+    async function conflict(me) {
+      setStatus("conflict");
+      let cloudSave;
+      try {
+        cloudSave = await cloud.loadSave(me);
+      } catch (e) {
+        return failed(e, me, () => sync2.flush());
+      }
+      if (uid !== me || halted()) return void 0;
+      return settle(cloudSave, me);
+    }
+    function schedule() {
+      if (halted() || asking || !settled) return;
+      timers.clearTimeout(timer);
+      timer = timers.setTimeout(() => {
+        timer = null;
+        sync2.flush();
+      }, debounceMs);
+      if (status === "saved" || status === "rejected") setStatus("saving");
+    }
+    const sync2 = {
+      get status() {
+        return status;
+      },
+      get uid() {
+        return uid;
+      },
+      get asking() {
+        return asking;
+      },
+      get settled() {
+        return settled;
+      },
+      get outdated() {
+        return outdated;
+      },
+      get frozen() {
+        return frozen;
+      },
+      /** A player signed in: compare the two saves and agree on one. `opts.guest`: a guest account. */
+      async start(userId, opts = {}) {
+        clearTimers();
+        uid = userId;
+        guest = !!opts.guest;
+        settled = false;
+        backoffReset();
+        if (frozen) return setStatus("blocked");
+        if (outdated) return setStatus("outdated");
+        meta = store.readMeta();
+        const me = userId;
+        setStatus("checking");
+        let cloudSave;
+        try {
+          cloudSave = await cloud.loadSave(me);
+        } catch (e) {
+          return failed(e, me, () => sync2.start(me, opts));
+        }
+        while (pushing) await pushing;
+        if (uid !== me || halted()) return void 0;
+        return run2(() => uid === me && !halted() ? settle(cloudSave, me) : void 0);
+      },
+      /** Signed out (or another account signed in): nothing more goes up for this player. */
+      stop() {
+        clearTimers();
+        uid = null;
+        settled = false;
+        setStatus(frozen ? "blocked" : outdated ? "outdated" : "idle");
+      },
+      /** The game is open in another tab that has saved since: this tab stops for good (until it is reloaded). */
+      freeze() {
+        frozen = true;
+        clearTimers();
+        setStatus("blocked");
+      },
+      /** A newer version of the game saved in this browser: stop. */
+      markOutdated() {
+        if (!outdated) goOutdated();
+      },
+      /** Called with every save the game writes to browser storage. */
+      noteLocal(json) {
+        if (json === lastJson) return;
+        lastJson = json;
+        if (frozen) return;
+        store.setLocalAt(new Date(now()).toISOString());
+        if (json && cloudSize(json) >= MAX_BYTES) {
+          if (uid && settled) setStatus("tooBig");
+          return;
+        }
+        schedule();
+      },
+      /** Push now (raid over, page hidden) instead of waiting for the quiet moment. */
+      flush() {
+        timers.clearTimeout(timer);
+        timer = null;
+        if (halted() || asking || !settled) return pushing ?? Promise.resolve();
+        const me = uid;
+        return run2(async () => {
+          if (uid !== me || halted() || !settled) return void 0;
+          const json = store.readJson();
+          if (json && meta?.uid === me && meta.hash === hashOf(parse(json))) return setStatus("saved");
+          return upload(json, meta?.uid === me ? meta.rev ?? null : null, me);
+        });
+      },
+      /** The page is going away: a last small push with keepalive, if anything is waiting. */
+      leave() {
+        if (halted() || asking || !settled || !cloud.pushOnLeave) return false;
+        const json = store.readJson();
+        if (!json || cloudSize(json) >= MAX_BYTES || meta?.uid === uid && meta.hash === hashOf(parse(json))) return false;
+        if (contentVersionOf(parse(json)) > CONTENT_VERSION) return false;
+        return cloud.pushOnLeave(json, meta?.uid === uid ? meta.rev ?? null : null, uid);
+      }
+    };
+    function run2(fn) {
+      if (pushing) {
+        again = true;
+        return pushing;
+      }
+      pushing = (async () => {
+        try {
+          await fn();
+        } finally {
+          pushing = null;
+          if (again && uid && !asking && !halted()) {
+            again = false;
+            await sync2.flush();
+          }
+          again = false;
+        }
+      })();
+      return pushing;
+    }
+    return sync2;
+  }
+
+  // src/client/api.js
+  var KEY = "cursewake.save.v1";
+  function loadSave() {
+    let json = null;
+    try {
+      json = localStorage.getItem(KEY);
+    } catch {
+      return { json: null, raw: null };
+    }
+    try {
+      return { json, raw: json ? JSON.parse(json) : null };
+    } catch {
+      return { json, raw: null };
+    }
+  }
+  function keepAside(data) {
+    try {
+      writeBackup(localStorage, data, Date.now());
+    } catch {
+    }
+  }
+  function cleanName(name) {
+    const s = String(name ?? "").replace(/[\p{Cc}\p{Cs}\u2028\u2029\u202A-\u202E\u2066-\u2069\uFEFF]/gu, "").trim();
+    return Array.from(s).slice(0, 16).join("").trim();
+  }
+  var newHeroId = (prefix) => `${prefix}${Date.now().toString(36)}${Math.floor(Math.random() * 2 ** 32).toString(36)}`;
   var HERO_SLOTS = 3;
   var STASH_SIZE = 60;
-  var freshState = () => ({ version: 2, slots: new Array(HERO_SLOTS).fill(null), active: null, stash: [], stashMats: {}, hcStash: [], hcStashMats: {}, seed: Math.random() * 2 ** 32 >>> 0, lang: null, sound: true });
+  var freshState = () => ({ version: 2, contentVersion: CONTENT_VERSION, slots: new Array(HERO_SLOTS).fill(null), active: null, stash: [], stashMats: {}, hcStash: [], hcStashMats: {}, seed: Math.random() * 2 ** 32 >>> 0, lang: null, sound: true });
   function usableSlot(sl) {
     return !!sl && typeof sl === "object" && sl.hero && typeof sl.hero === "object" && Object.hasOwn(content.classes, sl.hero.classId ?? "") && sl.hero.attrs && sl.hero.equipment && Array.isArray(sl.hero.bag) && Array.isArray(sl.hero.tactics) && sl.hero.belt && (sl.run == null || typeof sl.run === "object" && Array.isArray(sl.run.cards) && Object.hasOwn(content.zones, sl.run.zoneId ?? ""));
   }
   function upgradeHero(hero2, run2, spill = () => {
   }) {
+    if (typeof hero2.id !== "string" || !hero2.id) hero2.id = newHeroId("l");
     hero2.mats ?? (hero2.mats = {});
     hero2.bag = hero2.bag.map((it) => cleanItem(content, it)).filter(Boolean);
     for (const [slot, it] of Object.entries(hero2.equipment)) {
@@ -5429,9 +5971,17 @@ small.sync.st-conflict { color: #ff7b6b; }
       hero2.unspentSkill += lasts.filter((z) => hero2.cleared?.[z]).length * content.B.hero.skillPointsPerChapter;
     }
   }
-  function readState(raw) {
+  function readState(input, { dry = false } = {}) {
     let state = null;
+    const aside = dry ? () => {
+    } : keepAside;
+    let raw = input;
     if (raw && typeof raw === "object" && !Array.isArray(raw)) {
+      try {
+        raw = structuredClone(raw);
+      } catch {
+        raw = JSON.parse(JSON.stringify(raw));
+      }
       if (raw.version === 1) {
         const st = freshState();
         Object.assign(st, { seed: raw.seed ?? st.seed, lang: raw.lang ?? null, sound: raw.sound !== false });
@@ -5461,9 +6011,11 @@ small.sync.st-conflict { color: #ff7b6b; }
         state.hcStashMats = mats(raw.hcStashMats);
         state.slots = state.slots.map((sl) => {
           if (sl && typeof sl === "object" && sl.run && !(typeof sl.run === "object" && Array.isArray(sl.run.cards) && Object.hasOwn(content.zones, sl.run.zoneId ?? ""))) {
-            try {
-              localStorage.setItem(`${KEY}.backupRun`, JSON.stringify(sl.run));
-            } catch {
+            if (!dry) {
+              try {
+                localStorage.setItem(`${KEY}.backupRun`, JSON.stringify(sl.run));
+              } catch {
+              }
             }
             if (sl.hero && typeof sl.hero === "object") {
               const b = sl.run?.belt;
@@ -5478,26 +6030,31 @@ small.sync.st-conflict { color: #ff7b6b; }
         });
         state.slots.forEach((sl, i) => {
           if (sl && !usableSlot(sl)) {
-            try {
-              localStorage.setItem(`${KEY}.backup${i}`, JSON.stringify(sl));
-            } catch {
-            }
+            aside({ version: 2, contentVersion: contentVersionOf(raw), slots: [sl, null, null], active: null, stash: [], stashMats: {}, hcStash: [], hcStashMats: {}, lang: raw.lang ?? null, sound: raw.sound !== false });
             state.slots[i] = null;
           }
+        });
+        state.slots.forEach((sl, i) => {
+          if (!sl) return;
+          sl.name = cleanName(sl.name);
+          if (typeof sl.hero.id !== "string" || !sl.hero.id) sl.hero.id = `l${hashOf([i, sl.name, sl.hero.classId, !!sl.hero.hardcore])}`;
         });
         for (const sl of state.slots) if (sl) upgradeHero(sl.hero, sl.run, (it) => (sl.hero.hardcore ? state.hcStash : state.stash).push(it));
         if (!(Number.isInteger(state.active) && state.slots[state.active])) state.active = null;
       } else {
-        try {
-          localStorage.setItem(`${KEY}.backup`, JSON.stringify(raw));
-        } catch {
-        }
+        aside(raw);
       }
     }
-    return state ?? freshState();
+    state ?? (state = freshState());
+    state.contentVersion = CONTENT_VERSION;
+    return state;
   }
   function createLocalApi({ onSave = null } = {}) {
-    let state = readState(loadSave());
+    const loaded = loadSave();
+    const outdated = contentVersionOf(loaded.raw) > CONTENT_VERSION;
+    let frozen = outdated;
+    let storedJson = loaded.json;
+    let state = readState(loaded.raw, { dry: outdated });
     const activate = (i) => {
       const sl = i == null ? null : state.slots[i];
       state.active = sl ? i : null;
@@ -5509,15 +6066,25 @@ small.sync.st-conflict { color: #ff7b6b; }
     activate(state.active);
     const save = () => {
       if (state.active != null && state.hero) state.slots[state.active] = { hero: state.hero, run: state.run, name: state.name, seenCamp: state.seenCamp };
+      if (frozen) return;
       try {
         const { hero: hero2, run: run2, name, seenCamp, ...stored } = state;
+        stored.contentVersion = CONTENT_VERSION;
         const json = JSON.stringify(stored);
         localStorage.setItem(KEY, json);
+        storedJson = json;
         onSave?.(json);
       } catch {
       }
     };
     if (state.active != null) save();
+    if (!frozen && loaded.raw && storedJson !== loaded.json) {
+      try {
+        const m = JSON.parse(localStorage.getItem(META_KEY));
+        if (m && m.hash === hashOf(loaded.raw)) localStorage.setItem(META_KEY, JSON.stringify({ ...m, hash: hashOf(JSON.parse(storedJson)) }));
+      } catch {
+      }
+    }
     const chestItems = () => state.hero?.hardcore ? state.hcStash : state.stash;
     const chestMats = () => state.hero?.hardcore ? state.hcStashMats : state.stashMats;
     const setChestMats = (m) => {
@@ -5586,27 +6153,39 @@ small.sync.st-conflict { color: #ff7b6b; }
       },
       sheet: () => state.hero ? deriveStats(content, state.hero) : null,
       inCamp,
-      /** The save as written to browser storage (null if there is none). */
+      /** The save as this tab last wrote it to browser storage (or loaded it; null if there is none). */
       savedJson() {
-        try {
-          return localStorage.getItem(KEY);
-        } catch {
-          return null;
-        }
+        return storedJson;
       },
-      /** Puts another save in place of this one (the cloud copy the player picked). */
+      /** Puts another save in place of this one (the cloud copy the player picked, or a backup). */
       replaceSave(raw) {
+        if (frozen) return { ok: false, error: "frozen" };
+        if (contentVersionOf(raw) > CONTENT_VERSION) return { ok: false, error: "newer" };
         state = readState(raw);
         activate(state.active);
         save();
         return { ok: true };
       },
+      /** How many heroes of this save this version can play (nothing is changed or kept aside). */
+      playableHeroes(raw) {
+        if (contentVersionOf(raw) > CONTENT_VERSION) return 0;
+        return readState(raw, { dry: true }).slots.filter(Boolean).length;
+      },
+      /** Was the save in this browser written by a newer version of the game? */
+      get outdated() {
+        return outdated;
+      },
+      /** From now on nothing is written to browser storage (the game is open in another tab that saved since). */
+      freeze() {
+        frozen = true;
+      },
+      get frozen() {
+        return frozen;
+      },
       /** Called when the saved game cannot be shown: keeps a copy and starts clean. */
       resetBrokenSave() {
-        try {
-          localStorage.setItem(`${KEY}.backup`, JSON.stringify(state));
-        } catch {
-        }
+        if (frozen) return;
+        keepAside(JSON.parse(JSON.stringify({ ...state, hero: void 0, run: void 0 })));
         state = freshState();
         activate(null);
         save();
@@ -5649,8 +6228,9 @@ small.sync.st-conflict { color: #ff7b6b; }
         const free = state.slots.findIndex((sl) => !sl);
         if (free < 0) return { ok: false, error: "slots_full" };
         const hero2 = newHero(content, classId, nextRng());
+        hero2.id = newHeroId("h");
         hero2.hardcore = !!hardcore;
-        state.slots[free] = { hero: hero2, run: null, name: String(name ?? "").trim().slice(0, 16), seenCamp: false };
+        state.slots[free] = { hero: hero2, run: null, name: cleanName(name), seenCamp: false };
         activate(free);
         save();
         return { ok: true, slot: free };
@@ -7557,7 +8137,7 @@ small.sync.st-conflict { color: #ff7b6b; }
       localNote: "No sign-in: the save stays in this browser only. You can change your mind in Settings any time.",
       guestName: "Guest",
       account: "Account",
-      st: { saved: "Saved to the cloud \u2713", saving: "Saving\u2026", checking: "Saving\u2026", offline: "Offline \u2013 saved here", conflict: "Conflict", tooBig: "Too big \u2013 saved here", idle: "Not signed in", local: "Only on this computer", off: "Offline \u2013 saved here" },
+      st: { saved: "Saved to the cloud \u2713", saving: "Saving\u2026", checking: "Checking\u2026", offline: "No connection \u2013 saved on this computer", conflict: "Pick a save!", tooBig: "Too big \u2013 saved on this computer", idle: "Not signed in", local: "Only on this computer", off: "No connection \u2013 saved on this computer", outdated: "A new version is out \u2013 reload the page", rejected: "The cloud did not accept the save \u2013 it is kept on this computer", blocked: "Also open in another tab", browser: "Saved in this browser" },
       link: "Link Discord",
       linkNote: "Your guest save stays, and you can sign in with it on any computer.",
       signIn: "Sign in",
@@ -7566,26 +8146,60 @@ small.sync.st-conflict { color: #ff7b6b; }
       signOutGuest: "If you sign out, you cannot get back to this guest cloud save. Your heroes stay on this computer.",
       signOutYes: "Yes, sign out",
       keep: "Cancel",
-      offNote: "The cloud cannot be reached right now, or the game was opened from a file. Everything works the same; the save stays in this browser.",
+      offNote: "The cloud cannot be reached right now. Everything works the same; the save stays in this browser.",
+      fileNote: "You opened the game from a file, so the save stays in this browser. To save to the cloud as well, open the game from its website.",
       busy: "One moment\u2026",
       linked: "Done! Discord is linked and your save is kept.",
       welcome: "Signed in: {name}",
       welcomeGuest: "You are playing as a guest. Your save goes to the cloud as well.",
-      tooBig: "Your save is too big for the cloud (1.5 MB at most). It is still kept on this computer.",
+      tooBig: "Your save is too big for the cloud (400 kB at most). It is still kept on this computer.",
+      outdated: "A new version of the game is out \u2013 reload the page to keep your save safe.",
+      reload: "Reload",
+      tabsTitle: "The game is open in another tab",
+      tabs: "The game is also open in another tab \u2013 reload the page here, or close this tab.",
+      signedOut: "You were signed out (maybe in another tab). Your heroes are still on this computer.",
+      switched: "Another tab signed in with a different account: {name}.",
+      backupFailed: "We could not make a backup (the browser\u2019s storage is full), so your save was not replaced.",
+      switch: {
+        title: "Sign in with this Discord?",
+        text: "This Discord account already has a save. If you sign in with it, you will have to pick which one to keep playing: the Discord one or your current guest save. You cannot get back into the guest account afterwards, but your guest save stays on this computer as a backup.",
+        yes: "Sign in with Discord"
+      },
+      backups: {
+        title: "Earlier saves",
+        info: "When you pick one of two saves, or restore an earlier one, the other is kept here on this computer (the latest five).",
+        none: "No earlier saves on this computer yet.",
+        restore: "Restore",
+        old: "older save",
+        empty: "No heroes in it.",
+        newer: "A newer version of the game wrote this one \u2013 reload the page to restore it.",
+        confirm: "Restore this save? Your current save is kept as a backup.",
+        yes: "Yes, restore it",
+        done: "The earlier save is back.",
+        failed: "This save could not be restored."
+      },
       err: {
         cancelled: "Discord sign-in was cancelled. No harm done: try again, or play as a guest.",
-        already_linked: "This Discord account already belongs to another save. Sign in with it directly.",
+        already_linked: "This Discord account already belongs to another save. If you sign in with it, you will have to pick one of the two saves.",
         not_enabled: "Discord sign-in is not switched on yet. Play as a guest for now.",
         offline: "The cloud cannot be reached right now. The game goes on and saves on this computer.",
         failed: "Sign-in did not work. Try again a little later."
       },
       choice: {
         title: "There are two different saves",
-        info: "Which one do you want to keep playing? The other is kept on this computer as a backup.",
+        info: "Which one do you want to keep playing? The other one is kept on this computer as a backup (Settings \u203A Earlier saves).",
+        foreignInfo: "The save on this computer belongs to another account. Which one do you want to keep playing? The other one is kept on this computer as a backup.",
+        emptyInfo: "This account has no save yet, but this computer holds one that belongs to another account. Upload it to this account, or start fresh? Either way, the current save stays on this computer as a backup.",
+        guestInfo: "This computer holds your guest save. Which one do you want to keep playing? The other one is kept on this computer as a backup.",
+        guestEmptyInfo: "This account has no save yet, but this computer holds your guest save. Upload it to this account, or start fresh? Either way, the current save stays on this computer as a backup.",
         cloud: "In the cloud",
         local: "On this computer",
-        useCloud: "Use the cloud save",
-        useLocal: "Use this computer\u2019s save",
+        foreign: "Another account\u2019s save (on this computer)",
+        guestLocal: "Guest save (on this computer)",
+        use: "Keep playing this one",
+        upload: "Upload it to this account",
+        fresh: "Start fresh",
+        fallen: "A fallen hardcore hero does not come back: {names} stays fallen.",
         saved: "Last saved: {when}",
         unknown: "unknown time",
         none: "No heroes in it."
@@ -8149,7 +8763,7 @@ small.sync.st-conflict { color: #ff7b6b; }
       localNote: "Nem l\xE9psz be: a ment\xE9s csak ebben a b\xF6ng\xE9sz\u0151ben lesz. A Be\xE1ll\xEDt\xE1sokban b\xE1rmikor meggondolhatod.",
       guestName: "Vend\xE9g",
       account: "Fi\xF3k",
-      st: { saved: "Mentve a felh\u0151be \u2713", saving: "Ment\xE9s\u2026", checking: "Ment\xE9s\u2026", offline: "Offline \u2013 helyben mentve", conflict: "\xDCtk\xF6z\xE9s", tooBig: "T\xFAl nagy \u2013 helyben mentve", idle: "Nem vagy bel\xE9pve", local: "Csak ezen a g\xE9pen", off: "Offline \u2013 helyben mentve" },
+      st: { saved: "Mentve a felh\u0151be \u2713", saving: "Ment\xE9s\u2026", checking: "Ellen\u0151rz\xE9s\u2026", offline: "Nincs kapcsolat \u2013 ezen a g\xE9pen mentve", conflict: "V\xE1lassz ment\xE9st!", tooBig: "T\xFAl nagy \u2013 ezen a g\xE9pen mentve", idle: "Nem vagy bel\xE9pve", local: "Csak ezen a g\xE9pen", off: "Nincs kapcsolat \u2013 ezen a g\xE9pen mentve", outdated: "\xDAj v\xE1ltozat jelent meg \u2013 friss\xEDtsd az oldalt", rejected: "A felh\u0151 nem fogadta el a ment\xE9st \u2013 ezen a g\xE9pen megmaradt", blocked: "Egy m\xE1sik lapon is nyitva van", browser: "Ment\xE9s ebben a b\xF6ng\xE9sz\u0151ben" },
       link: "Discord hozz\xE1k\xF6t\xE9se",
       linkNote: "A vend\xE9gment\xE9sed \xEDgy megmarad, \xE9s b\xE1rmelyik g\xE9pen bel\xE9phetsz vele.",
       signIn: "Bel\xE9p\xE9s",
@@ -8158,26 +8772,60 @@ small.sync.st-conflict { color: #ff7b6b; }
       signOutGuest: "Ha kil\xE9psz, vend\xE9gk\xE9nt t\xF6bb\xE9 nem jutsz vissza ehhez a felh\u0151ment\xE9shez. Ezen a g\xE9pen a h\u0151seid megmaradnak.",
       signOutYes: "Igen, kil\xE9pek",
       keep: "M\xE9gse",
-      offNote: "A felh\u0151 most nem \xE9rhet\u0151 el, vagy f\xE1jlb\xF3l nyitottad meg a j\xE1t\xE9kot. Minden ugyan\xFAgy m\u0171k\xF6dik, a ment\xE9s ebben a b\xF6ng\xE9sz\u0151ben marad.",
+      offNote: "A felh\u0151 most nem \xE9rhet\u0151 el. Minden ugyan\xFAgy m\u0171k\xF6dik, a ment\xE9s ebben a b\xF6ng\xE9sz\u0151ben marad.",
+      fileNote: "F\xE1jlb\xF3l nyitottad meg a j\xE1t\xE9kot, ez\xE9rt a ment\xE9s ebben a b\xF6ng\xE9sz\u0151ben marad. Ha a felh\u0151be is menten\xE9l, nyisd meg a j\xE1t\xE9kot a weboldal\xE1r\xF3l.",
       busy: "Egy pillanat\u2026",
       linked: "K\xE9sz! A Discordod hozz\xE1 van k\xF6tve, a ment\xE9sed megmaradt.",
       welcome: "Bel\xE9pt\xE9l: {name}",
       welcomeGuest: "Vend\xE9gk\xE9nt j\xE1tszol. A ment\xE9sed a felh\u0151be is felker\xFCl.",
-      tooBig: "A ment\xE9sed t\xFAl nagy a felh\u0151h\xF6z (legfeljebb 1,5 MB). Ezen a g\xE9pen ugyan\xFAgy megmarad.",
+      tooBig: "A ment\xE9sed t\xFAl nagy a felh\u0151h\xF6z (legfeljebb 400 kB). Ezen a g\xE9pen ugyan\xFAgy megmarad.",
+      outdated: "Megjelent a j\xE1t\xE9k \xFAj v\xE1ltozata \u2013 friss\xEDtsd az oldalt, hogy a ment\xE9sed biztons\xE1gban legyen.",
+      reload: "Friss\xEDt\xE9s",
+      tabsTitle: "Egy m\xE1sik lapon is fut a j\xE1t\xE9k",
+      tabs: "A j\xE1t\xE9k egy m\xE1sik lapon is nyitva van \u2013 itt friss\xEDtsd az oldalt, vagy z\xE1rd be ezt a lapot.",
+      signedOut: "Kil\xE9pt\xE9l a fi\xF3kodb\xF3l (tal\xE1n egy m\xE1sik lapon). A h\u0151seid ezen a g\xE9pen megmaradtak.",
+      switched: "Egy m\xE1sik lapon m\xE1s fi\xF3kkal l\xE9pt\xE9l be: {name}.",
+      backupFailed: "Nem tudtunk biztons\xE1gi m\xE1solatot k\xE9sz\xEDteni (megtelt a b\xF6ng\xE9sz\u0151 t\xE1rhelye), ez\xE9rt nem cser\xE9lt\xFCk le a ment\xE9sedet.",
+      switch: {
+        title: "Bel\xE9psz ezzel a Discorddal?",
+        text: "Ehhez a Discord-fi\xF3khoz m\xE1r tartozik egy ment\xE9s. Ha bel\xE9psz vele, v\xE1lasztanod kell, melyikkel j\xE1tszol tov\xE1bb: a Discordossal vagy a mostani vend\xE9gment\xE9seddel. A vend\xE9gfi\xF3kba ut\xE1na nem tudsz visszal\xE9pni, de a vend\xE9gment\xE9sed biztons\xE1gi m\xE1solatk\xE9nt megmarad ezen a g\xE9pen.",
+        yes: "Bel\xE9pek Discorddal"
+      },
+      backups: {
+        title: "Kor\xE1bbi ment\xE9sek",
+        info: "Ha k\xE9t ment\xE9s k\xF6z\xFCl v\xE1lasztasz, vagy vissza\xE1ll\xEDtasz egy kor\xE1bbit, a m\xE1sikat itt \u0151rizz\xFCk meg ezen a g\xE9pen (a legut\xF3bbi \xF6t\xF6t).",
+        none: "Ezen a g\xE9pen m\xE9g nincs kor\xE1bbi ment\xE9s.",
+        restore: "Vissza\xE1ll\xEDt\xE1s",
+        old: "r\xE9gebbi ment\xE9s",
+        empty: "Nincs benne h\u0151s.",
+        newer: "Ezt a j\xE1t\xE9k egy \xFAjabb v\xE1ltozata mentette \u2013 friss\xEDtsd az oldalt, hogy vissza\xE1ll\xEDthasd.",
+        confirm: "Vissza\xE1ll\xEDtod ezt a ment\xE9st? A mostani ment\xE9sed biztons\xE1gi m\xE1solatk\xE9nt megmarad.",
+        yes: "Igen, vissza\xE1ll\xEDtom",
+        done: "Vissza\xE1ll\xEDtottuk a kor\xE1bbi ment\xE9st.",
+        failed: "Ezt a ment\xE9st nem siker\xFClt vissza\xE1ll\xEDtani."
+      },
       err: {
         cancelled: "A Discordos bel\xE9p\xE9s megszakadt. Semmi gond: pr\xF3b\xE1ld \xFAjra, vagy j\xE1tssz vend\xE9gk\xE9nt.",
-        already_linked: "Ez a Discord-fi\xF3k m\xE1r egy m\xE1sik ment\xE9shez tartozik. L\xE9pj be vele k\xF6zvetlen\xFCl.",
+        already_linked: "Ez a Discord-fi\xF3k m\xE1r egy m\xE1sik ment\xE9shez tartozik. Ha bel\xE9psz vele, v\xE1lasztanod kell a k\xE9t ment\xE9s k\xF6z\xF6tt.",
         not_enabled: "A Discordos bel\xE9p\xE9s m\xE9g nincs bekapcsolva. Addig j\xE1tssz vend\xE9gk\xE9nt.",
         offline: "Most nem \xE9rj\xFCk el a felh\u0151t. A j\xE1t\xE9k megy tov\xE1bb, a ment\xE9s ezen a g\xE9pen marad.",
         failed: "A bel\xE9p\xE9s nem siker\xFClt. Pr\xF3b\xE1ld \xFAjra egy kicsit k\xE9s\u0151bb."
       },
       choice: {
         title: "K\xE9t k\xFCl\xF6nb\xF6z\u0151 ment\xE9st tal\xE1ltunk",
-        info: "Melyikkel j\xE1tszol tov\xE1bb? A m\xE1sikat biztons\xE1gi m\xE1solatk\xE9nt meg\u0151rizz\xFCk ezen a g\xE9pen.",
-        cloud: "Felh\u0151ben l\xE9v\u0151",
-        local: "Ezen a g\xE9pen l\xE9v\u0151",
-        useCloud: "A felh\u0151ben l\xE9v\u0151t v\xE1lasztom",
-        useLocal: "Az ezen a g\xE9pen l\xE9v\u0151t v\xE1lasztom",
+        info: "Melyikkel j\xE1tszol tov\xE1bb? A m\xE1sik biztons\xE1gi m\xE1solatk\xE9nt megmarad ezen a g\xE9pen (Be\xE1ll\xEDt\xE1sok \u203A Kor\xE1bbi ment\xE9sek).",
+        foreignInfo: "Ezen a g\xE9pen egy m\xE1sik fi\xF3k ment\xE9se van. Melyikkel j\xE1tszol tov\xE1bb? A m\xE1sik biztons\xE1gi m\xE1solatk\xE9nt megmarad ezen a g\xE9pen.",
+        emptyInfo: "Ebben a fi\xF3kban m\xE9g nincs ment\xE9s, ezen a g\xE9pen viszont van egy, ami egy m\xE1sik fi\xF3khoz tartozik. Felt\xF6lt\xF6d ebbe a fi\xF3kba, vagy \xFAjrakezded? A mostani ment\xE9s mindenk\xE9pp megmarad ezen a g\xE9pen biztons\xE1gi m\xE1solatk\xE9nt.",
+        guestInfo: "Ezen a g\xE9pen a vend\xE9gment\xE9sed van. Melyikkel j\xE1tszol tov\xE1bb? A m\xE1sik biztons\xE1gi m\xE1solatk\xE9nt megmarad ezen a g\xE9pen.",
+        guestEmptyInfo: "Ebben a fi\xF3kban m\xE9g nincs ment\xE9s, ezen a g\xE9pen viszont ott van a vend\xE9gment\xE9sed. Felt\xF6lt\xF6d ebbe a fi\xF3kba, vagy \xFAjrakezded? A mostani ment\xE9s mindenk\xE9pp megmarad ezen a g\xE9pen biztons\xE1gi m\xE1solatk\xE9nt.",
+        cloud: "A felh\u0151ben",
+        local: "Ezen a g\xE9pen",
+        foreign: "Egy m\xE1sik fi\xF3k ment\xE9se (ezen a g\xE9pen)",
+        guestLocal: "Vend\xE9gment\xE9s (ezen a g\xE9pen)",
+        use: "Ezzel j\xE1tszom tov\xE1bb",
+        upload: "Felt\xF6lt\xF6m ebbe a fi\xF3kba",
+        fresh: "\xDAj kezd\xE9s",
+        fallen: "Az elesett hardcore h\u0151s nem \xE9led \xFAjra: {names} elesett marad.",
         saved: "Utolj\xE1ra mentve: {when}",
         unknown: "nem tudni, mikor",
         none: "Nincs benne h\u0151s."
@@ -29573,6 +30221,14 @@ ${suffix}`;
     if (/timeout|abort|failed to fetch|networkerror|network|load failed|retryable/.test(all)) return "offline";
     return "failed";
   }
+  function dataErrorKind(error, status) {
+    const st = Number(status) || 0;
+    if (st === 0) return "offline";
+    if (st === 401) return "auth";
+    if (st === 408 || st === 425 || st === 429 || st >= 500) return "offline";
+    if (/jwt|token/i.test(`${error?.code ?? ""} ${error?.message ?? ""}`) && st === 403) return "auth";
+    return "rejected";
+  }
   function createCloud() {
     const ret = readReturn();
     const sb = createClient(SUPABASE_URL, SUPABASE_KEY, {
@@ -29591,6 +30247,17 @@ ${suffix}`;
       e.kind = errorKind(error);
       e.cause = error;
       throw e;
+    };
+    const failData = (error, status) => {
+      const e = new Error(error?.message ?? String(error));
+      Object.assign(e, { kind: dataErrorKind(error, status), status: Number(status) || 0, code: error?.code ?? "", cause: error });
+      throw e;
+    };
+    const sameUser = (expect) => {
+      const uid = session2?.user?.id;
+      if (!uid) throw Object.assign(new Error("not signed in"), { kind: "auth" });
+      if (expect != null && uid !== expect) throw Object.assign(new Error("another account is signed in"), { kind: "wrong_user" });
+      return uid;
     };
     return {
       /** Reads the session (finishing an OAuth return if there is one) and cleans the address. */
@@ -29646,25 +30313,40 @@ ${suffix}`;
         }
         session2 = null;
       },
-      /** The player's cloud save: { data, rev, updated_at }, or null if there is none yet. */
-      async loadSave() {
-        const uid = session2?.user?.id;
-        if (!uid) throw Object.assign(new Error("not signed in"), { kind: "failed" });
-        const { data, error } = await sb.from("saves").select("data,rev,updated_at").eq("user_id", uid).maybeSingle();
-        if (error) fail2(error);
+      /** Checks the session with the server (after a 401): the user if it still holds, null if not. */
+      async recheck() {
+        try {
+          const { data, error } = await withTimeout2(sb.auth.refreshSession());
+          if (error || !data?.session) return { user: null, offline: errorKind(error) === "offline" };
+          session2 = data.session;
+          return { user: userInfo(data.session.user), offline: false };
+        } catch (e) {
+          return { user: userInfo(session2?.user), offline: true };
+        }
+      },
+      /** The player's cloud save: { data, rev, updated_at }, or null if there is none yet. `expectUid`: whose save is wanted. */
+      async loadSave(expectUid) {
+        const uid = sameUser(expectUid);
+        const { data, error, status } = await sb.from("saves").select("data,rev,updated_at").eq("user_id", uid).maybeSingle();
+        if (error) failData(error, status);
         return data ? { data: data.data, rev: Number(data.rev), updated_at: data.updated_at } : null;
       },
-      /** Saves when nobody else saved since `baseRev`: { ok, rev } or { ok: false, conflict: true, rev }. */
-      async pushSave(data, baseRev) {
-        const { data: res, error } = await sb.rpc("save_game", { p_data: data, p_base_rev: baseRev ?? null });
-        if (error) fail2(error);
-        return { ok: !!res?.ok, conflict: !!res?.conflict, rev: res?.rev == null ? null : Number(res.rev) };
+      /**
+       * Saves when nobody else saved since `baseRev`: { ok, rev }, { ok: false, conflict: true, rev },
+       * or { ok: false, outdated: true } (the cloud holds a save from a newer version of the game).
+       */
+      async pushSave(data, baseRev, expectUid) {
+        sameUser(expectUid);
+        const { data: res, error, status } = await sb.rpc("save_game", { p_data: data, p_base_rev: baseRev ?? null });
+        if (error) failData(error, status);
+        return { ok: !!res?.ok, conflict: !!res?.conflict, outdated: !!res?.outdated, rev: res?.rev == null ? null : Number(res.rev) };
       },
       /** Last chance when the page is closed: a small save is sent with keepalive (the answer is never read). */
-      pushOnLeave(json, baseRev) {
+      pushOnLeave(json, baseRev, expectUid) {
         const token = session2?.access_token;
+        if (!token || expectUid != null && session2?.user?.id !== expectUid) return false;
         const body = `{"p_data":${json},"p_base_rev":${baseRev == null ? "null" : Number(baseRev)}}`;
-        if (!token || body.length > 6e4) return false;
+        if (body.length > 6e4) return false;
         try {
           fetch(`${SUPABASE_URL}/rest/v1/rpc/save_game`, { method: "POST", keepalive: true, headers: { apikey: SUPABASE_KEY, Authorization: `Bearer ${token}`, "Content-Type": "application/json" }, body });
           return true;
@@ -29675,337 +30357,15 @@ ${suffix}`;
     };
   }
 
-  // src/client/sync.js
-  var META_KEY = "cursewake.save.v1.cloud";
-  var LOCAL_AT_KEY = "cursewake.save.v1.at";
-  var BACKUP_PREFIX = "cursewake.save.backup.";
-  var MAX_BYTES = 1.5 * 1024 * 1024;
-  var DEBOUNCE_MS = 2e3;
-  var BACKUPS_KEPT = 3;
-  function stableStringify(v) {
-    if (v === null || typeof v !== "object") return JSON.stringify(v) ?? "null";
-    if (Array.isArray(v)) return `[${v.map((x) => x === void 0 || typeof x === "function" ? "null" : stableStringify(x)).join(",")}]`;
-    return `{${Object.keys(v).sort().filter((k) => v[k] !== void 0 && typeof v[k] !== "function").map((k) => `${JSON.stringify(k)}:${stableStringify(v[k])}`).join(",")}}`;
-  }
-  function hashOf(save) {
-    const s = stableStringify(save ?? null);
-    let h1 = 3735928559;
-    let h2 = 1103547991;
-    for (let i = 0; i < s.length; i++) {
-      const c = s.charCodeAt(i);
-      h1 = Math.imul(h1 ^ c, 2654435761);
-      h2 = Math.imul(h2 ^ c, 1597334677);
-    }
-    h1 = Math.imul(h1 ^ h1 >>> 16, 2246822507) ^ Math.imul(h2 ^ h2 >>> 13, 3266489909);
-    h2 = Math.imul(h2 ^ h2 >>> 16, 2246822507) ^ Math.imul(h1 ^ h1 >>> 13, 3266489909);
-    return (4294967296 * (2097151 & h2) + (h1 >>> 0)).toString(36);
-  }
-  var slotsOf = (save) => save && typeof save === "object" && Array.isArray(save.slots) ? save.slots : save?.hero ? [{ hero: save.hero, name: save.name }] : [];
-  var hasHeroes = (save) => slotsOf(save).some((sl) => sl && typeof sl === "object" && sl.hero && typeof sl.hero === "object");
-  function heroSummary(save) {
-    return slotsOf(save).filter((sl) => sl?.hero && typeof sl.hero === "object").map((sl) => ({
-      name: String(sl.name ?? ""),
-      classId: String(sl.hero.classId ?? ""),
-      level: Number(sl.hero.level) || 1,
-      difficulty: typeof sl.hero.difficulty === "string" ? sl.hero.difficulty : "normal",
-      hardcore: !!sl.hero.hardcore,
-      dead: !!sl.hero.dead
-    }));
-  }
-  function decideSync({ local, cloud, meta, uid }) {
-    const localHas = hasHeroes(local);
-    const cloudHas = !!cloud && hasHeroes(cloud.data);
-    const cloudRev = cloud?.rev ?? null;
-    if (!localHas && !cloudHas) return { action: "none", baseRev: cloudRev };
-    if (!cloudHas) return { action: "upload", baseRev: cloudRev };
-    if (!localHas) return { action: "useCloud", baseRev: cloudRev };
-    const localHash = hashOf(local);
-    if (localHash === hashOf(cloud.data)) return { action: "same", baseRev: cloudRev };
-    const known = !!meta && meta.uid === uid && meta.rev != null;
-    const playedHere = !known || meta.hash !== localHash;
-    if (known && meta.rev === cloudRev && playedHere) return { action: "upload", baseRev: cloudRev };
-    if (known && !playedHere) return { action: "useCloud", baseRev: cloudRev };
-    return { action: "ask", baseRev: cloudRev };
-  }
-  function browserStore(api2, storage = globalThis.localStorage) {
-    const get2 = (k) => {
-      try {
-        return storage.getItem(k);
-      } catch {
-        return null;
-      }
-    };
-    const set = (k, v) => {
-      try {
-        storage.setItem(k, v);
-        return true;
-      } catch {
-        return false;
-      }
-    };
-    return {
-      readJson: () => api2.savedJson(),
-      writeLocal: (data) => api2.replaceSave(data),
-      readMeta: () => {
-        try {
-          return JSON.parse(get2(META_KEY)) ?? null;
-        } catch {
-          return null;
-        }
-      },
-      writeMeta: (m) => {
-        if (m) set(META_KEY, JSON.stringify(m));
-        else {
-          try {
-            storage.removeItem(META_KEY);
-          } catch {
-          }
-        }
-      },
-      localAt: () => get2(LOCAL_AT_KEY),
-      setLocalAt: (iso) => set(LOCAL_AT_KEY, iso),
-      /** Keeps the save that was not picked; only the newest few backups stay (storage is small). */
-      backup(data, now) {
-        const key = `${BACKUP_PREFIX}${now}`;
-        const ok = set(key, typeof data === "string" ? data : JSON.stringify(data));
-        try {
-          const keys = [];
-          for (let i = 0; i < storage.length; i++) {
-            const k = storage.key(i);
-            if (k?.startsWith(BACKUP_PREFIX)) keys.push(k);
-          }
-          keys.sort((a, b) => Number(b.slice(BACKUP_PREFIX.length)) - Number(a.slice(BACKUP_PREFIX.length)));
-          for (const k of keys.slice(BACKUPS_KEPT)) storage.removeItem(k);
-        } catch {
-        }
-        return ok ? key : null;
-      }
-    };
-  }
-  function createSync({ cloud, store, ui, now = () => Date.now(), timers = globalThis, debounceMs = DEBOUNCE_MS }) {
-    let uid = null;
-    let status = "idle";
-    let timer = null;
-    let retry = null;
-    let retryMs = 15e3;
-    let pushing = null;
-    let again = false;
-    let asking = false;
-    let lastJson = store.readJson();
-    const setStatus = (s) => {
-      if (s !== status) {
-        status = s;
-        ui.status(s);
-      }
-    };
-    const parse = (json) => {
-      try {
-        return json ? JSON.parse(json) : null;
-      } catch {
-        return null;
-      }
-    };
-    const clearTimers = () => {
-      timers.clearTimeout(timer);
-      timers.clearTimeout(retry);
-      timer = null;
-      retry = null;
-    };
-    const later = () => {
-      timers.clearTimeout(retry);
-      retry = timers.setTimeout(() => {
-        retry = null;
-        if (uid) sync2.flush();
-      }, retryMs);
-      retryMs = Math.min(retryMs * 2, 12e4);
-    };
-    const remember = (rev, hash) => store.writeMeta({ uid, rev, hash });
-    const backoffReset = () => {
-      retryMs = 15e3;
-    };
-    async function settle(cloudSave) {
-      const json = store.readJson();
-      const local = parse(json);
-      const d = decideSync({ local, cloud: cloudSave, meta: store.readMeta(), uid });
-      if (d.action === "none") {
-        remember(d.baseRev, hashOf(local));
-        return setStatus("saved");
-      }
-      if (d.action === "same") {
-        remember(d.baseRev, hashOf(local));
-        return setStatus("saved");
-      }
-      if (d.action === "useCloud") return takeCloud(cloudSave);
-      if (d.action === "upload") return upload(json, d.baseRev);
-      asking = true;
-      setStatus("conflict");
-      let pick;
-      try {
-        pick = await ui.ask({ local, cloud: cloudSave.data, localAt: store.localAt(), cloudAt: cloudSave.updated_at ?? null });
-      } finally {
-        asking = false;
-      }
-      if (!uid) return void 0;
-      if (pick === "cloud") {
-        store.backup(json, now());
-        return takeCloud(cloudSave);
-      }
-      store.backup(cloudSave.data, now());
-      return upload(store.readJson(), cloudSave.rev);
-    }
-    function takeCloud(cloudSave) {
-      store.writeLocal(cloudSave.data);
-      lastJson = store.readJson();
-      store.setLocalAt(cloudSave.updated_at ?? new Date(now()).toISOString());
-      remember(cloudSave.rev, hashOf(cloudSave.data));
-      ui.replaced?.();
-      setStatus("saved");
-      if (hashOf(parse(lastJson)) !== hashOf(cloudSave.data)) schedule();
-    }
-    async function upload(json, baseRev) {
-      if (!json) return setStatus("saved");
-      if (json.length > MAX_BYTES) return setStatus("tooBig");
-      const data = parse(json);
-      setStatus("saving");
-      let res;
-      try {
-        res = await cloud.pushSave(data, baseRev);
-      } catch {
-        setStatus("offline");
-        later();
-        return void 0;
-      }
-      backoffReset();
-      if (res.ok) {
-        remember(res.rev, hashOf(data));
-        return setStatus(store.readJson() === json ? "saved" : (schedule(), "saving"));
-      }
-      if (res.conflict) return conflict();
-      setStatus("offline");
-      later();
-      return void 0;
-    }
-    async function conflict() {
-      setStatus("conflict");
-      let cloudSave;
-      try {
-        cloudSave = await cloud.loadSave();
-      } catch {
-        setStatus("offline");
-        later();
-        return void 0;
-      }
-      return settle(cloudSave);
-    }
-    function schedule() {
-      if (!uid || asking) return;
-      timers.clearTimeout(timer);
-      timer = timers.setTimeout(() => {
-        timer = null;
-        sync2.flush();
-      }, debounceMs);
-      if (status === "saved") setStatus("saving");
-    }
-    const sync2 = {
-      get status() {
-        return status;
-      },
-      get uid() {
-        return uid;
-      },
-      get asking() {
-        return asking;
-      },
-      /** A player signed in: compare the two saves and agree on one. */
-      async start(userId) {
-        clearTimers();
-        uid = userId;
-        backoffReset();
-        setStatus("checking");
-        let cloudSave;
-        try {
-          cloudSave = await cloud.loadSave();
-        } catch {
-          if (uid !== userId) return void 0;
-          setStatus("offline");
-          timers.clearTimeout(retry);
-          retry = timers.setTimeout(() => {
-            retry = null;
-            if (uid === userId) sync2.start(userId);
-          }, retryMs);
-          retryMs = Math.min(retryMs * 2, 12e4);
-          return void 0;
-        }
-        while (pushing) await pushing;
-        if (uid !== userId) return void 0;
-        return run2(() => settle(cloudSave));
-      },
-      /** Signed out: nothing more goes up. */
-      stop() {
-        clearTimers();
-        uid = null;
-        setStatus("idle");
-      },
-      /** Called with every save the game writes to browser storage. */
-      noteLocal(json) {
-        if (json === lastJson) return;
-        lastJson = json;
-        store.setLocalAt(new Date(now()).toISOString());
-        if (json && json.length > MAX_BYTES) {
-          if (uid) setStatus("tooBig");
-          return;
-        }
-        schedule();
-      },
-      /** Push now (raid over, page hidden) instead of waiting for the quiet moment. */
-      flush() {
-        timers.clearTimeout(timer);
-        timer = null;
-        if (!uid || asking) return pushing ?? Promise.resolve();
-        return run2(async () => {
-          const json = store.readJson();
-          const meta = store.readMeta();
-          if (json && meta?.uid === uid && meta.hash === hashOf(parse(json))) return setStatus("saved");
-          return upload(json, meta?.uid === uid ? meta.rev ?? null : null);
-        });
-      },
-      /** The page is going away: a last small push with keepalive, if anything is waiting. */
-      leave() {
-        if (!uid || asking || !cloud.pushOnLeave) return false;
-        const json = store.readJson();
-        const meta = store.readMeta();
-        if (!json || json.length > MAX_BYTES || meta?.uid === uid && meta.hash === hashOf(parse(json))) return false;
-        return cloud.pushOnLeave(json, meta?.uid === uid ? meta.rev ?? null : null);
-      }
-    };
-    function run2(fn) {
-      if (pushing) {
-        again = true;
-        return pushing;
-      }
-      pushing = (async () => {
-        try {
-          await fn();
-        } finally {
-          pushing = null;
-          if (again && uid && !asking) {
-            again = false;
-            await sync2.flush();
-          }
-          again = false;
-        }
-      })();
-      return pushing;
-    }
-    return sync2;
-  }
-
   // src/client/main.js
   var UI = { en: ui_en_default, hu: ui_hu_default };
   var sync = null;
   var api = createLocalApi({ onSave: (json) => sync?.noteLocal(json) });
   var content2 = api.content;
   var root = document.getElementById("app");
+  document.addEventListener("error", (e) => {
+    if (e.target instanceof HTMLImageElement && root?.contains(e.target)) e.target.remove();
+  }, true);
   var lang = Object.hasOwn(locales, api.state.lang ?? "") ? api.state.lang : (navigator.language || "en").toLowerCase().startsWith("hu") ? "hu" : "en";
   var R = makeRenderer(locales[lang]);
   setSound(api.state.sound !== false);
@@ -30037,7 +30397,12 @@ ${suffix}`;
   var pct = (a, b) => Math.max(0, Math.min(100, b > 0 ? a / b * 100 : 0));
   var hero = () => api.state.hero;
   var run = () => api.state.run;
-  function toast(msg, link = null) {
+  function toast(msg, link = null, { sticky = false } = {}) {
+    if (sticky) {
+      view.sticky = { msg, link };
+      render();
+      return;
+    }
     view.toast = { msg, link };
     render();
     clearTimeout(toast.timer);
@@ -30048,7 +30413,7 @@ ${suffix}`;
     }, ms);
   }
   function toastHtml() {
-    const tt = view.toast;
+    const tt = overlayOpen() ? null : view.toast ?? view.sticky;
     if (!tt) return "";
     const msg = typeof tt === "string" ? tt : tt.msg;
     const link = typeof tt === "string" ? null : tt.link;
@@ -30060,7 +30425,7 @@ ${suffix}`;
     for (const ch of key) hsh = hsh * 31 + ch.charCodeAt(0) >>> 0;
     const hue = { hero: 18, merc: 42, summon: 110, monster: hsh % 60 + 80, boss: 0, zone: hsh % 40 + 15, item: 35 }[kind] ?? 30;
     const initials = label.replace(/^(The|A|Az) /i, "").split(/[\s-]+/).map((w) => w[0]).join("").slice(0, 2).toUpperCase();
-    return `<div class="art art-${kind} ${extra}" style="--hue:${hue}"><span>${esc(initials)}</span><img src="${asset(`${kind}_${key}`)}" alt="" onerror="this.remove()"></div>`;
+    return `<div class="art art-${kind} ${extra}" style="--hue:${hue}"><span>${esc(initials)}</span><img src="${asset(`${kind}_${key}`)}" alt=""></div>`;
   }
   function rosterDiff(h) {
     const cur = h.difficulty ?? "normal";
@@ -30305,7 +30670,7 @@ ${suffix}`;
     const name = R.itemName(item);
     const cant = item.identified && !forMerc && !canEquip(content2, hero(), item).ok;
     return `<button class="item r-${item.rarity} ${item.identified ? "" : "unid"} ${cant ? "cant" : ""} ${selected ? "sel" : ""}" ${attrs} title="${esc(name)}">
-    <img src="${asset(`item_${content2.bases[item.base]?.icon ?? item.base}`)}" alt="" onerror="this.remove()"><span>${esc(locales[lang].base[item.base])}</span>${item.identified ? "" : '<i class="q">?</i>'}${cant ? '<i class="lock"></i>' : ""}</button>`;
+    <img src="${asset(`item_${content2.bases[item.base]?.icon ?? item.base}`)}" alt=""><span>${esc(locales[lang].base[item.base])}</span>${item.identified ? "" : '<i class="q">?</i>'}${cant ? '<i class="lock"></i>' : ""}</button>`;
   }
   function withSk(sheet, h) {
     if (!sheet || !h) return sheet;
@@ -30594,6 +30959,7 @@ ${suffix}`;
     ${document.fullscreenEnabled ? `<div class="mrow"><b>${t2("ux.fullscreen")}</b><button class="btn ghost" data-act="fullscreen">\u26F6</button></div>` : ""}
     <div class="mrow col"><b>${t2("ux.heroes")}</b><p class="dim">${t2("ux.heroesInfo")}</p><button class="btn ghost" data-act="toRoster">${t2("ux.toRoster")}</button></div>
     <div class="mrow col acct-rows"><b>${t2("cloud.account")}</b>${accountRows()}</div>
+    <div class="mrow col bk-rows"><b>${t2("cloud.backups.title")}</b>${backupRows()}</div>
   </div>`;
   }
   function tabSkills() {
@@ -30664,7 +31030,7 @@ ${suffix}`;
     return `<p class="sklink"><span>${t2("tab.order")}:</span> ${i >= 0 ? t2("ux.orderRow", { n: i + 1 }) : `<span class="bad">${t2("ux.notInOrder")}</span>`}</p>`;
   }
   function skillIcon(id, treeIndex = 0) {
-    return `<span class="sk-ico t${treeIndex}"><img src="${asset(`skill_${id}`)}" alt="" onerror="this.remove()"></span>`;
+    return `<span class="sk-ico t${treeIndex}"><img src="${asset(`skill_${id}`)}" alt=""></span>`;
   }
   function skillValues(h, def, lvl) {
     const r = resolveSkill(content2, { ...h, skills: { ...h.skills, [def.id]: lvl } }, def);
@@ -30753,7 +31119,7 @@ ${suffix}`;
     const tag2 = still ? "span" : "button";
     const name = label0 ?? `${R.matName(id)}, ${t2("mats.pieces", { n })}`;
     return `<${tag2} class="item mat-tile ${m.kind === "gem" ? `gem g-${m.type} q${m.quality}` : "rune"} ${selected ? "sel" : ""}" ${attrs} title="${esc(name)}" ${still ? 'role="img"' : ""} aria-label="${esc(name)}">
-    <img src="${asset(pic)}" alt="" onerror="this.remove()">${label ? `<b class="rune-name" aria-hidden="true">${label}</b>` : ""}${m.kind === "gem" ? `<i class="qmark" aria-hidden="true">${ROMAN[m.quality]}</i>` : ""}<i class="cnt" aria-hidden="true">${n}</i></${tag2}>`;
+    <img src="${asset(pic)}" alt="">${label ? `<b class="rune-name" aria-hidden="true">${label}</b>` : ""}${m.kind === "gem" ? `<i class="qmark" aria-hidden="true">${ROMAN[m.quality]}</i>` : ""}<i class="cnt" aria-hidden="true">${n}</i></${tag2}>`;
   }
   function matDetail(id) {
     const h = hero();
@@ -31029,11 +31395,11 @@ ${suffix}`;
       }).join("");
       body += `<p class="dim desc">${t2(`cardDesc.${card.type}`)}</p>${costLine(card)}`;
     } else if (card.type === "chest") {
-      body = `<div class="bigicon chest"><img src="${asset("ui_chest")}" alt="" onerror="this.remove()"></div><p class="desc">${t2("cardDesc.chest")}</p>`;
+      body = `<div class="bigicon chest"><img src="${asset("ui_chest")}" alt=""></div><p class="desc">${t2("cardDesc.chest")}</p>`;
       action = t2("open");
     } else {
       title = L.shrine[card.shrine].name;
-      body = `<div class="bigicon shrine"><img src="${asset("ui_shrine")}" alt="" onerror="this.remove()"></div><p class="desc">${esc(L.shrine[card.shrine].desc)}</p>`;
+      body = `<div class="bigicon shrine"><img src="${asset("ui_shrine")}" alt=""></div><p class="desc">${esc(L.shrine[card.shrine].desc)}</p>`;
       action = t2("pray");
     }
     return `<article class="card c-${card.type}" style="--i:${i}"><h3>${esc(title)}</h3><div class="card-body">${body}</div>
@@ -31111,7 +31477,7 @@ ${suffix}`;
     if (!box || !name) return;
     const el = document.createElement("span");
     el.className = "call";
-    el.innerHTML = `<img src="${asset(`skill_${id}`)}" alt="" onerror="this.remove()"><b>${esc(name)}</b>`;
+    el.innerHTML = `<img src="${asset(`skill_${id}`)}" alt=""><b>${esc(name)}</b>`;
     box.appendChild(el);
     setTimeout(() => el.remove(), 1100);
   }
@@ -31452,7 +31818,7 @@ ${suffix}`;
   }
   function lootList(loot) {
     const rows = [];
-    const ico = (name) => `<span class="loot-ico"><img src="${asset(name)}" alt="" onerror="this.remove()"></span>`;
+    const ico = (name) => `<span class="loot-ico"><img src="${asset(name)}" alt=""></span>`;
     if (loot.gold) rows.push(`<li class="gold-line"><span class="coin"></span>${t2("result.gold", { v: fmt(loot.gold) })}</li>`);
     for (const item of loot.items) rows.push(`<li class="r-${item.rarity} drop">${ico(`item_${content2.bases[item.base]?.icon ?? item.base}`)}<span>${esc(R.itemName(item))}</span></li>`);
     for (const id of loot.mats ?? []) {
@@ -31662,8 +32028,15 @@ ${suffix}`;
     const focus = a && a !== document.body && stage.contains(a) && a.dataset?.act ? [a.dataset.act, a.dataset.v, a.dataset.w, a.dataset.r] : null;
     const wb = document.getElementById("winbody");
     const keep = wb ? [wb.dataset.keep, wb.scrollTop] : null;
-    stage.innerHTML = html + choiceHtml() + toastHtml() + `<div class="turnmsg"><b>\u21BB</b><span>${t2("rotate")}</span></div>`;
+    stage.innerHTML = html + overlayHtml() + toastHtml() + `<div class="turnmsg"><b>\u21BB</b><span>${t2("rotate")}</span></div>`;
     document.documentElement.lang = lang;
+    const shade = stage.querySelector(":scope > .choice-shade");
+    if (shade) {
+      for (const el of stage.children) if (el !== shade && !el.classList.contains("turnmsg")) el.inert = true;
+      const back = focus && [...shade.querySelectorAll(`[data-act="${focus[0]}"]`)].find((el) => el.dataset.v === focus[1]);
+      (back ?? shade.querySelector("button:not([disabled])"))?.focus({ preventScroll: true });
+      return afterRender();
+    }
     const wb2 = document.getElementById("winbody");
     if (keep && wb2 && wb2.dataset.keep === keep[0]) wb2.scrollTop = keep[1];
     const log = document.getElementById("log");
@@ -32176,6 +32549,7 @@ ${suffix}`;
   root.addEventListener("click", (e) => {
     const el = e.target.closest("[data-act]");
     if (!el || el.disabled) return;
+    if (overlayOpen() && !el.closest(".choice-shade")) return;
     gestured = true;
     if (el.dataset.toast) {
       view.toast = null;
@@ -32220,6 +32594,17 @@ ${suffix}`;
     }
   });
   window.addEventListener("keydown", (e) => {
+    if (overlayOpen()) {
+      const btns = [...stage.querySelectorAll(".choice-shade button:not([disabled])")];
+      if (e.key === "Tab" && btns.length) {
+        const i = btns.indexOf(document.activeElement);
+        e.preventDefault();
+        btns[(i + (e.shiftKey ? -1 : 1) + btns.length) % btns.length].focus();
+      }
+      if (e.key === "Escape" && acct.dialog && acct.dialog.kind !== "tabs") actions.dialogClose();
+      if (e.key === " " && !btns.includes(document.activeElement)) e.preventDefault();
+      return;
+    }
     if (e.target?.tagName === "INPUT" || e.target?.tagName === "SELECT") return;
     if (view.fight && !view.fight.done) {
       if (e.key === "1" || e.key === "2") actions.speed(e.key);
@@ -32229,7 +32614,6 @@ ${suffix}`;
       }
     }
     if (e.key !== "Escape") return;
-    if (acct.choice) return;
     if (view.account) {
       view.account = false;
       render();
@@ -32246,14 +32630,15 @@ ${suffix}`;
     } else if (hero() && !view.fight && !view.modal && view.tab !== "camp") actions.tab("camp");
   });
   root.addEventListener("keydown", (e) => {
-    if (e.key === "Enter" && e.target.id === "heroName") {
+    if (e.key === "Enter" && e.target.id === "heroName" && !overlayOpen()) {
       gestured = true;
       actions.create();
     }
   });
   var MODE_KEY = "cursewake.cloud.mode";
   var LINKING_KEY = "cursewake.cloud.linking";
-  var acct = { state: "off", user: null, status: "idle", discord: false, choice: null, busy: false, cloud: null };
+  var FROM_GUEST_KEY = "cursewake.cloud.fromGuest";
+  var acct = { state: cloudPossible() ? "checking" : "none", user: null, status: "idle", discord: false, choice: null, dialog: null, busy: false, cloud: null, signingOut: false, fromGuest: false };
   var getMode = () => {
     try {
       return localStorage.getItem(MODE_KEY);
@@ -32277,18 +32662,31 @@ ${suffix}`;
     }
     return null;
   };
-  var statusKey = () => acct.state === "on" ? acct.status : acct.state === "local" ? "local" : "off";
+  function overlayOpen() {
+    return !!(acct.choice || acct.dialog);
+  }
+  var statusKey = () => acct.state === "on" ? acct.status : acct.state === "local" ? "local" : acct.state === "none" ? "browser" : "off";
   function avatarOf(u, cls = "") {
-    const letter = esc((u && !u.guest && u.name || t2("cloud.guestName")).slice(0, 1).toUpperCase());
-    return `<span class="avatar ${cls}">${letter}${u?.avatar ? `<img src="${esc(u.avatar)}" alt="" referrerpolicy="no-referrer" onerror="this.remove()">` : ""}</span>`;
+    const letter = esc((Array.from(u && !u.guest && u.name || t2("cloud.guestName"))[0] ?? "?").toUpperCase());
+    return `<span class="avatar ${cls}">${letter}${u?.avatar ? `<img src="${esc(u.avatar)}" alt="" referrerpolicy="no-referrer">` : ""}</span>`;
   }
   var userName = (u) => u && !u.guest && u.name ? u.name : t2("cloud.guestName");
+  function fmtWhen(at, unknownKey = "cloud.choice.unknown") {
+    const d = at == null || at === "" ? null : new Date(at);
+    if (!d || Number.isNaN(d.getTime())) return t2(unknownKey);
+    try {
+      return new Intl.DateTimeFormat(lang === "hu" ? "hu-HU" : "en-GB", { dateStyle: "medium", timeStyle: "short" }).format(d);
+    } catch {
+      return d.toLocaleString();
+    }
+  }
   function accountChip() {
     const st = statusKey();
     if (acct.state === "on") {
       return `<button class="chip acct st-${st}" data-act="account" title="${esc(t2(`cloud.st.${st}`))}" aria-label="${esc(`${t2("cloud.account")}: ${userName(acct.user)} \u2013 ${t2(`cloud.st.${st}`)}`)}">${avatarOf(acct.user)}<span class="acct-name">${esc(userName(acct.user))}</span><i class="sync-dot" aria-hidden="true"></i></button>`;
     }
     if (acct.state === "local") return `<button class="chip acct st-local" data-act="account">${t2("cloud.st.local")}</button>`;
+    if (acct.state === "none") return `<button class="chip acct st-browser" data-act="account">${t2("cloud.st.browser")}</button>`;
     if (acct.state === "off") return `<span class="chip acct st-off" role="status" title="${esc(t2("cloud.offNote"))}">${t2("cloud.st.off")}</span>`;
     return "";
   }
@@ -32297,16 +32695,34 @@ ${suffix}`;
     if (acct.state === "on") {
       const u = acct.user;
       const out = view.confirm === "signout" ? `<div class="confirm"><p>${t2("cloud.signOutGuest")}</p><div class="row"><button class="btn" data-act="cloudSignOut">${t2("cloud.signOutYes")}</button><button class="btn ghost" data-act="ask" data-v="">${t2("cloud.keep")}</button></div></div>` : `<button class="btn ghost" data-act="cloudSignOut" ${acct.busy ? "disabled" : ""}>${t2("cloud.signOut")}</button>`;
+      const reload = ["outdated", "blocked"].includes(st) ? `<button class="btn" data-act="reload">${t2("cloud.reload")}</button>` : "";
       return `<div class="acct-who">${avatarOf(u, "big")}<div><b class="acct-n">${esc(userName(u))}</b><small class="sync st-${st}" role="status">${t2(`cloud.st.${st}`)}</small></div></div>
-      ${u?.guest ? `<p class="dim">${t2("cloud.linkNote")}</p><button class="btn" data-act="cloudLink" ${acct.busy || !acct.discord ? "disabled" : ""}>${t2("cloud.link")}</button>${acct.discord ? "" : `<small class="dim">${t2("cloud.discordSoon")}</small>`}` : ""}
+      ${reload}${u?.guest ? `<p class="dim">${t2("cloud.linkNote")}</p><button class="btn" data-act="cloudLink" ${acct.busy || !acct.discord ? "disabled" : ""}>${t2("cloud.link")}</button>${acct.discord ? "" : `<small class="dim">${t2("cloud.discordSoon")}</small>`}` : ""}
       ${out}`;
     }
     if (acct.state === "local") return `<small class="sync st-local">${t2("cloud.st.local")}</small><p class="dim">${t2("cloud.signInNote")}</p><button class="btn ghost" data-act="cloudSignIn">${t2("cloud.signIn")}</button>`;
+    if (acct.state === "none") return `<small class="sync st-browser">${t2("cloud.st.browser")}</small><p class="dim">${t2("cloud.fileNote")}</p>`;
     return `<small class="sync st-off">${t2("cloud.st.off")}</small><p class="dim">${t2("cloud.offNote")}</p>`;
   }
+  function backupRows() {
+    const L = locales[lang];
+    let list = [];
+    try {
+      list = listBackups(localStorage).filter((b) => hasProgress(b.save));
+    } catch {
+    }
+    if (!list.length) return `<p class="dim">${t2("cloud.backups.none")}</p>`;
+    const rows = list.slice(0, 8).map((b) => {
+      const heroes = b.heroes.length ? b.heroes.map((h) => `${esc(h.name || t2("defaultName"))} <span class="dim">(${esc(L.class[h.classId]?.name ?? h.classId)}, ${t2("levelN", { n: h.level })}${h.hardcore ? `, ${t2("ux.hardcoreTag")}` : ""}${h.dead ? `, ${t2("ux.fallenTag")}` : ""})</span>`).join(", ") : t2("cloud.backups.empty");
+      const can = !b.newer && (!b.heroes.length || api.playableHeroes(b.save) > 0);
+      return `<li><div><b>${esc(fmtWhen(b.at, "cloud.backups.old"))}</b><small>${heroes}</small>${can ? "" : `<small class="dim">${t2("cloud.backups.newer")}</small>`}</div><button class="btn ghost" data-act="restoreAsk" data-v="${esc(b.key)}" ${can && !api.frozen ? "" : "disabled"}>${t2("cloud.backups.restore")}</button></li>`;
+    }).join("");
+    return `<p class="dim">${t2("cloud.backups.info")}</p><ul class="bk-list">${rows}</ul>`;
+  }
   function accountPop() {
-    if (!view.account || acct.state === "off") return "";
-    return `<div class="acct-pop panel" role="dialog" aria-label="${esc(t2("cloud.account"))}"><button class="x" data-act="account" aria-label="${t2("close")}" title="${t2("close")}">\xD7</button><h3>${t2("cloud.account")}</h3>${accountRows()}</div>`;
+    if (!view.account || acct.state === "off" || acct.state === "checking") return "";
+    return `<div class="acct-pop panel" role="dialog" aria-label="${esc(t2("cloud.account"))}"><button class="x" data-act="account" aria-label="${t2("close")}" title="${t2("close")}">\xD7</button><h3>${t2("cloud.account")}</h3>${accountRows()}
+    <details class="bk-pop"><summary>${t2("cloud.backups.title")}</summary>${backupRows()}</details></div>`;
   }
   function renderSignIn() {
     const dis = acct.busy ? "disabled" : "";
@@ -32330,30 +32746,41 @@ ${suffix}`;
     const c = acct.choice;
     if (!c) return "";
     const L = locales[lang];
-    const when = (iso) => {
-      const d = iso ? new Date(iso) : null;
-      if (!d || Number.isNaN(d.getTime())) return t2("cloud.choice.unknown");
-      try {
-        return new Intl.DateTimeFormat(lang === "hu" ? "hu-HU" : "en-GB", { dateStyle: "medium", timeStyle: "short" }).format(d);
-      } catch {
-        return d.toLocaleString();
-      }
-    };
-    const side = (key, save, at, act2) => {
+    const heroList = (save) => {
       const heroes = heroSummary(save);
-      const list = heroes.length ? heroes.map((h) => `<li>${art("hero", Object.hasOwn(L.class, h.classId) ? h.classId : "reaver", L.class[h.classId]?.name ?? "?")}<div><b>${esc(h.name || t2("defaultName"))}</b><small>${esc(L.class[h.classId]?.name ?? h.classId)} \xB7 ${t2("levelN", { n: h.level })}${DIFFICULTIES.includes(h.difficulty) && h.difficulty !== "normal" ? ` \xB7 ${t2(`diff.${h.difficulty}`)}` : ""}${h.hardcore ? ` \xB7 ${t2("ux.hardcoreTag")}` : ""}${h.dead ? ` \xB7 ${t2("ux.fallenTag")}` : ""}</small></div></li>`).join("") : `<li class="dim">${t2("cloud.choice.none")}</li>`;
-      return `<section class="ch-side"><h4>${t2(`cloud.choice.${key}`)}</h4><small class="dim">${t2("cloud.choice.saved", { when: esc(when(at)) })}</small><ul>${list}</ul><button class="btn" data-act="cloudPick" data-v="${act2}">${t2(act2 === "cloud" ? "cloud.choice.useCloud" : "cloud.choice.useLocal")}</button></section>`;
+      return heroes.length ? heroes.map((h) => `<li>${art("hero", Object.hasOwn(L.class, h.classId) ? h.classId : "reaver", L.class[h.classId]?.name ?? "?")}<div><b>${esc(h.name || t2("defaultName"))}</b><small>${esc(L.class[h.classId]?.name ?? h.classId)} \xB7 ${t2("levelN", { n: h.level })}${DIFFICULTIES.includes(h.difficulty) && h.difficulty !== "normal" ? ` \xB7 ${t2(`diff.${h.difficulty}`)}` : ""}${h.hardcore ? ` \xB7 ${t2("ux.hardcoreTag")}` : ""}${h.dead ? ` \xB7 ${t2("ux.fallenTag")}` : ""}</small></div></li>`).join("") : `<li class="dim">${t2("cloud.choice.none")}</li>`;
     };
-    return `<div class="choice-shade"><div class="panel choice" role="dialog" aria-modal="true" aria-label="${esc(t2("cloud.choice.title"))}">
-    <h3 class="center">${t2("cloud.choice.title")}</h3><p class="dim center">${t2("cloud.choice.info")}</p>
-    <div class="ch-sides">${side("cloud", c.cloud, c.cloudAt, "cloud")}${side("local", c.local, c.localAt, "local")}</div>
+    const fallen = (names) => names?.length ? `<small class="ch-warn">${t2("cloud.choice.fallen", { names: esc(names.map((n) => n || t2("defaultName")).join(", ")) })}</small>` : "";
+    const guestHere = c.foreignGuest || acct.fromGuest;
+    const localTitle = t2(guestHere ? "cloud.choice.guestLocal" : c.foreign ? "cloud.choice.foreign" : "cloud.choice.local");
+    const side = (title, save, at, buttons, names) => `<section class="ch-side"><h4>${title}</h4><small class="dim">${t2("cloud.choice.saved", { when: esc(fmtWhen(at)) })}</small><ul>${heroList(save)}</ul>${fallen(names)}${buttons}</section>`;
+    const pick = (v, label, ghost = false, aria = "") => `<button class="btn ${ghost ? "ghost" : ""}" data-act="cloudPick" data-v="${v}"${aria ? ` aria-label="${esc(aria)}"` : ""}>${label}</button>`;
+    const body = c.cloudEmpty ? `<p class="dim center">${t2(guestHere ? "cloud.choice.guestEmptyInfo" : "cloud.choice.emptyInfo")}</p><div class="ch-sides one">${side(localTitle, c.local, c.localAt, pick("local", t2("cloud.choice.upload")) + pick("fresh", t2("cloud.choice.fresh"), true), c.fallen?.local)}</div>` : `<p class="dim center">${t2(guestHere ? "cloud.choice.guestInfo" : c.foreign ? "cloud.choice.foreignInfo" : "cloud.choice.info")}</p><div class="ch-sides">${side(t2("cloud.choice.cloud"), c.cloud, c.cloudAt, pick("cloud", t2("cloud.choice.use"), false, `${t2("cloud.choice.use")}: ${t2("cloud.choice.cloud")}`), c.fallen?.cloud)}${side(localTitle, c.local, c.localAt, pick("local", t2("cloud.choice.use"), false, `${t2("cloud.choice.use")}: ${localTitle}`), c.fallen?.local)}</div>`;
+    return `<div class="choice-shade"><div class="panel choice" role="dialog" aria-modal="true" aria-labelledby="choice-t">
+    <h3 class="center" id="choice-t">${t2("cloud.choice.title")}</h3>${body}
   </div></div>`;
   }
+  function dialogHtml() {
+    const d = acct.dialog;
+    if (!d || acct.choice) return "";
+    const btns = d.buttons.map((b) => `<button class="btn ${b.ghost ? "ghost" : ""}" data-act="${b.act}" data-v="${esc(b.v ?? "")}">${esc(b.label)}</button>`).join("");
+    return `<div class="choice-shade"><div class="panel choice small" role="alertdialog" aria-modal="true" aria-labelledby="dlg-t" aria-describedby="dlg-p">
+    <h3 class="center" id="dlg-t">${esc(d.title)}</h3><p class="center" id="dlg-p">${esc(d.text)}</p><div class="row center-row">${btns}</div>
+  </div></div>`;
+  }
+  var overlayHtml = () => choiceHtml() || dialogHtml();
   function askChoice(q) {
     return new Promise((resolve) => {
+      view.account = false;
       acct.choice = { ...q, resolve };
       render();
     });
+  }
+  function closeChoice() {
+    const c = acct.choice;
+    if (!c) return;
+    acct.choice = null;
+    c.resolve(null);
   }
   function onReplaced() {
     if (view.fight) clearTimeout(view.fight.timer);
@@ -32367,11 +32794,22 @@ ${suffix}`;
     render();
   }
   var tooBigSaid = false;
+  var statusLate = false;
+  var rejectedSaid = false;
   function onStatus(s) {
     acct.status = s;
     if (s === "tooBig" && !tooBigSaid) {
       tooBigSaid = true;
       toast(t2("cloud.tooBig"));
+      return;
+    }
+    if (s === "rejected" && !rejectedSaid) {
+      rejectedSaid = true;
+      toast(t2("cloud.st.rejected"));
+      return;
+    }
+    if (document.visibilityState === "hidden") {
+      statusLate = true;
       return;
     }
     if (!hero() || view.tab === "menu") {
@@ -32384,33 +32822,102 @@ ${suffix}`;
       render();
     }
   }
+  var outdatedSaid = false;
+  function onOutdated() {
+    if (outdatedSaid) return;
+    outdatedSaid = true;
+    toast(t2("cloud.outdated"), { act: "reload", v: "", label: t2("cloud.reload") }, { sticky: true });
+  }
   var cloudError = (kind) => toast(t2(`cloud.err.${kind ?? "failed"}`) === `cloud.err.${kind}` ? t2("cloud.err.failed") : t2(`cloud.err.${kind ?? "failed"}`));
+  var tabBlocked = false;
+  function blockTab() {
+    if (tabBlocked) return;
+    tabBlocked = true;
+    api.freeze();
+    sync?.freeze();
+    closeChoice();
+    if (view.fight) clearTimeout(view.fight.timer);
+    view.account = false;
+    acct.dialog = { kind: "tabs", title: t2("cloud.tabsTitle"), text: t2("cloud.tabs"), buttons: [{ act: "reload", label: t2("cloud.reload") }] };
+    render();
+  }
+  window.addEventListener("storage", (e) => {
+    if (tabBlocked || e.storageArea && e.storageArea !== window.localStorage) return;
+    if (e.key === null || e.key === SAVE_KEY && e.newValue !== api.savedJson()) blockTab();
+  });
   function signedIn(user, greet = false) {
-    if (!user) return;
+    if (!user || tabBlocked) return;
     const same = acct.user?.id === user.id && acct.state === "on";
     acct.user = user;
     acct.state = "on";
     setMode(null);
     if (!same) {
-      sync.start(user.id);
+      sync.start(user.id, { guest: !!user.guest });
       if (greet) toast(user.guest ? t2("cloud.welcomeGuest") : t2("cloud.welcome", { name: user.name ?? "" }));
     }
     render();
   }
+  function lostSession() {
+    if (acct.state !== "on") return;
+    closeChoice();
+    sync?.stop();
+    acct.user = null;
+    acct.state = "signin";
+    view.account = false;
+    view.confirm = null;
+    render();
+    toast(t2("cloud.signedOut"));
+  }
+  function switchedUser(user) {
+    closeChoice();
+    sync?.stop();
+    acct.user = null;
+    acct.state = "checking";
+    signedIn(user);
+    toast(t2("cloud.switched", { name: userName(user) }));
+  }
+  var lastRecheck = 0;
+  async function onAuthLost() {
+    if (!acct.cloud || acct.state !== "on" || Date.now() - lastRecheck < 6e4) return;
+    lastRecheck = Date.now();
+    const me = acct.user?.id;
+    const r = await acct.cloud.recheck();
+    if (acct.state !== "on" || acct.user?.id !== me) return;
+    if (r.user?.id === me) {
+      if (sync.settled) sync.flush();
+      else sync.start(me, { guest: !!acct.user?.guest });
+      return;
+    }
+    if (r.user && r.user.id !== me) {
+      switchedUser(r.user);
+      return;
+    }
+    if (!r.offline) lostSession();
+  }
   async function startCloud() {
-    if (!cloudPossible()) return;
+    if (!cloudPossible()) {
+      acct.state = "none";
+      render();
+      return;
+    }
     let cloud;
     try {
       cloud = createCloud();
     } catch (e) {
       console.warn("cloud unavailable", e);
+      acct.state = "off";
+      render();
       return;
     }
     acct.cloud = cloud;
-    sync = createSync({ cloud, store: browserStore(api), ui: { status: onStatus, ask: askChoice, replaced: onReplaced } });
+    sync = createSync({ cloud, store: browserStore(api), ui: { status: onStatus, ask: askChoice, replaced: onReplaced, outdated: onOutdated, authLost: onAuthLost, error: (k) => toast(k === "backup" ? t2("cloud.backupFailed") : t2("cloud.err.failed")) } });
+    if (api.outdated) sync.markOutdated();
+    if (tabBlocked) sync.freeze();
     acct.state = "checking";
     const linking = session(LINKING_KEY) === "1";
     session(LINKING_KEY, null);
+    acct.fromGuest = session(FROM_GUEST_KEY) === "1";
+    session(FROM_GUEST_KEY, null);
     const health = cloud.health().then((h) => {
       acct.discord = h.discord;
       if (["signin", "on"].includes(acct.state)) render();
@@ -32418,14 +32925,24 @@ ${suffix}`;
     }, () => false);
     const init = await cloud.init();
     cloud.onChange((event, user) => {
-      if (event === "SIGNED_OUT") return;
-      if (user && acct.state === "on" && acct.user?.id === user.id) {
+      if (event === "INITIAL_SESSION" || acct.signingOut || tabBlocked) return;
+      if (event === "SIGNED_OUT" || !user) {
+        lostSession();
+        return;
+      }
+      if (acct.state === "on" && acct.user && acct.user.id !== user.id) {
+        switchedUser(user);
+        return;
+      }
+      if (acct.state === "on") {
         acct.user = user;
         render();
+        return;
       }
+      if (event === "SIGNED_IN" && acct.state === "signin" && !acct.busy) signedIn(user);
     });
     if (init.error) {
-      if (init.errorKind === "already_linked") toast(t2("cloud.err.already_linked"), acct.discord || await health ? { act: "cloudDiscord", v: "", label: t2("cloud.discord") } : null);
+      if (init.errorKind === "already_linked") toast(t2("cloud.err.already_linked"), acct.discord || await health ? { act: "cloudSwitchAsk", v: "", label: t2("cloud.discord") } : null);
       else cloudError(init.errorKind);
     }
     if (init.user) {
@@ -32451,6 +32968,14 @@ ${suffix}`;
       view.confirm = null;
       render();
     },
+    reload() {
+      window.location.reload();
+    },
+    dialogClose() {
+      if (acct.dialog?.kind === "tabs") return;
+      acct.dialog = null;
+      render();
+    },
     async cloudGuest() {
       if (acct.busy) return;
       acct.busy = true;
@@ -32472,10 +32997,22 @@ ${suffix}`;
       try {
         await acct.cloud.signInDiscord();
       } catch (e) {
+        session(FROM_GUEST_KEY, null);
         acct.busy = false;
         render();
         cloudError(e.kind);
       }
+    },
+    /** The Discord a guest tried to link already has a save: say what signing in with it means before leaving the page. */
+    cloudSwitchAsk() {
+      acct.dialog = { kind: "switch", title: t2("cloud.switch.title"), text: t2("cloud.switch.text"), buttons: [{ act: "cloudSwitchYes", label: t2("cloud.switch.yes") }, { act: "dialogClose", label: t2("cloud.keep"), ghost: true }] };
+      render();
+    },
+    async cloudSwitchYes() {
+      acct.dialog = null;
+      if (acct.user?.guest) session(FROM_GUEST_KEY, "1");
+      await sync?.flush();
+      return actions.cloudDiscord();
     },
     async cloudLink() {
       if (acct.busy || !acct.cloud) return;
@@ -32483,7 +33020,7 @@ ${suffix}`;
       render();
       session(LINKING_KEY, "1");
       try {
-        sync?.flush();
+        await sync?.flush();
         await acct.cloud.linkDiscord();
       } catch (e) {
         session(LINKING_KEY, null);
@@ -32512,9 +33049,14 @@ ${suffix}`;
       view.confirm = null;
       acct.busy = true;
       render();
-      await sync?.flush();
-      sync?.stop();
-      await acct.cloud?.signOut();
+      acct.signingOut = true;
+      try {
+        await sync?.flush();
+        sync?.stop();
+        await acct.cloud?.signOut();
+      } finally {
+        acct.signingOut = false;
+      }
       acct.busy = false;
       acct.user = null;
       view.account = false;
@@ -32526,16 +33068,54 @@ ${suffix}`;
       const c = acct.choice;
       if (!c) return;
       acct.choice = null;
-      c.resolve(v === "local" ? "local" : "cloud");
+      acct.fromGuest = false;
+      c.resolve(["local", "fresh"].includes(v) && (v !== "fresh" || c.cloudEmpty) ? v : "cloud");
       render();
+    },
+    restoreAsk(key) {
+      if (api.frozen) return;
+      acct.dialog = { kind: "restore", title: t2("cloud.backups.title"), text: t2("cloud.backups.confirm"), buttons: [{ act: "restoreYes", v: key, label: t2("cloud.backups.yes") }, { act: "dialogClose", label: t2("cloud.keep"), ghost: true }] };
+      render();
+    },
+    restoreYes(key) {
+      acct.dialog = null;
+      const b = listBackups(localStorage).find((x) => x.key === key);
+      if (!b || b.newer || api.frozen) {
+        render();
+        return toast(t2("cloud.backups.failed"));
+      }
+      const cur = api.savedJson();
+      let curSave = null;
+      try {
+        curSave = cur ? JSON.parse(cur) : null;
+      } catch {
+      }
+      if (hasProgress(curSave) && !writeBackup(localStorage, cur, Date.now())) {
+        render();
+        return toast(t2("cloud.backupFailed"));
+      }
+      const res = api.replaceSave(keepFallen(b.save, curSave).data);
+      if (!res.ok) {
+        render();
+        return toast(t2("cloud.backups.failed"));
+      }
+      onReplaced();
+      return toast(t2("cloud.backups.done"));
     }
   });
   document.addEventListener("visibilitychange", () => {
     if (document.visibilityState === "hidden") sync?.flush();
+    else if (statusLate) {
+      statusLate = false;
+      onStatus(acct.status);
+    }
   });
   window.addEventListener("pagehide", () => sync?.leave());
   window.addEventListener("online", () => {
-    if (acct.state === "on") sync?.flush();
+    if (acct.state === "on") {
+      if (sync?.settled) sync.flush();
+      else if (acct.user && !sync?.asking && sync?.status === "offline") sync.start(acct.user.id, { guest: !!acct.user.guest });
+    }
   });
   try {
     restoreUnseen();
@@ -32548,6 +33128,7 @@ ${suffix}`;
     render();
     toast(t2("saveBroken"));
   }
+  if (api.outdated) onOutdated();
   startCloud().catch((e) => {
     console.warn("cloud start failed", e);
     acct.state = acct.state === "on" ? "on" : "off";

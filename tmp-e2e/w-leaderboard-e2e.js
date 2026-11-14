@@ -20917,7 +20917,8 @@ if (shouldShowDeprecationWarning()) console.warn("\u26A0\uFE0F  Node.js 20 and b
 var fail = (m) => {
   throw new Error(m);
 };
-var eq = (a2, b2) => JSON.stringify(a2) === JSON.stringify(b2);
+var norm = (v) => Array.isArray(v) ? v.map(norm) : v && typeof v === "object" ? Object.fromEntries(Object.keys(v).sort().map((k) => [k, norm(v[k])])) : v;
+var eq = (a2, b2) => JSON.stringify(norm(a2)) === JSON.stringify(norm(b2));
 function assert(v, m) {
   if (!v) fail(m || "assert failed");
 }

@@ -2,7 +2,7 @@
 <html lang="en">
 <head>
 <meta charset="utf-8">
-<meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'sha256-plhJxdkoLYZwPM5fv4qvnZBpwBxWGvlQGQu5m4OTBzc=' 'sha256-LJsQEwLXDHlaON/4ewSmXVZ/lTU1xavoDXZYM+HYakQ='; style-src 'self' 'unsafe-inline'; img-src 'self' data: blob: https://cdn.discordapp.com; font-src 'self' data:; media-src 'self' data: blob:; connect-src 'self' https://zwhsmstbntuwgcgfqhzl.supabase.co wss://zwhsmstbntuwgcgfqhzl.supabase.co; object-src 'none'; base-uri 'none'; form-action 'none'">
+<meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'sha256-plhJxdkoLYZwPM5fv4qvnZBpwBxWGvlQGQu5m4OTBzc=' 'sha256-HzPeciNG+rbtgi6HWy19Le2eqzNBr9sPE4KlSuUbO1g='; style-src 'self' 'unsafe-inline'; img-src 'self' data: blob: https://cdn.discordapp.com; font-src 'self' data:; media-src 'self' data: blob:; connect-src 'self' https://zwhsmstbntuwgcgfqhzl.supabase.co wss://zwhsmstbntuwgcgfqhzl.supabase.co; object-src 'none'; base-uri 'none'; form-action 'none'">
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
 <meta name="theme-color" content="#0a0706">
 <meta name="mobile-web-app-capable" content="yes">
@@ -1589,6 +1589,43 @@ html, body { text-size-adjust: 100%; }
 /* The raid card's big picture (chest, shrine…): always the whole picture, fitted in its box, on every screen. */
 .bigicon { position: relative; } .bigicon img { position: absolute; inset: 0; width: 100%; height: 100%; object-fit: contain; }
 .portrait .bigicon { flex: none; aspect-ratio: 1; }
+
+/* ================================================================ the belt plan: each place is meant for a healing or a mana potion
+   An empty place shows a faint outline of the potion it waits for; in camp the places are buttons with a little menu. */
+.potion { position: relative; }
+.potion.pl-life:not(.full) { border-color: #7a3424; }
+.potion.pl-mana:not(.full) { border-color: #5a46a8; }
+.potion:not(.full)::after { content: ''; position: absolute; inset: 2px; opacity: .3; border-radius: inherit; background: var(--ui-potion-life) center / 130% no-repeat; }
+.potion.pl-mana:not(.full)::after { background-image: var(--ui-potion-mana); filter: var(--mana-shift); }
+.bslot { position: relative; display: inline-flex; flex: none; }
+.pbtn { padding: 0; margin: 0; font: inherit; color: inherit; cursor: pointer; appearance: none; -webkit-appearance: none; touch-action: manipulation; transition: transform .12s, box-shadow .12s, filter .12s; }
+.pbtn:hover { filter: brightness(1.25); transform: translateY(-1px); }
+.pbtn:focus-visible { outline: 2px solid var(--gold, #e0b45a); outline-offset: 2px; }
+.bslot.open .pbtn { box-shadow: 0 0 0 2px #e0b45a, 0 0 10px #e0b45a88; transform: translateY(-1px); }
+.belt.editable { gap: 5px; }
+.bover { flex: none; align-self: center; padding: 1px 6px; border-radius: 99px; font: 700 12px system-ui; color: #f0c27a; background: #3a1d0c; box-shadow: inset 0 0 0 1px #8a5a2a; }
+.beltpop { position: absolute; left: 50%; z-index: 40; transform: translateX(-50%); width: max-content; min-width: 176px; max-width: 240px; display: grid; gap: 4px; padding: 8px; border-radius: 8px; text-align: left;
+  background: linear-gradient(180deg, #2a1f16, #140e0a); border: 1px solid #000; box-shadow: inset 0 0 0 1px #8a6a32, 0 10px 24px #000c; }
+.beltpop.down { top: calc(100% + 8px); } .beltpop.up { bottom: calc(100% + 10px); }
+.beltpop::before { content: ''; position: absolute; left: 50%; width: 10px; height: 10px; margin-left: -5px; background: inherit; box-shadow: inset 1px 1px 0 0 #8a6a32; }
+.beltpop.down::before { top: -6px; transform: rotate(45deg); } .beltpop.up::before { bottom: -6px; transform: rotate(225deg); background: #140e0a; }
+.belt .beltpop small { display: block; }
+.beltpop > small { color: #b9a782; font: 600 12.5px var(--serif); font-variant: small-caps; letter-spacing: .05em; padding: 0 2px 2px; }
+.bk { display: flex; align-items: center; gap: 9px; min-height: 44px; padding: 5px 10px 5px 8px; font: inherit; color: #f3e6cc; text-align: left; cursor: pointer; border: 1px solid #000; border-radius: 6px; background: linear-gradient(180deg, #2b1f15, #1a120c); box-shadow: inset 0 0 0 1px #4a3a26; }
+.bk:hover { filter: brightness(1.2); } .bk:focus-visible { outline: 2px solid #e0b45a; outline-offset: 1px; }
+.bk.life.on { box-shadow: inset 0 0 0 1px #c0503a, inset 0 0 12px #c0503a44; } .bk.mana.on { box-shadow: inset 0 0 0 1px #7a5ad0, inset 0 0 12px #7a5ad044; }
+.bk .pot-ico { width: 18px; height: 24px; }
+.bk-txt { display: grid; flex: 1; min-width: 0; line-height: 1.2; } .bk-txt b { font: 600 14.5px var(--serif); font-variant: small-caps; letter-spacing: .03em; } .bk-txt small { font: 500 12px system-ui; color: #b9a782; }
+.bk-tick { flex: none; font: 700 15px system-ui; color: #e0b45a; }
+.presets { display: flex; flex-wrap: wrap; gap: 6px; } .presets .chip { font-size: 12.5px; padding: 3px 10px; } .presets .chip.on { background: #3a2a14; border-color: #b08a4a; color: #f3e2b8; }
+.potbox > .presets { margin-top: -2px; }
+.pb-edit { margin: 6px 0 0; font-size: 12.5px; line-height: 1.35; }
+.bc-open { font: 700 14px system-ui; color: #efe2c4; background: #0005; border: 0; padding: 2px 6px; cursor: pointer; border-radius: 8px; box-shadow: inset 0 0 0 1px #4a3a26; }
+.bc-open:focus-visible { outline: 2px solid #e0b45a; outline-offset: 2px; }
+.portrait .presets .chip { min-height: 36px; padding: 0 12px; font-size: 13.5px; }
+.portrait .pb-row .potion.pbtn { width: 30px; height: 38px; }
+.touch:not(.portrait) .pb-row .potion.pbtn { width: 26px; height: 34px; }
+.touch:not(.portrait) .pb-edit { display: none; }
 
 </style>
 </head>
@@ -4023,6 +4060,8 @@ html, body { text-size-adjust: 100%; }
       gold: 0,
       belt: { life: content3.B.potion.baseBeltSlots, mana: 0 },
       // a full belt for the first raid
+      beltPlan: new Array(content3.B.potion.baseBeltSlots).fill("life"),
+      // what each belt place is meant to hold
       reserve: { life: 0, mana: 0 },
       // potions in the pack that refill the belt (B.potion.reserveMax at most)
       tactics: cls.defaultTactics.map((t3) => ({ skill: t3.skill, cond: { ...t3.cond } })),
@@ -4213,22 +4252,45 @@ html, body { text-size-adjust: 100%; }
     const life = Math.min(max, cleanCount(r?.life));
     return { life, mana: Math.min(max - life, cleanCount(r?.mana)) };
   }
-  function refillBelt(belt, reserve, slots, manaWant = 0, anyMana = true) {
+  var POTION_KINDS = ["life", "mana"];
+  function planCounts(plan) {
+    const n = { life: 0, mana: 0 };
+    for (const k of plan ?? []) if (k === "life" || k === "mana") n[k]++;
+    return n;
+  }
+  function planFrom(slots, mana = 0) {
+    const m = Math.max(0, Math.min(slots, Math.floor(mana) || 0));
+    return [...new Array(slots - m).fill("life"), ...new Array(m).fill("mana")];
+  }
+  function cleanBeltPlan(plan, slots, belt = null) {
+    const n = Math.max(0, Math.floor(slots) || 0);
+    if (!Array.isArray(plan)) return planFrom(n, Math.max(0, Math.floor(belt?.mana) || 0));
+    const out = plan.slice(0, n).map((k) => k === "mana" ? "mana" : "life");
+    while (out.length < n) out.push("life");
+    return out;
+  }
+  function syncBeltPlan(content3, hero2) {
+    hero2.beltPlan = cleanBeltPlan(hero2.beltPlan, deriveStats(content3, hero2).beltSlots, hero2.belt);
+    return hero2.beltPlan;
+  }
+  function beltFill(plan, belt) {
+    const seen = { life: 0, mana: 0 };
+    return (plan ?? []).map((k) => seen[k]++ < (belt?.[k] ?? 0));
+  }
+  function refillBelt(belt, reserve, plan) {
+    const cap3 = planCounts(plan);
     let moved = 0;
-    const take = (kind, upTo) => {
-      while (reserve[kind] > 0 && belt.life + belt.mana < slots && belt[kind] < upTo) {
+    for (const kind of POTION_KINDS) {
+      while (reserve[kind] > 0 && belt[kind] < cap3[kind]) {
         reserve[kind]--;
         belt[kind]++;
         moved++;
       }
-    };
-    take("mana", manaWant);
-    take("life", Infinity);
-    if (anyMana) take("mana", Infinity);
+    }
     return moved;
   }
-  function stowPotion(content3, belt, reserve, slots, kind) {
-    if (belt.life + belt.mana < slots) {
+  function stowPotion(content3, belt, reserve, plan, kind) {
+    if (belt[kind] < planCounts(plan)[kind]) {
       belt[kind]++;
       return "belt";
     }
@@ -5007,6 +5069,166 @@ html, body { text-size-adjust: 100%; }
     return specs.map((s, i) => buildMonster(content3, s, `m${i}`));
   }
 
+  // src/engine/town.js
+  var IN_RAID3 = { ok: false, error: "in_raid" };
+  function sellItem(content3, hero2, index) {
+    if (hero2.inRun) return IN_RAID3;
+    if (!validIndex(hero2.bag, index)) return { ok: false, error: "no_item" };
+    const item = hero2.bag[index];
+    const gold = content3.B.loot.sellValue(item, content3.bases[item.base]);
+    hero2.bag.splice(index, 1);
+    hero2.gold += gold;
+    return { ok: true, gold };
+  }
+  function buyScroll(content3, hero2) {
+    if (hero2.inRun) return { ok: false, error: "in_raid" };
+    const R2 = content3.B.run;
+    if ((hero2.scrolls ?? 0) >= R2.maxScrolls) return { ok: false, error: "scrolls_full" };
+    const price = R2.scrollPrice(hero2.level);
+    if (hero2.gold < price) return { ok: false, error: "no_gold" };
+    hero2.gold -= price;
+    hero2.scrolls = (hero2.scrolls ?? 0) + 1;
+    return { ok: true, price };
+  }
+  function identifyItem(hero2, index) {
+    if (hero2.inRun) return IN_RAID3;
+    if (!validIndex(hero2.bag, index)) return { ok: false, error: "no_item" };
+    hero2.bag[index].identified = true;
+    return { ok: true };
+  }
+  var isKind = (k) => k === "life" || k === "mana";
+  var potionRefund = (content3, hero2) => Math.floor(content3.B.potion.price(hero2.level) * content3.B.potion.sellBackPct / 100);
+  function ready(content3, hero2) {
+    hero2.belt = { life: Math.max(0, Math.floor(hero2.belt?.life) || 0), mana: Math.max(0, Math.floor(hero2.belt?.mana) || 0) };
+    hero2.reserve = cleanReserve(content3, hero2.reserve);
+    return syncBeltPlan(content3, hero2);
+  }
+  function fitToPlan(content3, hero2, sell) {
+    const cap3 = planCounts(hero2.beltPlan);
+    const max = content3.B.potion.reserveMax;
+    const each = potionRefund(content3, hero2);
+    const out = { stored: 0, sold: 0, refund: 0 };
+    for (const kind of ["mana", "life"]) {
+      while (hero2.belt[kind] > cap3[kind]) {
+        if (potionCount(hero2.reserve) < max) {
+          hero2.reserve[kind]++;
+          out.stored++;
+        } else if (sell) {
+          hero2.gold += each;
+          out.sold++;
+          out.refund += each;
+        } else break;
+        hero2.belt[kind]--;
+      }
+    }
+    return out;
+  }
+  function fillBelt(content3, hero2) {
+    if (hero2.inRun) return IN_RAID3;
+    const plan = ready(content3, hero2);
+    const price = content3.B.potion.price(hero2.level);
+    const cap3 = planCounts(plan);
+    const fromReserve = refillBelt(hero2.belt, hero2.reserve, plan);
+    let bought = 0;
+    for (const kind of POTION_KINDS) {
+      while (hero2.belt[kind] < cap3[kind] && hero2.gold >= price) {
+        hero2.gold -= price;
+        hero2.belt[kind]++;
+        bought++;
+      }
+    }
+    const empty = POTION_KINDS.reduce((n, k) => n + Math.max(0, cap3[k] - hero2.belt[k]), 0);
+    return { ok: true, bought, spent: bought * price, fromReserve, empty };
+  }
+  function buyPotion(content3, hero2, kind) {
+    if (hero2.inRun) return IN_RAID3;
+    if (!isKind(kind)) return { ok: false, error: "cannot_buy" };
+    const plan = ready(content3, hero2);
+    if (hero2.belt[kind] >= planCounts(plan)[kind]) {
+      const r = buyReserve(content3, hero2, kind);
+      return r.ok ? { ...r, to: "reserve" } : r;
+    }
+    const price = content3.B.potion.price(hero2.level);
+    if (hero2.gold < price) return { ok: false, error: "no_gold" };
+    hero2.gold -= price;
+    hero2.belt[kind]++;
+    return { ok: true, price, to: "belt" };
+  }
+  function potionDestination(content3, hero2, kind) {
+    const plan = syncBeltPlan(content3, hero2);
+    if ((hero2.belt?.[kind] ?? 0) < planCounts(plan)[kind]) return "belt";
+    return potionCount(hero2.reserve) < content3.B.potion.reserveMax ? "reserve" : null;
+  }
+  function setBeltSlot(content3, hero2, index, kind) {
+    if (hero2.inRun) return IN_RAID3;
+    if (!isKind(kind)) return { ok: false, error: "bad_item" };
+    const plan = ready(content3, hero2);
+    if (!Number.isInteger(index) || index < 0 || index >= plan.length) return { ok: false, error: "bad_slot" };
+    const was = plan[index];
+    const res = { ok: true, kind, from: null, price: 0, out: null, outKind: was, refund: 0 };
+    if (was === kind) return res;
+    plan[index] = kind;
+    const cap3 = planCounts(plan);
+    if (hero2.belt[kind] < cap3[kind] && hero2.reserve[kind] > 0) {
+      hero2.reserve[kind]--;
+      hero2.belt[kind]++;
+      res.from = "reserve";
+    }
+    if (hero2.belt[was] > cap3[was]) {
+      hero2.belt[was]--;
+      if (potionCount(hero2.reserve) < content3.B.potion.reserveMax) {
+        hero2.reserve[was]++;
+        res.out = "reserve";
+      } else {
+        res.refund = potionRefund(content3, hero2);
+        hero2.gold += res.refund;
+        res.out = "sold";
+      }
+    }
+    const price = content3.B.potion.price(hero2.level);
+    if (hero2.belt[kind] < cap3[kind] && !res.from && hero2.gold >= price) {
+      hero2.gold -= price;
+      hero2.belt[kind]++;
+      res.from = "bought";
+      res.price = price;
+    }
+    return res;
+  }
+  function setBeltPlan(content3, hero2, plan) {
+    if (hero2.inRun) return IN_RAID3;
+    const cur = ready(content3, hero2);
+    if (!Array.isArray(plan) || plan.length !== cur.length || !plan.every(isKind)) return { ok: false, error: "bad_slot" };
+    hero2.beltPlan = [...plan];
+    const fromReserve = refillBelt(hero2.belt, hero2.reserve, hero2.beltPlan);
+    const f = fitToPlan(content3, hero2, true);
+    const cap3 = planCounts(hero2.beltPlan);
+    const empty = POTION_KINDS.reduce((n, k) => n + Math.max(0, cap3[k] - hero2.belt[k]), 0);
+    return { ok: true, fromReserve, ...f, empty };
+  }
+  function presetPlan(name, slots) {
+    if (name === "half") return Array.from({ length: slots }, (_, i) => i % 2 ? "mana" : "life");
+    if (name === "life") return new Array(slots).fill("life");
+    return null;
+  }
+  function buyReserve(content3, hero2, kind) {
+    if (hero2.inRun) return IN_RAID3;
+    if (kind !== "life" && kind !== "mana") return { ok: false, error: "bad_item" };
+    const P = content3.B.potion;
+    hero2.reserve = cleanReserve(content3, hero2.reserve);
+    if (potionCount(hero2.reserve) >= P.reserveMax) return { ok: false, error: "reserve_full" };
+    const price = P.price(hero2.level);
+    if (hero2.gold < price) return { ok: false, error: "no_gold" };
+    hero2.gold -= price;
+    hero2.reserve[kind]++;
+    return { ok: true, price };
+  }
+  function settleBelt(content3, hero2) {
+    if (hero2.inRun || !hero2.belt) return 0;
+    const plan = ready(content3, hero2);
+    const moved = refillBelt(hero2.belt, hero2.reserve, plan);
+    return moved + fitToPlan(content3, hero2, false).stored;
+  }
+
   // src/engine/loot.js
   function rollMats(content3, rng, level, source) {
     const L = content3.B.loot;
@@ -5078,7 +5300,7 @@ html, body { text-size-adjust: 100%; }
   }
 
   // src/engine/merc.js
-  var IN_RAID3 = { ok: false, error: "in_raid" };
+  var IN_RAID4 = { ok: false, error: "in_raid" };
   var clamp3 = (v, lo, hi) => Math.max(lo, Math.min(hi, v));
   function mercUnlocked(content3, hero2) {
     return !!hero2.cleared?.[content3.B.merc.unlockZone];
@@ -5214,7 +5436,7 @@ html, body { text-size-adjust: 100%; }
     };
   }
   function hireMerc(content3, hero2, typeId) {
-    if (hero2.inRun) return IN_RAID3;
+    if (hero2.inRun) return IN_RAID4;
     if (!mercUnlocked(content3, hero2)) return { ok: false, error: "merc_locked" };
     if (typeof typeId !== "string" || !Object.hasOwn(content3.mercs, typeId)) return { ok: false, error: "bad_merc" };
     if (hero2.merc?.type === typeId) return { ok: false, error: "merc_same" };
@@ -5234,7 +5456,7 @@ html, body { text-size-adjust: 100%; }
     return { ok: true, price };
   }
   function reviveMerc(content3, hero2) {
-    if (hero2.inRun) return IN_RAID3;
+    if (hero2.inRun) return IN_RAID4;
     if (!typeOf(content3, hero2)) return { ok: false, error: "no_merc" };
     if (!hero2.merc.dead) return { ok: false, error: "merc_alive" };
     const price = content3.B.merc.revivePrice(hero2.level);
@@ -5244,7 +5466,7 @@ html, body { text-size-adjust: 100%; }
     return { ok: true, price };
   }
   function dismissMerc(content3, hero2) {
-    if (hero2.inRun) return IN_RAID3;
+    if (hero2.inRun) return IN_RAID4;
     if (!hero2.merc) return { ok: false, error: "no_merc" };
     const items = Object.values(wornBy(content3, hero2));
     if (hero2.bag.length + items.length > content3.B.hero.bagSize) return { ok: false, error: "bag_full" };
@@ -5253,7 +5475,7 @@ html, body { text-size-adjust: 100%; }
     return { ok: true };
   }
   function mercEquip(content3, hero2, index) {
-    if (hero2.inRun) return IN_RAID3;
+    if (hero2.inRun) return IN_RAID4;
     if (!validIndex(hero2.bag, index)) return { ok: false, error: "no_item" };
     const item = hero2.bag[index];
     const check = mercCanEquip(content3, hero2, item);
@@ -5267,7 +5489,7 @@ html, body { text-size-adjust: 100%; }
     return { ok: true, slot };
   }
   function mercUnequip(content3, hero2, slot) {
-    if (hero2.inRun) return IN_RAID3;
+    if (hero2.inRun) return IN_RAID4;
     if (!hero2.merc) return { ok: false, error: "no_merc" };
     const worn = wornBy(content3, hero2);
     if (!content3.MERC_SLOTS.includes(slot) || !worn[slot]) return { ok: false, error: "no_item" };
@@ -5358,9 +5580,11 @@ html, body { text-size-adjust: 100%; }
       mercLife = 0;
     }
     const reserve = cleanReserve(content3, hero2.reserve);
-    refillBelt(hero2.belt, reserve, s.beltSlots, hero2.belt.mana, false);
-    const life = Math.min(hero2.belt.life, s.beltSlots);
-    const mana = Math.min(hero2.belt.mana, s.beltSlots - life);
+    const plan = syncBeltPlan(content3, hero2);
+    refillBelt(hero2.belt, reserve, plan);
+    const cap3 = planCounts(plan);
+    const life = Math.min(hero2.belt.life, cap3.life);
+    const mana = Math.min(hero2.belt.mana, cap3.mana);
     hero2.belt = { life: hero2.belt.life - life, mana: hero2.belt.mana - mana };
     for (const kind of ["life", "mana"]) {
       const room = content3.B.potion.reserveMax - potionCount(reserve);
@@ -5381,8 +5605,7 @@ html, body { text-size-adjust: 100%; }
       mana: s.maxMana,
       belt: { life, mana },
       reserve,
-      manaPlan: mana,
-      // the belt is refilled the way it was set up: this many mana potions, the rest life
+      // the belt is refilled between stations the way hero.beltPlan says (it cannot change on a raid)
       // The mercenary comes along if the hero has one that is alive; null otherwise.
       merc: mercLife > 0 ? { life: mercLife } : null,
       buffs: [],
@@ -5439,7 +5662,7 @@ html, body { text-size-adjust: 100%; }
     const max = mercSheet(content3, hero2)?.maxLife ?? 0;
     run2.merc.life = Math.min(max, Math.round(run2.merc.life + max * pct2 / 100));
   }
-  function takeLoot(content3, hero2, run2, drops, beltSlots, out) {
+  function takeLoot(content3, hero2, run2, drops, out) {
     var _a;
     hero2.gold += drops.gold;
     run2.gained.gold += drops.gold;
@@ -5464,7 +5687,7 @@ html, body { text-size-adjust: 100%; }
     for (const kind of ["life", "mana"]) {
       let n = kind === "life" ? drops.lifePotions : drops.manaPotions;
       while (n-- > 0) {
-        const went = stowPotion(content3, run2.belt, run2.reserve, beltSlots, kind);
+        const went = stowPotion(content3, run2.belt, run2.reserve, syncBeltPlan(content3, hero2), kind);
         if (went) out.potions[kind]++;
         if (went === "reserve") out.potions.reserve = (out.potions.reserve ?? 0) + 1;
         if (!went) out.potions.lost = (out.potions.lost ?? 0) + 1;
@@ -5478,10 +5701,10 @@ html, body { text-size-adjust: 100%; }
     const r = run2.reserve ?? { life: 0, mana: 0 };
     hero2.belt = { life: hero2.belt.life + run2.belt.life, mana: hero2.belt.mana + run2.belt.mana };
     hero2.reserve = cleanReserve(content3, { life: (hero2.reserve?.life ?? 0) + r.life, mana: (hero2.reserve?.mana ?? 0) + r.mana });
-    refillBelt(hero2.belt, hero2.reserve, deriveStats(content3, hero2).beltSlots, run2.manaPlan ?? 0, false);
     run2.belt = { life: 0, mana: 0 };
     run2.reserve = { life: 0, mana: 0 };
     hero2.inRun = false;
+    settleBelt(content3, hero2);
     if (run2.played > 0) hero2.raidSeed = env.nextRaidSeed(hero2);
     const d = cleanDifficulty(run2.difficulty);
     if (result === "death") {
@@ -5589,7 +5812,7 @@ html, body { text-size-adjust: 100%; }
       let xp = 0;
       for (const m of enemies) {
         xp += m.xp * content3.B.xp.levelPenalty(hero2.level, m.level);
-        takeLoot(content3, hero2, run2, rollMonsterDrops(content3, lootRng, m, sheet), sheet.beltSlots, loot);
+        takeLoot(content3, hero2, run2, rollMonsterDrops(content3, lootRng, m, sheet), loot);
       }
       xp = Math.round(xp * (1 + run2.xpPct / 100));
       result.xp = xp;
@@ -5608,7 +5831,7 @@ html, body { text-size-adjust: 100%; }
         return result;
       }
     } else if (card.type === "chest") {
-      takeLoot(content3, hero2, run2, rollChest(content3, lootRng, zoneLevels(content3, zone, cleanDifficulty(run2.difficulty))[1], sheet), sheet.beltSlots, loot);
+      takeLoot(content3, hero2, run2, rollChest(content3, lootRng, zoneLevels(content3, zone, cleanDifficulty(run2.difficulty))[1], sheet), loot);
       run2.rested = true;
     } else if (card.type === "shrine" && Object.hasOwn(R2.shrines, card.shrine)) {
       const sh = R2.shrines[card.shrine];
@@ -5628,108 +5851,12 @@ html, body { text-size-adjust: 100%; }
     }
     run2.station++;
     run2.reserve ?? (run2.reserve = { life: 0, mana: 0 });
-    refillBelt(run2.belt, run2.reserve, sheet.beltSlots, run2.manaPlan ?? 0);
+    refillBelt(run2.belt, run2.reserve, syncBeltPlan(content3, hero2));
     run2.life = Math.min(sheet.maxLife, Math.round(run2.life + sheet.maxLife * R2.betweenStationsHealPct / 100));
     run2.mana = Math.min(sheet.maxMana, Math.round(run2.mana + sheet.maxMana * R2.betweenStationsManaPct / 100));
     healMerc(content3, hero2, run2, R2.betweenStationsHealPct);
     drawCards(content3, run2, env.rngFor(run2, STREAM.cards));
     return result;
-  }
-
-  // src/engine/town.js
-  var IN_RAID4 = { ok: false, error: "in_raid" };
-  function sellItem(content3, hero2, index) {
-    if (hero2.inRun) return IN_RAID4;
-    if (!validIndex(hero2.bag, index)) return { ok: false, error: "no_item" };
-    const item = hero2.bag[index];
-    const gold = content3.B.loot.sellValue(item, content3.bases[item.base]);
-    hero2.bag.splice(index, 1);
-    hero2.gold += gold;
-    return { ok: true, gold };
-  }
-  function buyScroll(content3, hero2) {
-    if (hero2.inRun) return { ok: false, error: "in_raid" };
-    const R2 = content3.B.run;
-    if ((hero2.scrolls ?? 0) >= R2.maxScrolls) return { ok: false, error: "scrolls_full" };
-    const price = R2.scrollPrice(hero2.level);
-    if (hero2.gold < price) return { ok: false, error: "no_gold" };
-    hero2.gold -= price;
-    hero2.scrolls = (hero2.scrolls ?? 0) + 1;
-    return { ok: true, price };
-  }
-  function identifyItem(hero2, index) {
-    if (hero2.inRun) return IN_RAID4;
-    if (!validIndex(hero2.bag, index)) return { ok: false, error: "no_item" };
-    hero2.bag[index].identified = true;
-    return { ok: true };
-  }
-  function buyPotions(content3, hero2, want) {
-    if (hero2.inRun) return IN_RAID4;
-    const P = content3.B.potion;
-    const slots = deriveStats(content3, hero2).beltSlots;
-    const price = P.price(hero2.level);
-    const refundEach = Math.floor(price * P.sellBackPct / 100);
-    const target = (kind) => Math.max(0, Math.floor(want?.[kind] ?? 0));
-    hero2.reserve = cleanReserve(content3, hero2.reserve);
-    const reserve = hero2.reserve;
-    let bought = 0;
-    let sold = 0;
-    let fromReserve = 0;
-    let stored = 0;
-    for (const kind of ["life", "mana"]) {
-      while (hero2.belt[kind] < target(kind)) {
-        const full = hero2.belt.life + hero2.belt.mana >= slots;
-        if (full) {
-          if (kind !== "life" || hero2.belt.mana <= target("mana")) break;
-          const roomInReserve = potionCount(reserve) - (reserve.life > 0 ? 1 : 0) < P.reserveMax;
-          if (reserve.life === 0 && hero2.gold + (roomInReserve ? 0 : refundEach) < price) break;
-          hero2.belt.mana--;
-          if (roomInReserve) {
-            reserve.mana++;
-            stored++;
-          } else {
-            hero2.gold += refundEach;
-            sold++;
-          }
-        } else if (reserve[kind] === 0 && hero2.gold < price) break;
-        hero2.belt[kind]++;
-        if (reserve[kind] > 0) {
-          reserve[kind]--;
-          fromReserve++;
-        } else {
-          hero2.gold -= price;
-          bought++;
-        }
-      }
-    }
-    return { ok: true, bought, spent: bought * price, sold, refund: sold * refundEach, fromReserve, stored };
-  }
-  function buyReserve(content3, hero2, kind) {
-    if (hero2.inRun) return IN_RAID4;
-    if (kind !== "life" && kind !== "mana") return { ok: false, error: "bad_item" };
-    const P = content3.B.potion;
-    hero2.reserve = cleanReserve(content3, hero2.reserve);
-    if (potionCount(hero2.reserve) >= P.reserveMax) return { ok: false, error: "reserve_full" };
-    const price = P.price(hero2.level);
-    if (hero2.gold < price) return { ok: false, error: "no_gold" };
-    hero2.gold -= price;
-    hero2.reserve[kind]++;
-    return { ok: true, price };
-  }
-  function settleBelt(content3, hero2) {
-    if (hero2.inRun || !hero2.belt) return 0;
-    hero2.reserve = cleanReserve(content3, hero2.reserve);
-    const slots = deriveStats(content3, hero2).beltSlots;
-    const max = content3.B.potion.reserveMax;
-    let moved = 0;
-    for (const kind of ["mana", "life"]) {
-      while (hero2.belt.life + hero2.belt.mana > slots && hero2.belt[kind] > 0 && potionCount(hero2.reserve) < max) {
-        hero2.belt[kind]--;
-        hero2.reserve[kind]++;
-        moved++;
-      }
-    }
-    return moved + refillBelt(hero2.belt, hero2.reserve, slots, hero2.belt.mana, false);
   }
 
   // src/engine/power.js
@@ -6553,6 +6680,17 @@ html, body { text-size-adjust: 100%; }
     hero2.scrolls ?? (hero2.scrolls = 2);
     hero2.reserve = cleanReserve(content, hero2.reserve);
     if (run2) run2.reserve = cleanReserve(content, run2.reserve);
+    if (!Array.isArray(hero2.beltPlan)) {
+      let slots = content.B.potion.baseBeltSlots;
+      try {
+        slots = deriveStats(content, hero2).beltSlots;
+      } catch {
+      }
+      const onRaid = hero2.inRun && run2 && !run2.over;
+      const mana = onRaid ? Number.isInteger(run2.manaPlan) ? run2.manaPlan : run2.belt?.mana ?? 0 : hero2.belt?.mana ?? 0;
+      hero2.beltPlan = planFrom(slots, mana);
+    }
+    if (run2) delete run2.manaPlan;
     if (!hero2.inRun) {
       try {
         settleBelt(content, hero2);
@@ -6720,11 +6858,6 @@ html, body { text-size-adjust: 100%; }
         }
       }
       return res;
-    };
-    const beltWant = () => {
-      const h = state.hero;
-      const free = deriveStats(content, h).beltSlots - h.belt.life - h.belt.mana;
-      return free > 0 ? { life: h.belt.life + free, mana: h.belt.mana } : { life: 99, mana: 0 };
     };
     const nextRng = () => {
       state.seed = Math.imul(state.seed, 1664525) + 1013904223 >>> 0;
@@ -6934,28 +7067,29 @@ html, body { text-size-adjust: 100%; }
         state.hero.bag.forEach((_, i) => identifyItem(state.hero, i));
         return { ok: true };
       }),
-      /** One potion: into the belt while it has room, otherwise into the reserve. */
+      /** One potion: into the belt if a place planned for its kind is empty, otherwise into the reserve. */
       buyPotion: campOnly((kind = "life") => {
         if (state.hero.inRun) return { ok: false, error: "in_raid" };
-        const b = state.hero.belt;
-        if (kind !== "life" && kind !== "mana") return { ok: false, error: "cannot_buy" };
-        if (b.life + b.mana >= deriveStats(content, state.hero).beltSlots) {
-          const r = buyReserve(content, state.hero, kind);
-          return r.ok ? { ...r, to: "reserve" } : r;
-        }
-        const price = content.B.potion.price(state.hero.level);
-        if (state.hero.gold < price) return { ok: false, error: "no_gold" };
-        state.hero.gold -= price;
-        b[kind]++;
-        return { ok: true, price, bought: 1, spent: price, to: "belt" };
+        return buyPotion(content, state.hero, kind);
       }),
-      fillBelt: campOnly(() => buyPotions(content, state.hero, beltWant())),
-      /** What "fill the belt" would do now, without doing it: { bought, sold, fromReserve, stored, net gold }. */
+      /** Where the next bought potion of `kind` would go: 'belt', 'reserve' or null. */
+      potionDestination: (kind) => state.hero ? potionDestination(content, state.hero, kind) : null,
+      /** "Fill the belt": every empty place with its planned kind, from the reserve first, then bought. */
+      fillBelt: campOnly(() => fillBelt(content, state.hero)),
+      /** What "fill the belt" would do now, without doing it: { bought, fromReserve, empty, net gold }. */
       fillBeltPreview: () => {
-        if (!state.hero || state.hero.dead) return null;
-        const r = buyPotions(content, structuredClone(state.hero), beltWant());
-        return r.ok ? { bought: r.bought, sold: r.sold, fromReserve: r.fromReserve, stored: r.stored, net: r.spent - r.refund } : null;
+        if (!state.hero || state.hero.dead || state.hero.inRun) return null;
+        const r = fillBelt(content, structuredClone(state.hero));
+        return r.ok ? { bought: r.bought, fromReserve: r.fromReserve, empty: r.empty, net: r.spent } : null;
       },
+      /** Place `index` of the belt is to hold `kind` ('life' | 'mana'). */
+      setBeltSlot: campOnly((index, kind) => setBeltSlot(content, state.hero, index, kind)),
+      /** A quick plan for the whole belt: 'life' (all healing) or 'half' (healing and mana taking turns). */
+      beltPreset: campOnly((name) => {
+        if (state.hero.inRun) return { ok: false, error: "in_raid" };
+        const plan = presetPlan(name, syncBeltPlan(content, state.hero).length);
+        return plan ? setBeltPlan(content, state.hero, plan) : { ok: false, error: "bad_slot" };
+      }),
       // The crucible reaches into the chest too, as Diablo 2 Resurrected's cube reaches its gem tab:
       // the hero's own pouch is used first, what is made goes to the hero.
       socket: campOnly((where, key, matId) => withChest(() => socketItem(content, state.hero, where, key, matId))),
@@ -8713,9 +8847,8 @@ html, body { text-size-adjust: 100%; }
       choose: "Who will you hire?",
       skill: "Skill"
     },
-    fillBeltGain: "Swap for healing potions (+{gold} gold)",
-    fillBeltSwap: "Swap in healing potions from the reserve",
-    fillBelt: "Fill with healing potions ({gold} gold)",
+    fillBeltSwap: "Fill the belt from the reserve",
+    fillBelt: "Fill the belt ({gold} gold)",
     beltFull: "Your belt is full.",
     sellJunk: "Sell common items ({n}) for {gold} gold",
     sellEmpty: "Your bag is empty: nothing to sell.",
@@ -8855,6 +8988,39 @@ html, body { text-size-adjust: 100%; }
       reserveOf: "Reserve: {life} healing and {mana} mana potions ({n}/{max}). When the belt is full, found potions go here, and the belt is refilled from it.",
       reserveHint: "What does not fit in the belt goes into the reserve ({n}/{max}). It refills the belt between the stations of a raid, and by itself in camp.",
       toReserve: "to reserve",
+      toBelt: "to belt",
+      beltEdit: "Set up the belt at the Merchant",
+      beltEditHint: "Click a place in the belt to choose which potion goes there.",
+      beltSlotN: "Place {n}",
+      beltSlotTip: "Place {n}: {kind} ({state})",
+      slotFull: "filled",
+      slotEmpty: "empty",
+      beltOver: "{n} potions do not fit in the belt right now \u2013 they go into the reserve as soon as it has room.",
+      slotNow: "here now",
+      slotFromReserve: "from the reserve",
+      slotCost: "{gold} gold",
+      slotNoGold: "not enough gold",
+      presetLife: "All healing",
+      presetHalf: "Half and half",
+      presetDoneLife: "The belt now holds healing potions only.",
+      presetDoneHalf: "The belt now holds healing and mana potions in turn.",
+      presetStored: "{n} potions went into the reserve.",
+      presetSold: "The reserve was full, so the Merchant bought back {n} potions ({gold} gold).",
+      filledBought: "You bought {n} potions ({gold} gold).",
+      filledReserve: "{n} potions moved from the reserve into the belt.",
+      filledEmpty: "{n} places stay empty: not enough gold.",
+      slotIn_reserve_life: "A healing potion from the reserve took the place.",
+      slotIn_reserve_mana: "A mana potion from the reserve took the place.",
+      slotIn_bought_life: "You bought a healing potion for it ({gold} gold).",
+      slotIn_bought_mana: "You bought a mana potion for it ({gold} gold).",
+      slotIn_none_life: "This place is for a healing potion now, but you cannot afford one yet.",
+      slotIn_none_mana: "This place is for a mana potion now, but you cannot afford one yet.",
+      slotOut_reserve_life: "The healing potion went into the reserve.",
+      slotOut_reserve_mana: "The mana potion went into the reserve.",
+      slotOut_sold_life: "The reserve was full, so the Merchant bought back the healing potion ({gold} gold).",
+      slotOut_sold_mana: "The reserve was full, so the Merchant bought back the mana potion ({gold} gold).",
+      boughtReserve_life: "No empty healing place in the belt, so it went into the reserve.",
+      boughtReserve_mana: "No empty mana place in the belt, so it went into the reserve.",
       beltShort: "Belt",
       estTip: "Estimate: you lose about {life} life and {pots}. Chance to win: {v}%. Your full life: {max}.",
       estPots: "drink about {n} potions",
@@ -8886,8 +9052,7 @@ html, body { text-size-adjust: 100%; }
       stashItems: "Items ({n})",
       stash: "Chest",
       sayStash: "Your shared chest: what you put here, your other (non-hardcore) heroes can reach.",
-      fillBeltHint: "Fills the belt with healing potions. Spare mana potions are sold back for half price.",
-      potionsSold: "Mana potions sold back to make room for healing potions: {n}, for {gold} gold.",
+      fillBeltHint: "Every empty place gets the potion you chose for it: from the reserve first, then bought.",
       sayStashHc: "The chest of your hardcore heroes. Only hardcore heroes can reach it, and it is the only one they reach.",
       socketTooHigh: "This would make it a level {n} item, and your hero is only level {lvl}.",
       stashCount: "Chest ({n}/{max})",
@@ -9626,9 +9791,8 @@ html, body { text-size-adjust: 100%; }
       choose: "Kit fogadsz fel?",
       skill: "K\xE9pess\xE9ge"
     },
-    fillBeltGain: "Gy\xF3gyitalra cser\xE9lem (+{gold} arany)",
-    fillBeltSwap: "Gy\xF3gyitalt teszek az \xF6vbe a tartal\xE9kb\xF3l",
-    fillBelt: "Telet\xF6lt\xF6m gy\xF3gyitallal ({gold} arany)",
+    fillBeltSwap: "Felt\xF6lt\xF6m az \xF6vet a tartal\xE9kb\xF3l",
+    fillBelt: "Felt\xF6lt\xF6m az \xF6vet ({gold} arany)",
     beltFull: "Tele az ital\xF6ved.",
     sellJunk: "Eladom a k\xF6z\xF6ns\xE9ges t\xE1rgyakat ({n} db, {gold} arany)",
     sellEmpty: "\xDCres a zs\xE1kod, nincs mit eladni.",
@@ -9768,6 +9932,39 @@ html, body { text-size-adjust: 100%; }
       reserveOf: "Tartal\xE9k: {life} gy\xF3gyital \xE9s {mana} manaital ({n}/{max}). Ha tele az \xF6v, ide ker\xFClnek a tal\xE1lt italok, \xE9s innen t\xF6lt\u0151dik vissza az \xF6v.",
       reserveHint: "Ami nem f\xE9r az \xF6vbe, a tartal\xE9kba ker\xFCl ({n}/{max}). Porty\xE1n \xE1llom\xE1sr\xF3l \xE1llom\xE1sra, a t\xE1borban pedig mag\xE1t\xF3l t\xF6lti vissza az \xF6vet.",
       toReserve: "tartal\xE9kba",
+      toBelt: "\xF6vbe",
+      beltEdit: "Az \xF6v be\xE1ll\xEDt\xE1sa a Kalm\xE1rn\xE1l",
+      beltEditHint: "Kattints az \xF6v egyik hely\xE9re, \xE9s v\xE1laszd ki, milyen ital legyen benne.",
+      beltSlotN: "{n}. hely",
+      beltSlotTip: "{n}. hely: {kind} ({state})",
+      slotFull: "tele",
+      slotEmpty: "\xFCres",
+      beltOver: "{n} ital most nem f\xE9r az \xF6vbe \u2013 amint lesz hely a tartal\xE9kban, oda ker\xFCl.",
+      slotNow: "most ez van itt",
+      slotFromReserve: "a tartal\xE9kb\xF3l",
+      slotCost: "{gold} arany",
+      slotNoGold: "nincs r\xE1 aranyad",
+      presetLife: "Mind gy\xF3gyital",
+      presetHalf: "Fele-fele",
+      presetDoneLife: "Mostant\xF3l csupa gy\xF3gyital van az \xF6vben.",
+      presetDoneHalf: "Mostant\xF3l felv\xE1ltva gy\xF3gyital \xE9s manaital van az \xF6vben.",
+      presetStored: "{n} ital a tartal\xE9kba ker\xFClt.",
+      presetSold: "Tele volt a tartal\xE9k, ez\xE9rt {n} italt visszavett a Kalm\xE1r ({gold} arany).",
+      filledBought: "Vett\xE9l {n} italt ({gold} arany).",
+      filledReserve: "{n} ital ker\xFClt a tartal\xE9kb\xF3l az \xF6vbe.",
+      filledEmpty: "{n} hely \xFCres maradt, mert nincs r\xE1 aranyad.",
+      slotIn_reserve_life: "Gy\xF3gyital ker\xFClt a hely\xE9re a tartal\xE9kb\xF3l.",
+      slotIn_reserve_mana: "Manaital ker\xFClt a hely\xE9re a tartal\xE9kb\xF3l.",
+      slotIn_bought_life: "Vett\xE9l bele egy gy\xF3gyitalt ({gold} arany).",
+      slotIn_bought_mana: "Vett\xE9l bele egy manaitalt ({gold} arany).",
+      slotIn_none_life: "Ez a hely mostant\xF3l gy\xF3gyital\xE9, de most nincs r\xE1 aranyad.",
+      slotIn_none_mana: "Ez a hely mostant\xF3l manaital\xE9, de most nincs r\xE1 aranyad.",
+      slotOut_reserve_life: "A gy\xF3gyital a tartal\xE9kba ker\xFClt.",
+      slotOut_reserve_mana: "A manaital a tartal\xE9kba ker\xFClt.",
+      slotOut_sold_life: "Tele volt a tartal\xE9k, ez\xE9rt a gy\xF3gyitalt visszavette a Kalm\xE1r ({gold} arany).",
+      slotOut_sold_mana: "Tele volt a tartal\xE9k, ez\xE9rt a manaitalt visszavette a Kalm\xE1r ({gold} arany).",
+      boughtReserve_life: "Nincs \xFCres gy\xF3gyitalhely az \xF6vben, ez\xE9rt a tartal\xE9kba ker\xFClt.",
+      boughtReserve_mana: "Nincs \xFCres manaitalhely az \xF6vben, ez\xE9rt a tartal\xE9kba ker\xFClt.",
       beltShort: "\xD6v",
       estTip: "Becsl\xE9s: kb. {life} \xE9leter\u0151t vesz\xEDtesz, \xE9s {pots}. Gy\u0151zelmi es\xE9ly: {v}%. Teljes \xE9leter\u0151d: {max}.",
       estPots: "kb. {n} italt iszol meg",
@@ -9799,8 +9996,7 @@ html, body { text-size-adjust: 100%; }
       stashItems: "T\xE1rgyak ({n})",
       stash: "L\xE1da",
       sayStash: "A k\xF6z\xF6s l\xE1d\xE1d: amit ide teszel, a t\xF6bbi (nem hardcore) h\u0151s\xF6d is el\xE9ri.",
-      fillBeltHint: "Telet\xF6lti az \xF6vet gy\xF3gyitallal. A felesleges manaitalokat f\xE9l\xE1r\xE9rt visszaveszi a Kalm\xE1r.",
-      potionsSold: "{n} manaitalt visszaadt\xE1l {gold} arany\xE9rt, hogy bef\xE9rjenek a gy\xF3gyitalok.",
+      fillBeltHint: "Minden \xFCres helyre olyan ital ker\xFCl, amilyet kiv\xE1lasztott\xE1l neki: el\u0151bb a tartal\xE9kb\xF3l, azt\xE1n v\xE1s\xE1rolva.",
       sayStashHc: "A hardcore h\u0151seid l\xE1d\xE1ja: csak \u0151k \xE9rik el, \xE9s \u0151k is csak ezt.",
       socketTooHigh: "Ett\u0151l a t\xE1rgy {n}. szint\u0171 lenne, a h\u0151s\xF6d pedig m\xE9g csak {lvl}. szint\u0171.",
       stashCount: "L\xE1da ({n}/{max})",
@@ -32006,6 +32202,9 @@ ${suffix}`;
     const rm = clampInt(rmana, 0, max - rl);
     hero2.belt = { life: bl, mana: bm };
     hero2.reserve = { life: rl, mana: rm };
+    const plan = cleanBeltPlan(hero2.beltPlan, slots, hero2.belt);
+    const cap3 = planCounts(plan);
+    hero2.beltPlan = cap3.life >= bl && cap3.mana >= bm ? plan : planFrom(slots, bm);
     return { ok: true, belt: hero2.belt, reserve: hero2.reserve, slots, max };
   }
   var OVERRIDES_KEY = "cursewake.admin.overrides";
@@ -32193,7 +32392,7 @@ ${suffix}`;
   }
 
   // src/client/admin.js
-  var BUILD_TIME = true ? "2026-11-14T11:00:47.040Z" : null;
+  var BUILD_TIME = true ? "2026-11-14T16:24:58.090Z" : null;
   var TABS = ["players", "log", "hero", "test", "balance", "system"];
   var KINDS = ["raid_start", "raid_end", "level_up", "death", "boss_kill", "unique_found", "set_found", "runeword_found", "difficulty_unlocked", "hero_created", "hero_deleted", "sync_conflict", "sync_outdated", "sync_rejected", "admin_edit"];
   var POLL_MS = 15e3;
@@ -33425,7 +33624,7 @@ ${suffix}`;
     let mid = "";
     if (mode === "camp") {
       mid = `${["gear", "skills", "order"].map((k) => `<button class="hbtn ${view.tab === k ? "on" : ""}" data-act="tab" data-v="${k}">${t2(`tab.${k}`)}${badge[k] ? `<em>${badge[k]}</em>` : ""}</button>`).join("")}
-      ${beltView(h.belt, s.beltSlots, h.reserve)}${beltView(h.belt, s.beltSlots, h.reserve, { compact: true })}`;
+      ${beltView(h.belt, s.beltSlots, h.reserve, { edit: !h.dead ? "hud" : null })}${beltView(h.belt, s.beltSlots, h.reserve, { compact: true, open: !h.dead })}`;
     } else if (mode === "raid") {
       mid = `${beltView(r.belt, s.beltSlots, r.reserve)}${raidMerc(r)}<span class="hud-gap"></span>${h.scrolls > 0 ? `<button class="hbtn ghost" data-act="ask" data-v="retreat">${t2("ux.retreatN", { n: h.scrolls })}</button>` : `<button class="hbtn ghost" disabled>${t2("ux.noScroll")}</button>`}`;
     } else if (mode === "fight") {
@@ -33453,18 +33652,52 @@ ${suffix}`;
     const reserve = live ? r.reserve ?? { life: 0, mana: 0 } : f.reserve0;
     return `<div class="fbelt" id="fbelt">${beltView(belt, s.beltSlots, reserve)}${beltView(belt, s.beltSlots, reserve, { compact: true })}</div>`;
   }
-  function beltView(belt, slots, reserve = null, { compact = false, bare = false } = {}) {
+  var planOf = (slots, belt) => cleanBeltPlan(hero()?.beltPlan, slots, belt);
+  var kindName = (k) => t2(k === "mana" ? "ux.potionMana" : "ux.potionLife");
+  function beltView(belt, slots, reserve = null, { compact = false, bare = false, edit = null, open = false } = {}) {
     const res = reserve ?? { life: 0, mana: 0 };
     const max = content2.B.potion.reserveMax;
     const rn = res.life + res.mana;
     const resTip = esc(t2("ux.reserveOf", { life: res.life, mana: res.mana, n: rn, max }));
     const resBox = max > 0 && !bare ? `<div class="reserve ${rn ? "" : "empty"}" title="${resTip}" aria-label="${resTip}"><span class="rz life"><i></i>${res.life}</span><span class="rz mana"><i></i>${res.mana}</span></div>` : "";
+    const plan = planOf(slots, belt);
+    const cap3 = planCounts(plan);
+    const held = Math.min(belt.life, cap3.life) + Math.min(belt.mana, cap3.mana);
+    const tip = t2("beltOf", { n: held, max: slots });
     if (compact) {
-      return `<div class="belt compact" title="${t2("beltOf", { n: belt.life + belt.mana, max: slots })}"><span class="bc life"><i></i>${belt.life}</span><span class="bc mana"><i></i>${belt.mana}</span>${max > 0 ? `<span class="bc-res ${rn ? "" : "empty"}" title="${resTip}">+${rn}</span>` : ""}</div>`;
+      const inner = `<span class="bc life"><i></i>${belt.life}</span><span class="bc mana"><i></i>${belt.mana}</span>${max > 0 ? `<span class="bc-res ${rn ? "" : "empty"}" title="${resTip}">+${rn}</span>` : ""}`;
+      return open ? `<button class="belt compact bc-open" data-act="beltOpen" title="${esc(t2("ux.beltEdit"))}" aria-label="${esc(`${tip}. ${t2("ux.beltEdit")}`)}">${inner}</button>` : `<div class="belt compact" title="${tip}">${inner}</div>`;
     }
+    const full = beltFill(plan, belt);
     let dots = "";
-    for (let i = 0; i < slots; i++) dots += `<span class="potion ${i < belt.life ? "full" : i < belt.life + belt.mana ? "full mana" : ""}"></span>`;
-    return `<div class="beltwrap"><div class="belt" title="${t2("beltOf", { n: belt.life + belt.mana, max: slots })}"><small>${t2("belt")}</small>${dots}</div>${resBox}</div>`;
+    plan.forEach((k, i) => {
+      const cls = `potion ${full[i] ? "full" : ""} ${k === "mana" ? "mana" : ""} pl-${k}`;
+      if (!edit) {
+        dots += `<span class="${cls}"></span>`;
+        return;
+      }
+      const on = view.beltPop?.i === i && view.beltPop?.w === edit;
+      const label = t2("ux.beltSlotTip", { n: i + 1, kind: kindName(k), state: t2(full[i] ? "ux.slotFull" : "ux.slotEmpty") });
+      dots += `<span class="bslot ${on ? "open" : ""}"><button class="${cls} pbtn" data-act="beltSlot" data-v="${i}" data-w="${edit}" title="${esc(label)}" aria-label="${esc(label)}" aria-haspopup="menu" aria-expanded="${on}"></button>${on ? beltPop(i, k, edit) : ""}</span>`;
+    });
+    const extra = Math.max(0, belt.life - cap3.life) + Math.max(0, belt.mana - cap3.mana);
+    const over = extra ? `<span class="bover" title="${esc(t2("ux.beltOver", { n: extra }))}">+${extra}</span>` : "";
+    return `<div class="beltwrap"><div class="belt ${edit ? "editable" : ""}" title="${edit ? "" : tip}"><small>${t2("belt")}</small>${dots}${over}</div>${resBox}</div>`;
+  }
+  function beltPop(i, kind, where) {
+    const h = hero();
+    const price = content2.B.potion.price(h.level);
+    const res = h.reserve ?? { life: 0, mana: 0 };
+    const opt = (k) => {
+      const cur = k === kind;
+      const how = cur ? t2("ux.slotNow") : res[k] > 0 ? t2("ux.slotFromReserve") : h.gold >= price ? t2("ux.slotCost", { gold: fmt(price) }) : t2("ux.slotNoGold");
+      return `<button class="bk ${k} ${cur ? "on" : ""}" role="menuitemradio" aria-checked="${cur}" data-act="beltKind" data-v="${k}"><span class="pot-ico ${k}"></span><span class="bk-txt"><b>${kindName(k)}</b><small>${how}</small></span>${cur ? '<span class="bk-tick" aria-hidden="true">\u2713</span>' : ""}</button>`;
+    };
+    return `<div class="beltpop ${where === "hud" ? "up" : "down"}" role="menu" aria-label="${esc(t2("ux.beltSlotN", { n: i + 1 }))}"><small>${t2("ux.beltSlotN", { n: i + 1 })}</small>${opt("life")}${opt("mana")}</div>`;
+  }
+  function beltEmpty(h, slots) {
+    const cap3 = planCounts(planOf(slots, h.belt));
+    return Math.max(0, cap3.life - h.belt.life) + Math.max(0, cap3.mana - h.belt.mana);
   }
   function campHint() {
     const h = hero();
@@ -33478,7 +33711,7 @@ ${suffix}`;
     if (h.unspentAttr > 0) return ["attrPoints", "gear"];
     if (h.bag.some((i) => !i.identified)) return ["unidentified", "gear"];
     if (better) return ["better", "gear"];
-    if (h.belt.life + h.belt.mana < s.beltSlots && h.gold >= content2.B.potion.price(h.level)) return ["potions", "merchant"];
+    if (beltEmpty(h, s.beltSlots) > 0 && h.gold >= content2.B.potion.price(h.level)) return ["potions", "merchant"];
     if (h.merc?.dead && h.gold >= content2.B.merc.revivePrice(h.level)) return ["mercDown", "merc"];
     if (!h.merc && api.mercUnlocked() && h.gold >= content2.B.merc.hirePrice(h.level)) return ["mercNew", "merc"];
     return [api.state.seenCamp ? "ready" : "first", "waystone"];
@@ -34268,23 +34501,32 @@ ${suffix}`;
     const price = P.price(h.level);
     const res = h.reserve ?? { life: 0, mana: 0 };
     const rn = res.life + res.mana;
-    const free = s.beltSlots - h.belt.life - h.belt.mana;
-    const room = P.reserveMax - rn;
     const fill2 = api.fillBeltPreview();
-    const can = h.gold >= price && (free > 0 || room > 0);
-    const why = h.gold < price ? t2("gamble.noGold") : free <= 0 && room <= 0 ? t2("err.reserve_full") : "";
-    const buy = (kind) => `<button class="buypot ${kind} ${can ? "" : "off"}" data-act="buyPotion" data-v="${kind}" ${can ? "" : `aria-disabled="true" title="${esc(why)}"`}>
-      <span class="pot-ico ${kind}"></span><span class="bp-txt"><b>${t2(kind === "life" ? "ux.potionLife" : "ux.potionMana")}</b><small><span class="coin"></span>${fmt(price)}</small>${free <= 0 && room > 0 ? `<em>\u2192 ${t2("ux.toReserve")}</em>` : ""}</span></button>`;
+    const empty = beltEmpty(h, s.beltSlots);
+    const why = h.gold < price ? t2("gamble.noGold") : !api.potionDestination("life") && !api.potionDestination("mana") ? t2("err.reserve_full") : "";
+    const buy = (kind) => {
+      const to = api.potionDestination(kind);
+      const can = h.gold >= price && !!to;
+      return `<button class="buypot ${kind} ${can ? "" : "off"}" data-act="buyPotion" data-v="${kind}" ${can ? "" : `aria-disabled="true" title="${esc(why)}"`}>
+      <span class="pot-ico ${kind}"></span><span class="bp-txt"><b>${kindName(kind)}</b><small><span class="coin"></span>${fmt(price)}</small>${to ? `<em>\u2192 ${t2(to === "belt" ? "ux.toBelt" : "ux.toReserve")}</em>` : ""}</span></button>`;
+    };
     let cells = "";
     for (let i = 0; i < P.reserveMax; i++) cells += `<span class="rslot ${i < res.life ? "full" : i < rn ? "full mana" : ""}"></span>`;
+    const plan = planOf(s.beltSlots, h.belt);
+    const preset = (name, on) => `<button class="chip mini ${on ? "on" : ""}" data-act="beltPreset" data-v="${name}" aria-pressed="${on}">${t2(name === "life" ? "ux.presetLife" : "ux.presetHalf")}</button>`;
+    const allLife = plan.every((k) => k === "life");
+    const half = plan.every((k, i) => k === (i % 2 ? "mana" : "life"));
+    const held = s.beltSlots - empty;
     return `<h4>${t2("ux.potions")}</h4>
     <div class="potbox">
-      <div class="pb-row"><small>${t2("ux.beltShort")} <em>${h.belt.life + h.belt.mana}/${s.beltSlots}</em></small>${beltView(h.belt, s.beltSlots, null, { bare: true })}</div>
+      <div class="pb-row"><small>${t2("ux.beltShort")} <em>${held}/${s.beltSlots}</em></small>${beltView(h.belt, s.beltSlots, null, { bare: true, edit: "shop" })}</div>
+      <div class="presets">${preset("life", allLife)}${preset("half", half)}</div>
       ${P.reserveMax > 0 ? `<div class="pb-row res" title="${esc(t2("ux.reserveHint", { n: rn, max: P.reserveMax }))}"><small>${t2("ux.reserve")} <em>${rn}/${P.reserveMax}</em></small><div class="rgrid">${cells}</div></div>` : ""}
     </div>
+    <p class="dim small pb-edit">${t2("ux.beltEditHint")}</p>
     <div class="buyrow">${buy("life")}${buy("mana")}</div>
     ${why ? `<p class="gnote potnote">${esc(why)}</p>` : ""}
-    ${fill2?.bought || fill2?.sold || fill2?.fromReserve ? `<button class="btn ghost fillbtn" data-act="fillBelt" title="${esc(t2("ux.fillBeltHint"))}">${!fill2.bought && !fill2.sold ? t2("fillBeltSwap") : fill2.net < 0 ? t2("fillBeltGain", { gold: fmt(-fill2.net) }) : t2("fillBelt", { gold: fmt(fill2.net) })}</button>` : ""}
+    ${fill2?.bought || fill2?.fromReserve ? `<button class="btn ghost fillbtn" data-act="fillBelt" title="${esc(t2("ux.fillBeltHint"))}">${fill2.bought ? t2("fillBelt", { gold: fmt(fill2.net) }) : t2("fillBeltSwap")}</button>` : ""}
     ${P.reserveMax > 0 ? `<p class="dim small pb-hint">${t2("ux.reserveHint", { n: rn, max: P.reserveMax })}</p>` : ""}`;
   }
   function tabMerchant() {
@@ -35180,6 +35422,17 @@ ${suffix}`;
       stage.querySelector(view.scrollTo)?.scrollIntoView({ block: "nearest", behavior: scrollMode() });
       view.scrollTo = null;
     }
+    const bpop = stage.querySelector(".beltpop");
+    if (bpop) {
+      const sc = stage.getBoundingClientRect().width / stage.offsetWidth || 1;
+      const box = (bpop.closest(".win-body") ?? stage).getBoundingClientRect();
+      const r = bpop.getBoundingClientRect();
+      let dx = 0;
+      if (r.right > box.right - 6) dx = box.right - 6 - r.right;
+      if (r.left + dx < box.left + 6) dx = box.left + 6 - r.left;
+      if (dx) bpop.style.marginLeft = `${Math.round(dx / sc)}px`;
+      if (bpop.closest(".win-body")) bpop.scrollIntoView({ block: "nearest" });
+    }
     if (card && view.focusCard) {
       view.focusCard = false;
       card.querySelector(".pop-actions button:not([disabled]), .detail button:not([disabled])")?.focus({ preventScroll: true });
@@ -35219,6 +35472,8 @@ ${suffix}`;
     reviveMerc: "heal",
     buyPotion: "potion",
     fillBelt: "potion",
+    beltKind: "potion",
+    beltPreset: "potion",
     socket: "forge",
     crucible: "forge",
     gamble: "coin",
@@ -35362,7 +35617,9 @@ ${suffix}`;
       act(api.sellCommon());
     },
     buyPotion(v) {
-      act(api.buyPotion(v === "mana" ? "mana" : "life"));
+      const res = api.buyPotion(v === "mana" ? "mana" : "life");
+      if (!res?.ok) return fail(res);
+      return res.to === "reserve" ? toast(t2(`ux.boughtReserve_${v === "mana" ? "mana" : "life"}`)) : render();
     },
     gamble(v) {
       const res = api.gamble(v);
@@ -35416,8 +35673,56 @@ ${suffix}`;
     },
     fillBelt() {
       const res = api.fillBelt();
-      act(res);
-      if (res?.sold) toast(t2("ux.potionsSold", { n: res.sold, gold: fmt(res.refund) }));
+      if (!res?.ok) return fail(res);
+      const parts = [];
+      if (res.bought) parts.push(t2("ux.filledBought", { n: res.bought, gold: fmt(res.spent) }));
+      if (res.fromReserve) parts.push(t2("ux.filledReserve", { n: res.fromReserve }));
+      if (res.empty) parts.push(t2("ux.filledEmpty", { n: res.empty }));
+      return parts.length ? toast(parts.join(" ")) : render();
+    },
+    /** A belt place was clicked: its little menu opens (or closes again). */
+    beltSlot(v, el) {
+      const i = Number(v);
+      const w = el?.dataset?.w === "hud" ? "hud" : "shop";
+      view.beltPop = view.beltPop?.i === i && view.beltPop?.w === w ? null : { i, w };
+      view.focusAfter = view.beltPop ? ".beltpop .bk:not(.on)" : `[data-act="beltSlot"][data-w="${w}"][data-v="${i}"]`;
+      render();
+    },
+    /** The kind picked in a belt place's menu. */
+    beltKind(v) {
+      const pop = view.beltPop;
+      view.beltPop = null;
+      if (!pop) return render();
+      const kind = v === "mana" ? "mana" : "life";
+      view.focusAfter = `[data-act="beltSlot"][data-w="${pop.w}"][data-v="${pop.i}"]`;
+      const res = api.setBeltSlot(pop.i, kind);
+      if (!res?.ok) return fail(res);
+      if (res.outKind === kind) return render();
+      const parts = [];
+      if (res.from === "reserve") parts.push(t2(`ux.slotIn_reserve_${kind}`));
+      else if (res.from === "bought") parts.push(t2(`ux.slotIn_bought_${kind}`, { gold: fmt(res.price) }));
+      else parts.push(t2(`ux.slotIn_none_${kind}`));
+      if (res.out === "reserve") parts.push(t2(`ux.slotOut_reserve_${res.outKind}`));
+      if (res.out === "sold") parts.push(t2(`ux.slotOut_sold_${res.outKind}`, { gold: fmt(res.refund) }));
+      return toast(parts.join(" "));
+    },
+    /** One of the quick plans beside the belt. */
+    beltPreset(v) {
+      view.beltPop = null;
+      const res = api.beltPreset(v === "half" ? "half" : "life");
+      if (!res?.ok) return fail(res);
+      const parts = [t2(v === "half" ? "ux.presetDoneHalf" : "ux.presetDoneLife")];
+      if (res.fromReserve) parts.push(t2("ux.filledReserve", { n: res.fromReserve }));
+      if (res.stored) parts.push(t2("ux.presetStored", { n: res.stored }));
+      if (res.sold) parts.push(t2("ux.presetSold", { n: res.sold, gold: fmt(res.refund) }));
+      if (res.empty) parts.push(t2("ux.filledEmpty", { n: res.empty }));
+      return toast(parts.join(" "));
+    },
+    /** The phone's bar shows the belt as counts: a tap opens the merchant's belt corner, where its places are set. */
+    beltOpen() {
+      view.scrollTo = ".potbox";
+      if (view.tab === "merchant") render();
+      else actions.tab("merchant");
     },
     bagTab(v) {
       view.bagTab = v;
@@ -35668,6 +35973,13 @@ ${suffix}`;
   window.addEventListener("blur", hideHover);
   root.addEventListener("click", (e) => {
     const el = e.target.closest("[data-act]");
+    if (view.beltPop && !e.target.closest('.beltpop, [data-act="beltSlot"]')) {
+      view.beltPop = null;
+      if (!el || el.disabled) {
+        render();
+        return;
+      }
+    }
     if (!el || el.disabled) return;
     if (overlayOpen() && !el.closest(".choice-shade")) return;
     gestured = true;
@@ -35734,6 +36046,13 @@ ${suffix}`;
       }
     }
     if (e.key !== "Escape") return;
+    if (view.beltPop) {
+      const p = view.beltPop;
+      view.beltPop = null;
+      view.focusAfter = `[data-act="beltSlot"][data-w="${p.w}"][data-v="${p.i}"]`;
+      render();
+      return;
+    }
     if (view.account) {
       view.account = false;
       render();

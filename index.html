@@ -2,7 +2,7 @@
 <html lang="en">
 <head>
 <meta charset="utf-8">
-<meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'sha256-plhJxdkoLYZwPM5fv4qvnZBpwBxWGvlQGQu5m4OTBzc=' 'sha256-GncZWWBj6ElvGM3criPLSEDgNh7dTYsIlLFTSvMDlcI='; style-src 'self' 'unsafe-inline'; img-src 'self' data: blob: https://cdn.discordapp.com; font-src 'self' data:; media-src 'self' data: blob:; connect-src 'self' https://zwhsmstbntuwgcgfqhzl.supabase.co wss://zwhsmstbntuwgcgfqhzl.supabase.co; object-src 'none'; base-uri 'none'; form-action 'none'">
+<meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'sha256-plhJxdkoLYZwPM5fv4qvnZBpwBxWGvlQGQu5m4OTBzc=' 'sha256-G1+gTMQS+rcRDNYkzF9uKGFdfyl+9tshpztuOCljFHY='; style-src 'self' 'unsafe-inline'; img-src 'self' data: blob: https://cdn.discordapp.com; font-src 'self' data:; media-src 'self' data: blob:; connect-src 'self' https://zwhsmstbntuwgcgfqhzl.supabase.co wss://zwhsmstbntuwgcgfqhzl.supabase.co; object-src 'none'; base-uri 'none'; form-action 'none'">
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
 <meta name="theme-color" content="#0a0706">
 <meta name="mobile-web-app-capable" content="yes">
@@ -1512,6 +1512,80 @@ h4::before { content: ''; flex: none; width: 6px; height: 6px; margin-right: -2p
 .hovercard .change ul { font-size: 13.5px; }
 .hovercard .mchange { border: 1px solid #000; box-shadow: inset 0 0 0 1px var(--line); }
 @media (prefers-reduced-motion: reduce) { .hovercard { animation: none; } }
+
+/* ================================================================ big system fonts (Android WebView "text zoom")
+   The in-app browsers of Messenger, Facebook and Instagram make every font of the page as big as the phone's font size
+   setting (115-150 % and more), whatever text-size-adjust says. So no box may be sized by its text: grid columns are
+   minmax(0, 1fr), flex and grid children may shrink, long words wrap, fields and buttons fill their box. The few single
+   words that cannot wrap (the logo, the class names, window titles, the bottom bar's buttons) are fitted by fit.js. */
+html, body { text-size-adjust: 100%; }
+.portrait { overflow-wrap: anywhere; }
+.logo, .class-pick b, .win-head h3, .hbtn, .ds .item.none span, .diff-tab b, .sktabs button, .tile b, .gobtn b { overflow-wrap: normal; word-break: normal; hyphens: manual; }
+.portrait .num, .portrait .gold, .portrait .coin + *, .portrait dd { overflow-wrap: normal; }
+
+/* title, sign-in, heroes: the panels are as wide as the screen allows and everything in them shrinks with them */
+.title-screen > :not(.backdrop) { max-width: 100%; min-width: 0; }
+.title-panel, .signin-panel { grid-template-columns: minmax(0, 1fr); }
+.title-panel > *, .signin-panel > *, .roster > *, .si-opt > * { min-width: 0; max-width: 100%; }
+.class-row { grid-template-columns: repeat(5, minmax(0, 1fr)); }
+.class-pick { min-width: 0; }
+.class-pick b { align-self: stretch; text-align: center; white-space: nowrap; line-height: 1.2; }
+/* a big system font: three over two, the pictures the same size as before */
+.class-row.stack { grid-template-columns: repeat(6, minmax(0, 1fr)); row-gap: 6px; }
+.class-row.stack .class-pick { grid-column: span 2; }
+.class-row.stack .class-pick:nth-child(4) { grid-column: 2 / span 2; }
+.portrait .class-row.stack .class-pick .art, .class-row.stack .class-pick .art { width: min(100%, 76px); }
+.class-card > div:not(.art) { flex: 1 1 0; min-width: 0; }
+.field input { width: 100%; min-width: 0; }
+.hc-pick > span { min-width: 0; }
+.title-panel .btn, .signin-panel .btn, .roster .btn { white-space: normal; max-width: 100%; }
+.portrait .logo { letter-spacing: .12em; }
+.portrait .chip { white-space: normal; text-align: center; max-width: 100%; line-height: 1.2; }
+.portrait .chip.snd, .portrait .chip.langc, .portrait .menu-btn { white-space: nowrap; }
+.slot-info { min-width: 0; }
+
+/* the top strip: the hero's name and class are cut with "…" before they push the gold off */
+.portrait .who small { display: block; overflow: hidden; text-overflow: ellipsis; }
+.top .gold, .top .chip { flex: none; }
+
+/* windows: the title takes what is left beside the gold and the close button, which never leave the screen */
+.win-head > div:first-child { flex: 1 1 auto; min-width: 0; }
+.win-head .wingold, .win-head .x { flex: none; }
+.portrait .win-head h3 { line-height: 1.15; }
+.win-body > *, .pop-scroll > * { min-width: 0; }
+
+/* bottom bar */
+.hbtn { min-width: 0; }
+.portrait .m-camp .hudrow > * { min-width: 0; }
+.portrait .m-camp .belt.compact { flex-wrap: wrap; gap: 0 6px; height: auto; min-height: 32px; line-height: 1.15; }
+.portrait .m-raid .hbtn.ghost { white-space: normal; height: auto; min-height: 44px; line-height: 1.1; padding: 3px 8px; }
+.portrait .raid-merc { min-width: 0; }
+.portrait .controls .chip { white-space: nowrap; }
+
+/* camp windows */
+.portrait .merc-info .stats { max-width: none; grid-template-columns: minmax(0, 1fr) auto minmax(0, 1fr) auto; }
+.portrait .pb-row { grid-template-columns: minmax(70px, max-content) minmax(0, 1fr); }
+.portrait h4 .chip { flex: 1 1 auto; }
+.ds .item.none span { justify-self: stretch; min-width: 0; max-width: 100%; text-align: center; white-space: nowrap; }
+.portrait .gearsheet .stats, .portrait .gear2 .gearsheet .stats { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+.portrait .stats dt { min-width: 0; }
+/* the small windows (settings, a question) never grow past the screen: their inside scrolls */
+.win.w-menu, .win.small { max-height: calc(100% - 24px); }
+.portrait .win.w-menu, .portrait .win.small { max-height: calc(100% - 24px); }
+.choice-shade > .choice { max-height: 100%; }
+/* the mercenary's numbers: two pairs a line while they fit, one pair with a big font (the query is in em, so it follows the font) */
+.merc-info { container-type: inline-size; } .portrait .merc-card .merc-info { align-self: stretch; }
+@container (max-width: 23em) { .merc-info .stats, .portrait .merc-info .stats { grid-template-columns: minmax(0, 1fr) auto; max-width: none; } }
+/* phone raid cards: the card's name keeps its line, the cost goes under it when both do not fit */
+.portrait .card-head { flex-wrap: wrap; row-gap: 2px; }
+.portrait .card-head h3 { flex: 1 0 auto; max-width: 100%; }
+.portrait .card .est { flex: 0 1 auto; margin-left: auto; }
+/* the raid bar grows with the font, so the way back and the mercenary stay inside it */
+.portrait .raid { --hud: max(136px, 9.6em); }
+.unit > b, .portrait .unit > b { overflow-wrap: normal; word-break: normal; }
+.class-card h2 { overflow-wrap: normal; word-break: normal; }
+.title-panel:has(.class-row.stack) .class-card .art { width: 56px; }
+.portrait .class-row:not(.stack) { gap: 4px; } .portrait .class-row:not(.stack) .class-pick { padding: 4px 1px; }
 
 </style>
 </head>
@@ -4056,7 +4130,7 @@ h4::before { content: ''; flex: none; width: 6px; height: 6px; margin-right: -2p
       if (piece) (worn[_a = piece.set] ?? (worn[_a] = /* @__PURE__ */ new Set())).add(piece.id);
     }
     for (const [setId, pieces] of Object.entries(worn)) {
-      for (const [need, bonus] of Object.entries(content3.sets[setId].bonuses)) if (pieces.size >= Number(need)) add(bonus);
+      for (const [need2, bonus] of Object.entries(content3.sets[setId].bonuses)) if (pieces.size >= Number(need2)) add(bonus);
     }
     if (weapon?.twoHanded) hasShield = false;
     return { mods, armorDef, weapon, shieldBlock, hasShield, beltSlots };
@@ -32116,7 +32190,7 @@ ${suffix}`;
   }
 
   // src/client/admin.js
-  var BUILD_TIME = true ? "2026-11-14T08:10:04.571Z" : null;
+  var BUILD_TIME = true ? "2026-11-14T10:09:21.046Z" : null;
   var TABS = ["players", "log", "hero", "test", "balance", "system"];
   var KINDS = ["raid_start", "raid_end", "level_up", "death", "boss_kill", "unique_found", "set_found", "runeword_found", "difficulty_unlocked", "hero_created", "hero_deleted", "sync_conflict", "sync_outdated", "sync_rejected", "admin_edit"];
   var POLL_MS = 15e3;
@@ -33101,7 +33175,7 @@ ${suffix}`;
 .adm-card label { display: inline-flex; gap: 6px; align-items: center; margin: 4px 10px 4px 0; color: #d6c8ad; }
 .adm-card > label + .btn, .adm-card > .btn { margin: 4px 10px 4px 0; vertical-align: middle; }
 .adm-inline { display: flex; flex-wrap: wrap; gap: 4px 8px; align-items: center; margin: 4px 0; }
-.adm-dname { width: 80px; }
+.adm-dname { min-width: 80px; }
 .adm-kinds { display: flex; gap: 6px; flex-wrap: wrap; margin-bottom: 6px; }
 .adm-give select[size] { width: 100%; margin: 6px 0; padding: 2px; }
 .adm-give input[type=search] { width: 100%; }
@@ -33118,11 +33192,65 @@ ${suffix}`;
 @media (max-width: 900px) {
   .adm-win { width: 100vw; height: 100dvh; border-radius: 0; }
   .adm-head { flex-wrap: wrap; gap: 6px; } .adm-head h3 { font-size: 18px; } .adm-tabs { order: 3; width: 100%; } .adm-tab { padding: 6px 10px; font-size: 14px; }
-  .adm-split.has-pick { grid-template-columns: 1fr; grid-template-rows: minmax(0, 1fr) minmax(0, 1fr); }
+  .adm-split.has-pick { grid-template-columns: minmax(0, 1fr); grid-template-rows: minmax(0, 1fr) minmax(0, 1fr); }
+  .adm-body { overflow-wrap: anywhere; } #cw-admin .btn { white-space: normal; max-width: 100%; } .adm-table td, .adm-table th { overflow-wrap: normal; } .adm-head h3 { white-space: normal; min-width: 0; }
   .adm-grid, .adm-grid.two { grid-template-columns: minmax(0, 1fr); } #cw-admin input[type=search] { min-width: 0; width: 100%; }
   .adm-stats { gap: 4px 12px; } .adm-foot { display: none; } .adm-feed time { width: 62px; }
 }
 `;
+
+  // src/client/fit.js
+  var FIT = ".logo, .class-pick b, .win-head h3, .m-camp .hbtn, .controls .hbtn, .ds .item.none span, .diff-tab b, .sktabs button, .tile b, .gobtn b, .class-card h2, .unit > b";
+  var GROUP = ".class-row, .hudrow, .doll, .diffs, .sktabs, .tiles, .arena";
+  function textWidth(el, scale) {
+    let lo = Infinity;
+    let hi = -Infinity;
+    for (const n of el.childNodes) {
+      if (n.nodeType !== 3 || !n.textContent.trim()) continue;
+      const r = document.createRange();
+      r.selectNodeContents(n);
+      for (const q of r.getClientRects()) if (q.width > 0) {
+        lo = Math.min(lo, q.left);
+        hi = Math.max(hi, q.right);
+      }
+    }
+    return hi > lo ? (hi - lo) / scale : 0;
+  }
+  function roomOf(el) {
+    const s = getComputedStyle(el);
+    return el.clientWidth - (parseFloat(s.paddingLeft) || 0) - (parseFloat(s.paddingRight) || 0);
+  }
+  function need(el, scale) {
+    const w = textWidth(el, scale);
+    const room = roomOf(el);
+    return w > 0 && room > 0 && w > room + 0.5 ? room / w : 1;
+  }
+  function fitTexts(root2, scale = 1) {
+    if (!root2?.querySelectorAll) return;
+    const els = [...root2.querySelectorAll(FIT)];
+    for (const el of els) if (el.style.fontSize) el.style.fontSize = "";
+    for (const row of root2.querySelectorAll(".class-row")) {
+      row.classList.remove("stack");
+      const r = Math.min(1, ...[...row.querySelectorAll(".class-pick b")].map((b) => need(b, scale)));
+      if (r < 0.8) row.classList.add("stack");
+    }
+    const groups = /* @__PURE__ */ new Map();
+    for (const el of els) {
+      const g = el.closest(GROUP) ?? el;
+      if (!groups.has(g)) groups.set(g, []);
+      groups.get(g).push(el);
+    }
+    for (const list of groups.values()) {
+      for (let round = 0; round < 4; round++) {
+        const r = Math.min(1, ...list.map((el) => need(el, scale)));
+        if (r >= 1) break;
+        for (const el of list) {
+          const now = parseFloat(el.style.fontSize) || parseFloat(getComputedStyle(el).fontSize);
+          el.style.fontSize = `${Math.max(6, Math.floor(now * r * 0.98 * 10) / 10)}px`;
+        }
+      }
+    }
+  }
 
   // src/client/main.js
   var UI = { en: ui_en_default, hu: ui_hu_default };
@@ -33289,7 +33417,7 @@ ${suffix}`;
     const maxLife = live ? live.maxLife : s.maxLife;
     const maxMana = live ? live.maxMana : s.maxMana;
     const xpOf = pre ?? h;
-    const need = content2.B.xp.toNext(xpOf.level);
+    const need2 = content2.B.xp.toNext(xpOf.level);
     const badge = { skills: h.unspentSkill, gear: h.unspentAttr + h.bag.filter((i) => !i.identified).length + h.bag.filter((_, i) => (api.compare(i) ?? 0) > 0.01).length };
     let mid = "";
     if (mode === "camp") {
@@ -33307,7 +33435,7 @@ ${suffix}`;
   <footer class="hud m-${mode}">
     ${orb("life", life, maxLife)}
     <div class="hudbar">
-      <div class="bar xp" title="${t2("xp")}: ${fmt(xpOf.xp)} / ${fmt(need)}"><i style="width:${pct(xpOf.xp, need)}%"></i></div>
+      <div class="bar xp" title="${t2("xp")}: ${fmt(xpOf.xp)} / ${fmt(need2)}"><i style="width:${pct(xpOf.xp, need2)}%"></i></div>
       <div class="hudrow">${mid}</div>
     </div>
     ${orb("mana", mana, maxMana)}
@@ -33565,7 +33693,7 @@ ${suffix}`;
       const worn = new Set(content2.EQUIP_SLOTS.map((s) => content2.setPieces[h.equipment[s]?.setPiece]).filter((p) => p?.set === piece.set).map((p) => p.id)).size;
       const set = content2.sets[piece.set];
       lines.push(`${L.set[piece.set]} (${worn}/${set.pieces.length})`);
-      for (const [need, bonus] of Object.entries(set.bonuses)) lines.push(`${t2("forge.setBonus", { n: need })} ${R.modLines(bonus).join(", ")}`);
+      for (const [need2, bonus] of Object.entries(set.bonuses)) lines.push(`${t2("forge.setBonus", { n: need2 })} ${R.modLines(bonus).join(", ")}`);
     }
     const reqLvl = itemReqLevel(content2, seen);
     const reqs = [];
@@ -34952,6 +35080,7 @@ ${suffix}`;
     stage.classList.toggle("low", !portrait && h < 680);
     stage.classList.toggle("turn", !portrait && vh < (touch ? 500 : 440));
     stage.classList.toggle("touch", !!touch);
+    fitTexts(stage, k);
   }
   window.addEventListener("popstate", () => {
     if (hero() && view.tab !== "camp") {
@@ -35009,6 +35138,7 @@ ${suffix}`;
     afterRender(hovered);
   }
   function afterRender(hovered = null) {
+    fitTexts(stage, stage.getBoundingClientRect().width / stage.offsetWidth || 1);
     const card = document.querySelector(".gear2 .popcard");
     const wb = document.getElementById("winbody");
     if (card && wb && !document.documentElement.classList.contains("portrait") && !stage.classList.contains("portrait")) {

@@ -2,7 +2,7 @@
 <html lang="en">
 <head>
 <meta charset="utf-8">
-<meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'sha256-plhJxdkoLYZwPM5fv4qvnZBpwBxWGvlQGQu5m4OTBzc=' 'sha256-G1+gTMQS+rcRDNYkzF9uKGFdfyl+9tshpztuOCljFHY='; style-src 'self' 'unsafe-inline'; img-src 'self' data: blob: https://cdn.discordapp.com; font-src 'self' data:; media-src 'self' data: blob:; connect-src 'self' https://zwhsmstbntuwgcgfqhzl.supabase.co wss://zwhsmstbntuwgcgfqhzl.supabase.co; object-src 'none'; base-uri 'none'; form-action 'none'">
+<meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'sha256-plhJxdkoLYZwPM5fv4qvnZBpwBxWGvlQGQu5m4OTBzc=' 'sha256-LJsQEwLXDHlaON/4ewSmXVZ/lTU1xavoDXZYM+HYakQ='; style-src 'self' 'unsafe-inline'; img-src 'self' data: blob: https://cdn.discordapp.com; font-src 'self' data:; media-src 'self' data: blob:; connect-src 'self' https://zwhsmstbntuwgcgfqhzl.supabase.co wss://zwhsmstbntuwgcgfqhzl.supabase.co; object-src 'none'; base-uri 'none'; form-action 'none'">
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
 <meta name="theme-color" content="#0a0706">
 <meta name="mobile-web-app-capable" content="yes">
@@ -1586,6 +1586,9 @@ html, body { text-size-adjust: 100%; }
 .class-card h2 { overflow-wrap: normal; word-break: normal; }
 .title-panel:has(.class-row.stack) .class-card .art { width: 56px; }
 .portrait .class-row:not(.stack) { gap: 4px; } .portrait .class-row:not(.stack) .class-pick { padding: 4px 1px; }
+/* The raid card's big picture (chest, shrine…): always the whole picture, fitted in its box, on every screen. */
+.bigicon { position: relative; } .bigicon img { position: absolute; inset: 0; width: 100%; height: 100%; object-fit: contain; }
+.portrait .bigicon { flex: none; aspect-ratio: 1; }
 
 </style>
 </head>
@@ -32190,7 +32193,7 @@ ${suffix}`;
   }
 
   // src/client/admin.js
-  var BUILD_TIME = true ? "2026-11-14T10:09:21.046Z" : null;
+  var BUILD_TIME = true ? "2026-11-14T11:00:47.040Z" : null;
   var TABS = ["players", "log", "hero", "test", "balance", "system"];
   var KINDS = ["raid_start", "raid_end", "level_up", "death", "boss_kill", "unique_found", "set_found", "runeword_found", "difficulty_unlocked", "hero_created", "hero_deleted", "sync_conflict", "sync_outdated", "sync_rejected", "admin_edit"];
   var POLL_MS = 15e3;

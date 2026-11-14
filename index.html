@@ -2,7 +2,7 @@
 <html lang="en">
 <head>
 <meta charset="utf-8">
-<meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'sha256-BAuyZJFkPsRkJtNm1f/31XiwDUTyf8ohU/qX8DtdnXE=' 'sha256-uG4s2+FqW3YahikBgaBFAJ4ufpALp2qdIdjtSPSMb8s='; style-src 'self' 'unsafe-inline'; img-src 'self' data: blob: https://cdn.discordapp.com; font-src 'self' data:; media-src 'self' data: blob:; connect-src 'self' https://zwhsmstbntuwgcgfqhzl.supabase.co wss://zwhsmstbntuwgcgfqhzl.supabase.co; object-src 'none'; base-uri 'none'; form-action 'none'">
+<meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'sha256-BAuyZJFkPsRkJtNm1f/31XiwDUTyf8ohU/qX8DtdnXE=' 'sha256-CvICOIx/kYYkZv4tjtOomjtqskUVHwBbxCYhz5z6jWU='; style-src 'self' 'unsafe-inline'; img-src 'self' data: blob: https://cdn.discordapp.com; font-src 'self' data:; media-src 'self' data: blob:; connect-src 'self' https://zwhsmstbntuwgcgfqhzl.supabase.co wss://zwhsmstbntuwgcgfqhzl.supabase.co; object-src 'none'; base-uri 'none'; form-action 'none'">
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
 <meta name="theme-color" content="#0a0706">
 <meta name="mobile-web-app-capable" content="yes">
@@ -1697,6 +1697,10 @@ html, body { text-size-adjust: 100%; }
 /* a phone on a raid or a descent: a belt of six or eight places and the reserve do not fit beside the companion's bar,
    so the belt shows as counts there (as it does in a fight) */
 .portrait .m-raid .beltwrap { display: none; } .portrait .m-raid .belt.compact { display: flex; align-items: center; flex: 1 1 40%; height: 32px; gap: 8px; }
+/* the shop's sell-all row: one chip per rarity in the bag */
+.sellrow { display: flex; flex-wrap: wrap; align-items: center; gap: 6px; margin: -2px 0 8px; } .sellrow small { flex-basis: 100%; }
+.chip.sellr.r-magic { color: var(--magic); } .chip.sellr.r-rare { color: var(--rare); } .chip.sellr.r-set { color: var(--set); } .chip.sellr.r-unique, .chip.sellr.r-runecarved { color: var(--unique); } .chip.sellr.r-socketed { color: #b8b8b8; }
+.chip.sellr.armed { background: #7a2a20; border-color: #c0503a; color: #fff; }
 
 </style>
 </head>
@@ -7610,11 +7614,12 @@ html, body { text-size-adjust: 100%; }
       equip: campOnly((index) => equipFromBag(content, state.hero, index)),
       unequip: campOnly((slot) => unequip(content, state.hero, slot)),
       sell: campOnly((index) => sellItem(content, state.hero, index)),
-      sellCommon: campOnly(() => {
+      sellCommon: campOnly((rarity = "common") => {
         if (state.hero.inRun) return { ok: false, error: "in_raid" };
+        if (typeof rarity !== "string") return { ok: false, error: "bad_rarity" };
         let gold = 0;
         for (let i = state.hero.bag.length - 1; i >= 0; i--) {
-          if (state.hero.bag[i].rarity === "common") gold += sellItem(content, state.hero, i).gold;
+          if (state.hero.bag[i].rarity === rarity) gold += sellItem(content, state.hero, i).gold ?? 0;
         }
         return { ok: true, gold };
       }),
@@ -9509,6 +9514,10 @@ html, body { text-size-adjust: 100%; }
     fillBeltSwap: "Fill the belt from the reserve",
     fillBelt: "Fill the belt ({gold} gold)",
     beltFull: "Your belt is full.",
+    sellAllOf: "Sell everything of one kind:",
+    sellRarity: "{name} ({n})",
+    sellRarityConfirm: "Sure? {n} items, {gold} gold",
+    sellRarityTip: "Sell every item of this kind in your bag for {gold} gold.",
     sellJunk: "Sell common items ({n}) for {gold} gold",
     sellEmpty: "Your bag is empty: nothing to sell.",
     station: "Station {n} of {max}",
@@ -10530,6 +10539,10 @@ html, body { text-size-adjust: 100%; }
     fillBeltSwap: "Felt\xF6lt\xF6m az \xF6vet a tartal\xE9kb\xF3l",
     fillBelt: "Felt\xF6lt\xF6m az \xF6vet ({gold} arany)",
     beltFull: "Tele az ital\xF6ved.",
+    sellAllOf: "Egy kattint\xE1ssal eladom az \xF6sszes:",
+    sellRarity: "{name} ({n})",
+    sellRarityConfirm: "Biztos? {n} db, {gold} arany",
+    sellRarityTip: "Az \xF6sszes ilyen t\xE1rgy elad\xE1sa a zs\xE1kodb\xF3l: {gold} arany.",
     sellJunk: "Eladom a k\xF6z\xF6ns\xE9ges t\xE1rgyakat ({n} db, {gold} arany)",
     sellEmpty: "\xDCres a zs\xE1kod, nincs mit eladni.",
     station: "\xC1llom\xE1s: {n}/{max}",
@@ -11400,13 +11413,13 @@ html, body { text-size-adjust: 100%; }
   }
   var soundOn = () => enabled;
 
-  // node_modules/@supabase/supabase-js/dist/tracingRegistry.mjs
+  // ../../home/claude/cursewake/node_modules/@supabase/supabase-js/dist/tracingRegistry.mjs
   var EXTRACTOR_KEY = /* @__PURE__ */ Symbol.for("@supabase/supabase-js.traceContextExtractor");
   function getTraceContextExtractor() {
     return globalThis[EXTRACTOR_KEY];
   }
 
-  // node_modules/tslib/tslib.es6.mjs
+  // ../../home/claude/cursewake/node_modules/tslib/tslib.es6.mjs
   function __rest(s, e) {
     var t3 = {};
     for (var p in s) if (Object.prototype.hasOwnProperty.call(s, p) && e.indexOf(p) < 0)
@@ -11446,7 +11459,7 @@ html, body { text-size-adjust: 100%; }
     });
   }
 
-  // node_modules/@supabase/functions-js/dist/module/helper.js
+  // ../../home/claude/cursewake/node_modules/@supabase/functions-js/dist/module/helper.js
   var resolveFetch = (customFetch) => {
     if (customFetch) {
       return (...args) => customFetch(...args);
@@ -11454,7 +11467,7 @@ html, body { text-size-adjust: 100%; }
     return (...args) => fetch(...args);
   };
 
-  // node_modules/@supabase/functions-js/dist/module/types.js
+  // ../../home/claude/cursewake/node_modules/@supabase/functions-js/dist/module/types.js
   var FunctionsError = class extends Error {
     constructor(message, name = "FunctionsError", context) {
       super(message);
@@ -11503,7 +11516,7 @@ html, body { text-size-adjust: 100%; }
     FunctionRegion2["UsWest2"] = "us-west-2";
   })(FunctionRegion || (FunctionRegion = {}));
 
-  // node_modules/@supabase/functions-js/dist/module/FunctionsClient.js
+  // ../../home/claude/cursewake/node_modules/@supabase/functions-js/dist/module/FunctionsClient.js
   var FunctionsClient = class {
     /**
      * Creates a new Functions client bound to an Edge Functions URL.
@@ -11778,7 +11791,7 @@ html, body { text-size-adjust: 100%; }
     }
   };
 
-  // node_modules/@supabase/postgrest-js/dist/index.mjs
+  // ../../home/claude/cursewake/node_modules/@supabase/postgrest-js/dist/index.mjs
   var PostgrestError = class extends Error {
     /**
     * @example
@@ -15698,7 +15711,7 @@ ${cause.stack}`;
     }
   };
 
-  // node_modules/@supabase/realtime-js/dist/module/lib/websocket-factory.js
+  // ../../home/claude/cursewake/node_modules/@supabase/realtime-js/dist/module/lib/websocket-factory.js
   var WebSocketFactory = class {
     /**
      * Static-only utility – prevent instantiation.
@@ -15801,10 +15814,10 @@ Suggested solution: ${env.workaround}`;
   };
   var websocket_factory_default = WebSocketFactory;
 
-  // node_modules/@supabase/realtime-js/dist/module/lib/version.js
+  // ../../home/claude/cursewake/node_modules/@supabase/realtime-js/dist/module/lib/version.js
   var version = "2.119.0";
 
-  // node_modules/@supabase/realtime-js/dist/module/lib/constants.js
+  // ../../home/claude/cursewake/node_modules/@supabase/realtime-js/dist/module/lib/constants.js
   var DEFAULT_VERSION = `realtime-js/${version}`;
   var VSN_1_0_0 = "1.0.0";
   var VSN_2_0_0 = "2.0.0";
@@ -15835,7 +15848,7 @@ Suggested solution: ${env.workaround}`;
     closed: "closed"
   };
 
-  // node_modules/@supabase/realtime-js/dist/module/lib/serializer.js
+  // ../../home/claude/cursewake/node_modules/@supabase/realtime-js/dist/module/lib/serializer.js
   var Serializer = class _Serializer {
     constructor(allowedMetadataKeys) {
       this.HEADER_LENGTH = 1;
@@ -15984,7 +15997,7 @@ Suggested solution: ${env.workaround}`;
   Serializer.DEFAULT_METADATA_KEYS = ["persist"];
   var serializer_default = Serializer;
 
-  // node_modules/@supabase/realtime-js/dist/module/lib/transformers.js
+  // ../../home/claude/cursewake/node_modules/@supabase/realtime-js/dist/module/lib/transformers.js
   var PostgresTypes;
   (function(PostgresTypes2) {
     PostgresTypes2["abstime"] = "abstime";
@@ -16147,7 +16160,7 @@ Suggested solution: ${env.workaround}`;
     return wsUrl.href;
   };
 
-  // node_modules/@supabase/phoenix/priv/static/phoenix.mjs
+  // ../../home/claude/cursewake/node_modules/@supabase/phoenix/priv/static/phoenix.mjs
   var closure = (value) => {
     if (typeof value === "function") {
       return (
@@ -17966,7 +17979,7 @@ Suggested solution: ${env.workaround}`;
     }
   };
 
-  // node_modules/@supabase/realtime-js/dist/module/phoenix/presenceAdapter.js
+  // ../../home/claude/cursewake/node_modules/@supabase/realtime-js/dist/module/phoenix/presenceAdapter.js
   var PresenceAdapter = class _PresenceAdapter {
     constructor(channel, opts) {
       const phoenixOptions = phoenixPresenceOptions(opts);
@@ -18058,7 +18071,7 @@ Suggested solution: ${env.workaround}`;
     return (currentPresences === null || currentPresences === void 0 ? void 0 : currentPresences.metas) ? transformState(currentPresences) : [];
   }
 
-  // node_modules/@supabase/realtime-js/dist/module/RealtimePresence.js
+  // ../../home/claude/cursewake/node_modules/@supabase/realtime-js/dist/module/RealtimePresence.js
   var REALTIME_PRESENCE_LISTEN_EVENTS;
   (function(REALTIME_PRESENCE_LISTEN_EVENTS2) {
     REALTIME_PRESENCE_LISTEN_EVENTS2["SYNC"] = "sync";
@@ -18092,7 +18105,7 @@ Suggested solution: ${env.workaround}`;
     }
   };
 
-  // node_modules/@supabase/realtime-js/dist/module/lib/normalizeChannelError.js
+  // ../../home/claude/cursewake/node_modules/@supabase/realtime-js/dist/module/lib/normalizeChannelError.js
   function normalizeChannelError(reason) {
     if (reason instanceof Error) {
       return reason;
@@ -18111,7 +18124,7 @@ Suggested solution: ${env.workaround}`;
     return new Error("channel error: connection lost");
   }
 
-  // node_modules/@supabase/realtime-js/dist/module/phoenix/channelAdapter.js
+  // ../../home/claude/cursewake/node_modules/@supabase/realtime-js/dist/module/phoenix/channelAdapter.js
   var ChannelAdapter = class {
     constructor(socket, topic, params) {
       const phoenixParams = phoenixChannelParams(params);
@@ -18210,7 +18223,7 @@ Suggested solution: ${env.workaround}`;
     };
   }
 
-  // node_modules/@supabase/realtime-js/dist/module/RealtimePostgresFilterBuilder.js
+  // ../../home/claude/cursewake/node_modules/@supabase/realtime-js/dist/module/RealtimePostgresFilterBuilder.js
   var PostgrestReservedCharsRegexp2 = /[,()"\\]/;
   var needsQuoting = (value) => PostgrestReservedCharsRegexp2.test(value) || value !== value.trim();
   var quote = (value) => `"${value.replace(/\\/g, "\\\\").replace(/"/g, '\\"')}"`;
@@ -18324,7 +18337,7 @@ Suggested solution: ${env.workaround}`;
     }
   };
 
-  // node_modules/@supabase/realtime-js/dist/module/RealtimeChannel.js
+  // ../../home/claude/cursewake/node_modules/@supabase/realtime-js/dist/module/RealtimeChannel.js
   var REALTIME_POSTGRES_CHANGES_LISTEN_EVENT;
   (function(REALTIME_POSTGRES_CHANGES_LISTEN_EVENT2) {
     REALTIME_POSTGRES_CHANGES_LISTEN_EVENT2["ALL"] = "*";
@@ -19085,7 +19098,7 @@ Suggested solution: ${env.workaround}`;
     }
   };
 
-  // node_modules/@supabase/realtime-js/dist/module/phoenix/socketAdapter.js
+  // ../../home/claude/cursewake/node_modules/@supabase/realtime-js/dist/module/phoenix/socketAdapter.js
   var SocketAdapter = class {
     constructor(endPoint, options) {
       this.socket = new Socket(endPoint, options);
@@ -19197,7 +19210,7 @@ Suggested solution: ${env.workaround}`;
     }
   };
 
-  // node_modules/@supabase/realtime-js/dist/module/RealtimeClient.js
+  // ../../home/claude/cursewake/node_modules/@supabase/realtime-js/dist/module/RealtimeClient.js
   var CONNECTION_TIMEOUTS = {
     HEARTBEAT_INTERVAL: 25e3,
     RECONNECT_DELAY: 10,
@@ -19863,7 +19876,7 @@ Suggested solution: ${env.workaround}`;
     }
   };
 
-  // node_modules/iceberg-js/dist/index.mjs
+  // ../../home/claude/cursewake/node_modules/iceberg-js/dist/index.mjs
   var IcebergError = class extends Error {
     constructor(message, opts) {
       super(message);
@@ -20396,7 +20409,7 @@ Suggested solution: ${env.workaround}`;
     }
   };
 
-  // node_modules/@supabase/storage-js/dist/index.mjs
+  // ../../home/claude/cursewake/node_modules/@supabase/storage-js/dist/index.mjs
   function _typeof2(o) {
     "@babel/helpers - typeof";
     return _typeof2 = "function" == typeof Symbol && "symbol" == typeof Symbol.iterator ? function(o$1) {
@@ -23386,10 +23399,10 @@ Suggested solution: ${env.workaround}`;
     }
   };
 
-  // node_modules/@supabase/auth-js/dist/module/lib/version.js
+  // ../../home/claude/cursewake/node_modules/@supabase/auth-js/dist/module/lib/version.js
   var version3 = "2.119.0";
 
-  // node_modules/@supabase/auth-js/dist/module/lib/constants.js
+  // ../../home/claude/cursewake/node_modules/@supabase/auth-js/dist/module/lib/constants.js
   var AUTO_REFRESH_TICK_DURATION_MS = 30 * 1e3;
   var AUTO_REFRESH_TICK_THRESHOLD = 3;
   var EXPIRY_MARGIN_MS = AUTO_REFRESH_TICK_THRESHOLD * AUTO_REFRESH_TICK_DURATION_MS;
@@ -23409,7 +23422,7 @@ Suggested solution: ${env.workaround}`;
   var PKCE_MAX_CONCURRENT_FLOWS = 5;
   var JWKS_TTL = 10 * 60 * 1e3;
 
-  // node_modules/@supabase/auth-js/dist/module/lib/errors.js
+  // ../../home/claude/cursewake/node_modules/@supabase/auth-js/dist/module/lib/errors.js
   var AuthError = class extends Error {
     constructor(message, status, code) {
       super(message);
@@ -23532,7 +23545,7 @@ Suggested solution: ${env.workaround}`;
     }
   };
 
-  // node_modules/@supabase/auth-js/dist/module/lib/base64url.js
+  // ../../home/claude/cursewake/node_modules/@supabase/auth-js/dist/module/lib/base64url.js
   var TO_BASE64URL = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789-_".split("");
   var IGNORE_BASE64URL = " 	\n\r=".split("");
   var FROM_BASE64URL = (() => {
@@ -23694,7 +23707,7 @@ Suggested solution: ${env.workaround}`;
     return result.join("");
   }
 
-  // node_modules/@supabase/auth-js/dist/module/lib/helpers.js
+  // ../../home/claude/cursewake/node_modules/@supabase/auth-js/dist/module/lib/helpers.js
   function expiresAt(expiresIn) {
     const timeNow = Math.round(Date.now() / 1e3);
     return timeNow + expiresIn;
@@ -24067,7 +24080,7 @@ Suggested solution: ${env.workaround}`;
     return JSON.parse(JSON.stringify(obj));
   }
 
-  // node_modules/@supabase/auth-js/dist/module/lib/fetch.js
+  // ../../home/claude/cursewake/node_modules/@supabase/auth-js/dist/module/lib/fetch.js
   var _getErrorMessage2 = (err) => {
     if (typeof err === "object" && err !== null) {
       const e = err;
@@ -24236,10 +24249,10 @@ Suggested solution: ${env.workaround}`;
     return !!data.access_token && !!data.refresh_token && !!data.expires_in;
   }
 
-  // node_modules/@supabase/auth-js/dist/module/lib/types.js
+  // ../../home/claude/cursewake/node_modules/@supabase/auth-js/dist/module/lib/types.js
   var SIGN_OUT_SCOPES = ["global", "local", "others"];
 
-  // node_modules/@supabase/auth-js/dist/module/GoTrueAdminApi.js
+  // ../../home/claude/cursewake/node_modules/@supabase/auth-js/dist/module/GoTrueAdminApi.js
   var GoTrueAdminApi = class {
     /**
      * Creates an admin API client that can be used to manage users and OAuth clients.
@@ -25321,7 +25334,7 @@ Suggested solution: ${env.workaround}`;
     }
   };
 
-  // node_modules/@supabase/auth-js/dist/module/lib/local-storage.js
+  // ../../home/claude/cursewake/node_modules/@supabase/auth-js/dist/module/lib/local-storage.js
   function memoryLocalStorageAdapter(store = {}) {
     return {
       getItem: (key) => {
@@ -25336,7 +25349,7 @@ Suggested solution: ${env.workaround}`;
     };
   }
 
-  // node_modules/@supabase/auth-js/dist/module/lib/locks.js
+  // ../../home/claude/cursewake/node_modules/@supabase/auth-js/dist/module/lib/locks.js
   var internals = {
     /**
      * @experimental
@@ -25350,7 +25363,7 @@ Suggested solution: ${env.workaround}`;
     }
   };
 
-  // node_modules/@supabase/auth-js/dist/module/lib/polyfills.js
+  // ../../home/claude/cursewake/node_modules/@supabase/auth-js/dist/module/lib/polyfills.js
   function polyfillGlobalThis() {
     if (typeof globalThis === "object")
       return;
@@ -25370,7 +25383,7 @@ Suggested solution: ${env.workaround}`;
     }
   }
 
-  // node_modules/@supabase/auth-js/dist/module/lib/web3/ethereum.js
+  // ../../home/claude/cursewake/node_modules/@supabase/auth-js/dist/module/lib/web3/ethereum.js
   function getAddress(address) {
     if (!/^0x[a-fA-F0-9]{40}$/.test(address)) {
       throw new Error(`@supabase/auth-js: Address "${address}" is invalid.`);
@@ -25438,7 +25451,7 @@ Request ID: ${requestId}`;
 ${suffix}`;
   }
 
-  // node_modules/@supabase/auth-js/dist/module/lib/webauthn.errors.js
+  // ../../home/claude/cursewake/node_modules/@supabase/auth-js/dist/module/lib/webauthn.errors.js
   var WebAuthnError = class extends Error {
     constructor({ message, code, cause, name }) {
       var _a;
@@ -25613,7 +25626,7 @@ ${suffix}`;
     });
   }
 
-  // node_modules/@supabase/auth-js/dist/module/lib/webauthn.js
+  // ../../home/claude/cursewake/node_modules/@supabase/auth-js/dist/module/lib/webauthn.js
   var WebAuthnAbortService = class {
     /**
      * Create an abort signal for a new WebAuthn operation.
@@ -26136,7 +26149,7 @@ ${suffix}`;
     }
   };
 
-  // node_modules/@supabase/auth-js/dist/module/GoTrueClient.js
+  // ../../home/claude/cursewake/node_modules/@supabase/auth-js/dist/module/GoTrueClient.js
   polyfillGlobalThis();
   var DEFAULT_OPTIONS = {
     url: GOTRUE_URL,
@@ -31553,11 +31566,11 @@ ${suffix}`;
   GoTrueClient.nextInstanceID = {};
   var GoTrueClient_default = GoTrueClient;
 
-  // node_modules/@supabase/auth-js/dist/module/AuthClient.js
+  // ../../home/claude/cursewake/node_modules/@supabase/auth-js/dist/module/AuthClient.js
   var AuthClient = GoTrueClient_default;
   var AuthClient_default = AuthClient;
 
-  // node_modules/@supabase/supabase-js/dist/index.mjs
+  // ../../home/claude/cursewake/node_modules/@supabase/supabase-js/dist/index.mjs
   var version4 = "2.119.0";
   var JS_ENV = "";
   var JS_RUNTIME_VERSION;
@@ -33158,7 +33171,7 @@ ${suffix}`;
   }
 
   // src/client/admin.js
-  var BUILD_TIME = true ? "2026-11-14T18:59:38.756Z" : null;
+  var BUILD_TIME = true ? "2026-11-14T20:52:14.554Z" : null;
   var TABS = ["players", "log", "hero", "test", "balance", "system"];
   var KINDS = ["raid_start", "raid_end", "level_up", "death", "boss_kill", "unique_found", "set_found", "runeword_found", "difficulty_unlocked", "depth_start", "depth_floor", "depth_end", "hero_created", "hero_deleted", "sync_conflict", "sync_outdated", "sync_rejected", "admin_edit"];
   var POLL_MS = 15e3;
@@ -35378,8 +35391,16 @@ ${suffix}`;
   }
   function tabMerchant() {
     const h = hero();
-    const junk = h.bag.filter((i) => i.rarity === "common");
-    const junkGold = junk.reduce((g, i) => g + content2.B.loot.sellValue(i, content2.bases[i.base]), 0);
+    const RAR = ["common", "socketed", "magic", "rare", "runecarved", "set", "unique"];
+    const ASK = /* @__PURE__ */ new Set(["rare", "runecarved", "set", "unique"]);
+    const sellBtns = RAR.map((r) => {
+      const list = h.bag.filter((i) => i.rarity === r);
+      if (!list.length) return "";
+      const gold = list.reduce((g, i) => g + content2.B.loot.sellValue(i, content2.bases[i.base]), 0);
+      const armed = view.sellArm === r;
+      const label = armed ? t2("sellRarityConfirm", { n: list.length, gold: fmt(gold) }) : t2("sellRarity", { name: locales[lang].rarity[r], n: list.length });
+      return `<button class="chip sellr r-${r} ${armed ? "armed" : ""}" data-act="sellRarity" data-v="${r}" data-ask="${ASK.has(r) && !armed ? 1 : 0}" title="${esc(t2("sellRarityTip", { gold: fmt(gold) }))}">${label}</button>`;
+    }).join("");
     const gp = content2.B.gamble.price(h.level);
     const sel = view.sel?.w === "bag" && h.bag[view.sel.k] ? view.sel.k : null;
     const cells = h.bag.map((item, i) => `<div class="bagcell">${itemTile(item, `data-act="sel" data-w="bag" data-v="${i}"`, sel === i)}</div>`).join("");
@@ -35408,7 +35429,8 @@ ${suffix}`;
         ${gWhy ? `<p class="gnote">${gWhy}</p>` : ""}
         ${gambled ? `<div class="gamble-got"><p class="gambled">${t2("ux.gambled")}</p>${itemDetail(h.bag[sel], "shop", sel)}</div>` : ""}
       </div>
-      <h4>${t2("ux.sellTitle")} ${junk.length ? `<button class="chip" data-act="sellCommon">${t2("sellJunk", { n: junk.length, gold: fmt(junkGold) })}</button>` : ""}</h4>
+      <h4>${t2("ux.sellTitle")}</h4>
+      ${sellBtns ? `<div class="sellrow"><small class="dim">${t2("sellAllOf")}</small>${sellBtns}</div>` : ""}
       ${h.bag.length ? `<p class="dim sellpick">${t2("ux.sellPick")}</p><div class="baggrid shopbag">${cells}</div>` : `<p class="dim">${t2("sellEmpty")}</p>`}
     </section>
     <section class="shop-detail detail-wrap ${sel != null ? "has-card" : ""}">${sel != null ? `<div class="pop-scroll">${gambled ? `<p class="gambled">${t2("ux.gambled")}</p>` : ""}${card}</div><div class="pop-actions row">${out.buttons}</div>` : `<p class="dim pick">${t2("pickItem")}</p>`}</section>
@@ -36371,6 +36393,7 @@ ${suffix}`;
     mercUnequip: "drop_common",
     sell: "coin",
     sellCommon: "coin",
+    sellRarity: "coin",
     hireMerc: "coin",
     reviveMerc: "heal",
     buyPotion: "potion",
@@ -36535,7 +36558,17 @@ ${suffix}`;
     },
     sellCommon() {
       view.sel = null;
-      act(api.sellCommon());
+      act(api.sellCommon("common"));
+    },
+    sellRarity(r, el) {
+      if (el.dataset.ask === "1") {
+        view.sellArm = r;
+        render();
+        return;
+      }
+      view.sellArm = null;
+      view.sel = null;
+      act(api.sellCommon(r));
     },
     buyPotion(v) {
       const res = api.buyPotion(v === "mana" ? "mana" : "life");

@@ -2,7 +2,7 @@
 <html lang="en">
 <head>
 <meta charset="utf-8">
-<meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'sha256-plhJxdkoLYZwPM5fv4qvnZBpwBxWGvlQGQu5m4OTBzc=' 'sha256-GJaZrI9zOEFVsnfqYJxZj+/so+suyshMF8jBBst01EM='; style-src 'self' 'unsafe-inline'; img-src 'self' data: blob: https://cdn.discordapp.com; font-src 'self' data:; media-src 'self' data: blob:; connect-src 'self' https://zwhsmstbntuwgcgfqhzl.supabase.co wss://zwhsmstbntuwgcgfqhzl.supabase.co; object-src 'none'; base-uri 'none'; form-action 'none'">
+<meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'sha256-plhJxdkoLYZwPM5fv4qvnZBpwBxWGvlQGQu5m4OTBzc=' 'sha256-VPIw1BmBqk/g1SV1GVWXjBrCeJhO99dVI2Rn+BV3gN0='; style-src 'self' 'unsafe-inline'; img-src 'self' data: blob: https://cdn.discordapp.com; font-src 'self' data:; media-src 'self' data: blob:; connect-src 'self' https://zwhsmstbntuwgcgfqhzl.supabase.co wss://zwhsmstbntuwgcgfqhzl.supabase.co; object-src 'none'; base-uri 'none'; form-action 'none'">
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
 <meta name="theme-color" content="#0a0706">
 <meta name="mobile-web-app-capable" content="yes">
@@ -1478,6 +1478,14 @@ h4::before { content: ''; flex: none; width: 6px; height: 6px; margin-right: -2p
 /* The reason a potion cannot be bought, under the buttons (as the gamble says it). */
 .potnote { margin-top: 6px; }
 .touch:not(.portrait) .potnote { margin-top: 4px; }
+
+/* Life and mana as numbers on the bars (current/max), readable on any fill. */
+.bar.num { position: relative; height: 15px; }
+.bar.num > span { position: absolute; inset: 0; display: flex; align-items: center; justify-content: center; font: 600 11px/1 var(--ui-font, system-ui, sans-serif); color: #fff6e6; letter-spacing: .02em; text-shadow: 0 1px 0 #000, 0 0 3px #000, 0 0 2px #000; font-variant-numeric: tabular-nums; pointer-events: none; white-space: nowrap; }
+.unit .bar.num.mp { height: 12px; } .unit .bar.num.mp > span { font-size: 10px; }
+.portrait .unit .bar.num { height: 13px; } .portrait .unit .bar.num > span { font-size: 10px; }
+.portrait .unit .bar.num.mp { height: 11px; } .portrait .unit .bar.num.mp > span { font-size: 9px; }
+.raid-merc .bar.num { height: 13px; } .raid-merc .bar.num > span { font-size: 10px; }
 
 </style>
 </head>
@@ -32071,7 +32079,7 @@ ${suffix}`;
   }
 
   // src/client/admin.js
-  var BUILD_TIME = true ? "2026-11-14T00:53:33.523Z" : null;
+  var BUILD_TIME = true ? "2026-11-14T07:24:55.017Z" : null;
   var TABS = ["players", "log", "hero", "test", "balance", "system"];
   var KINDS = ["raid_start", "raid_end", "level_up", "death", "boss_kill", "unique_found", "set_found", "runeword_found", "difficulty_unlocked", "hero_created", "hero_deleted", "sync_conflict", "sync_outdated", "sync_rejected", "admin_edit"];
   var POLL_MS = 15e3;
@@ -34184,7 +34192,7 @@ ${suffix}`;
     const m = hero().merc;
     if (!r.merc || !m || !Object.hasOwn(content2.mercs, m.type)) return "";
     const max = api.mercSheet()?.maxLife ?? 1;
-    return `<div class="raid-merc ${r.merc.life > 0 ? "" : "down"}"><small>${esc(locales[lang].merc[m.type].name)}</small><div class="bar hp"><i style="width:${pct(r.merc.life, max)}%"></i></div></div>`;
+    return `<div class="raid-merc ${r.merc.life > 0 ? "" : "down"}"><small>${esc(locales[lang].merc[m.type].name)}</small><div class="bar hp num"><i style="width:${pct(r.merc.life, max)}%"></i><span>${barNum(r.merc.life, max)}</span></div></div>`;
   }
   function buffLine(r) {
     const L = locales[lang];
@@ -34223,8 +34231,8 @@ ${suffix}`;
     return `<div class="unit ${u.rank} ${u.life <= 0 ? "dead" : ""}" id="u-${u.uid}" ${tip ? `title="${esc(tip)}"` : ""}>
     ${art(kind, u.key, isHero ? locales[lang].class[u.key].name : name)}
     <b>${esc(name)}</b><small>${t2("levelN", { n: u.level })}</small>
-    <div class="bar hp"><i style="width:${pct(u.life, u.maxLife)}%"></i></div>
-    ${isHero ? `<div class="bar mp"><i style="width:${pct(u.mana, u.maxMana)}%"></i></div>` : ""}
+    <div class="bar hp num"><i style="width:${pct(u.life, u.maxLife)}%"></i><span>${barNum(u.life, u.maxLife)}</span></div>
+    ${u.maxMana > 0 ? `<div class="bar mp num"><i style="width:${pct(u.mana, u.maxMana)}%"></i><span>${barNum(u.mana, u.maxMana)}</span></div>` : ""}
     <div class="floats"></div></div>`;
   }
   function renderFight() {
@@ -34447,9 +34455,12 @@ ${suffix}`;
     void el.offsetWidth;
     el.classList.add(cls);
   }
+  var barNum = (value, max) => `${Math.max(0, Math.ceil(value ?? 0))}/${Math.round(max ?? 0)}`;
   function setBar(uid, sel, value, max) {
     const el = document.querySelector(`#u-${uid} ${sel} i`);
     if (el) el.style.width = `${pct(value, max)}%`;
+    const n = document.querySelector(`#u-${uid} ${sel} span`);
+    if (n) n.textContent = barNum(value, max);
   }
   function applyEvent(ev, animate) {
     const f = view.fight;
@@ -34546,7 +34557,7 @@ ${suffix}`;
     }
     for (const u of Object.values(U)) {
       setBar(u.uid, ".hp", u.life, u.maxLife);
-      if (u.kind === "hero") setBar(u.uid, ".mp", u.mana, u.maxMana);
+      if (u.maxMana > 0) setBar(u.uid, ".mp", u.mana, u.maxMana);
       document.getElementById(`u-${u.uid}`)?.classList.toggle("dead", u.life <= 0);
     }
     const line = R.logLine(ev, U);

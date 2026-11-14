@@ -2,7 +2,7 @@
 <html lang="en">
 <head>
 <meta charset="utf-8">
-<meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'sha256-plhJxdkoLYZwPM5fv4qvnZBpwBxWGvlQGQu5m4OTBzc=' 'sha256-HzPeciNG+rbtgi6HWy19Le2eqzNBr9sPE4KlSuUbO1g='; style-src 'self' 'unsafe-inline'; img-src 'self' data: blob: https://cdn.discordapp.com; font-src 'self' data:; media-src 'self' data: blob:; connect-src 'self' https://zwhsmstbntuwgcgfqhzl.supabase.co wss://zwhsmstbntuwgcgfqhzl.supabase.co; object-src 'none'; base-uri 'none'; form-action 'none'">
+<meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'sha256-plhJxdkoLYZwPM5fv4qvnZBpwBxWGvlQGQu5m4OTBzc=' 'sha256-uG4s2+FqW3YahikBgaBFAJ4ufpALp2qdIdjtSPSMb8s='; style-src 'self' 'unsafe-inline'; img-src 'self' data: blob: https://cdn.discordapp.com; font-src 'self' data:; media-src 'self' data: blob:; connect-src 'self' https://zwhsmstbntuwgcgfqhzl.supabase.co wss://zwhsmstbntuwgcgfqhzl.supabase.co; object-src 'none'; base-uri 'none'; form-action 'none'">
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
 <meta name="theme-color" content="#0a0706">
 <meta name="mobile-web-app-capable" content="yes">
@@ -1560,6 +1560,8 @@ html, body { text-size-adjust: 100%; }
 .portrait .m-camp .belt.compact { flex-wrap: wrap; gap: 0 6px; height: auto; min-height: 32px; line-height: 1.15; }
 .portrait .m-raid .hbtn.ghost { white-space: normal; height: auto; min-height: 44px; line-height: 1.1; padding: 3px 8px; }
 .portrait .raid-merc { min-width: 0; }
+/* the mercenary's name in the phone's raid bar: one line, cut with an ellipsis rather than broken mid-word */
+.portrait .raid-merc small { overflow-wrap: normal; word-break: normal; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
 .portrait .controls .chip { white-space: nowrap; }
 
 /* camp windows */
@@ -1627,6 +1629,75 @@ html, body { text-size-adjust: 100%; }
 .touch:not(.portrait) .pb-row .potion.pbtn { width: 26px; height: 34px; }
 .touch:not(.portrait) .pb-edit { display: none; }
 
+/* ================================================================ the Depths ("A Mélység") */
+:root { --depth: #5ec4b6; --depth-dark: #0f2a29; }
+.dmark.d-depth { color: var(--depth); }
+.spot.fresh-diff.d-depth .spot-name { box-shadow: inset 0 0 0 1px var(--depth), 0 0 18px #3fb6a6aa; }
+.tile.fresh-diff.d-depth::after { box-shadow: inset 0 0 0 2px var(--depth), inset 0 0 24px #3fb6a666; }
+/* the Waystone's two pages, once the Depths is open */
+.ws-switch { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 6px; margin: 0 0 8px; }
+.ws-tab { display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 1px; min-height: 46px; padding: 4px 8px; cursor: pointer; color: var(--text, #e8d9b4);
+  border: 1px solid #000; border-radius: 5px; background: linear-gradient(180deg, #241b14, #120d0a); box-shadow: inset 0 0 0 1px var(--line); transition: color .15s, box-shadow .15s; }
+.ws-tab b { font: 600 17px var(--serif); font-variant: small-caps; letter-spacing: .05em; }
+.ws-tab small { font-size: 12px; color: var(--dim); max-width: 100%; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; } .ws-tab small.new { color: var(--depth); font-weight: 700; }
+.ws-tab:hover { box-shadow: inset 0 0 0 1px var(--frame-hi); }
+.ws-tab.on { color: #fff3cf; box-shadow: inset 0 0 0 1px #ffd27a, 0 0 12px #c9a35a66; }
+.ws-tab.ws-depth b { color: #a8eadf; } .ws-tab.ws-depth.on { background: linear-gradient(180deg, #164441, #0a1f1e); color: #e2fffa; box-shadow: inset 0 0 0 1px var(--depth), 0 0 12px #3fb6a666; }
+/* the Depths page */
+.depth-page { display: grid; gap: 10px; }
+.dp-intro { margin: 0; padding: 6px 10px; font-size: 14px; color: #cfe9e3; border-left: 3px solid var(--depth); background: #0003; }
+.dp-record { display: flex; align-items: center; gap: 14px; padding: 10px 12px; border-radius: 6px; background: radial-gradient(circle at 15% 50%, #1b4a4566, #0000 70%), #0b1312; box-shadow: inset 0 0 0 1px #2f6a62; }
+.dp-record .dp-num { flex: none; font: 700 44px/1 var(--serif); color: #bff5ec; text-shadow: 0 0 16px #3fb6a6; }
+.dp-record b { display: block; font: 600 16px var(--serif); color: #e2fffa; } .dp-record small { display: block; font-size: 13px; color: var(--dim); }
+.dp-record.none { opacity: .9; }
+.dp-h { margin: 4px 0 0; }
+.dp-starts { display: grid; grid-template-columns: repeat(auto-fill, minmax(118px, 1fr)); gap: 6px; }
+.dp-start { display: flex; flex-direction: column; align-items: center; gap: 2px; min-height: 52px; padding: 6px 8px; cursor: pointer; color: #e8d9b4; border: 1px solid #000; border-radius: 5px; background: linear-gradient(180deg, #1b2422, #0d1211); box-shadow: inset 0 0 0 1px #2c4440; }
+.dp-start b { font: 600 17px var(--serif); } .dp-start small { font-size: 12px; color: var(--dim); text-align: center; }
+.dp-start:hover { box-shadow: inset 0 0 0 1px var(--depth); }
+.dp-start.on { background: linear-gradient(180deg, #1d5550, #0c2523); color: #fff; box-shadow: inset 0 0 0 1px #9ff0e4, 0 0 12px #3fb6a688; } .dp-start.on small { color: #cdeee9; }
+.dp-floorinfo { margin: 0; font-size: 13.5px; color: #cdbb96; }
+.dp-go { width: 100%; }
+.dp-go:disabled { opacity: .5; cursor: not-allowed; }
+/* what is at stake, right above the start: a death's cost, the scrolls carried (none: no start, and the way to the merchant) */
+.dp-death { margin: 0; padding: 6px 10px; font-size: 13.5px; color: #e6a08f; border-left: 3px solid #a8463a; background: #2a0d0866; }
+.dp-death b { color: #ffb4a2; }
+.dp-kit { display: flex; flex-wrap: wrap; align-items: center; gap: 6px 10px; font-size: 14px; }
+.dp-kit .dp-scrolls { font-weight: 600; color: #e8d9b4; }
+.dp-kit.none .dp-scrolls { color: #e6a08f; }
+.dp-noscroll { flex: 1 1 100%; margin: 0; font-size: 13.5px; color: #e6a08f; }
+.dp-waiting, .milestone .m-wait { margin: 0; font-size: 13.5px; color: #ffd27a; }
+.dp-waiting { padding: 6px 10px; border: 1px solid #8a6a2a; border-radius: 5px; background: #2a200a88; }
+.dp-rules { margin: 0; padding: 8px 12px 8px 26px; border: 1px solid var(--line); border-radius: 5px; background: #0005; font-size: 13.5px; display: grid; gap: 4px; }
+.dp-rules li.bad { color: #e6a08f; }
+/* a descent */
+.depth .backdrop.depth-bg { background: radial-gradient(ellipse at 50% 35%, #0000 30%, #020807d9 100%), linear-gradient(180deg, #071211d9, #0a0706a6 35%, #050908e6), var(--scene) center / cover no-repeat, #050908; filter: saturate(.75) hue-rotate(-12deg); }
+.depth-title .dt-where { display: block; font: 600 14px var(--serif); font-variant: small-caps; letter-spacing: .1em; color: #9fd9cf; text-shadow: 0 1px 3px #000; }
+.raid-title.depth-title h2 { font-size: 44px; line-height: 1.05; color: #d8fff8; text-shadow: 0 2px 10px #000, 0 0 26px #3fb6a688; }
+.dt-facts { display: flex; flex-wrap: wrap; justify-content: center; gap: 4px 6px; font-style: normal !important; }
+.dt-facts span { display: inline-block; padding: 1px 9px; border-radius: 99px; font: 13px system-ui, sans-serif; color: #cfe9e3; background: #0b1c1bcc; box-shadow: inset 0 0 0 1px #2f6a62; }
+.dt-facts span.boss { color: #ffd0c4; background: #3a0f0acc; box-shadow: inset 0 0 0 1px #a8463a; }
+.depth .st.now { background: var(--depth); box-shadow: 0 0 0 2px #9ff0e455, 0 0 12px #3fb6a6; }
+.portrait .raid-title.depth-title h2 { font-size: 30px; } .portrait .depth-title .dt-where { font-size: 12.5px; } .portrait .dt-facts span { font-size: 12px; }
+.short .dt-facts { display: none; }
+.touch:not(.portrait) .raid-title.depth-title h2 { font-size: 32px; }
+/* results of a descent */
+.floordown { margin: 8px 0; padding: 8px 12px; border-radius: 5px; text-align: center; background: linear-gradient(180deg, #123532cc, #081615cc); box-shadow: inset 0 0 0 1px #2f6a62; }
+.floordown b { font: 600 20px var(--serif); font-variant: small-caps; letter-spacing: .04em; color: #c8fff6; } .floordown p { margin: 4px 0 0; font-size: 14px; }
+.tag.rec { display: inline-block; white-space: nowrap; overflow-wrap: normal; margin-left: 8px; color: #052220; background: var(--depth); border-color: var(--depth); }
+.milestone { margin: 8px 0; padding: 10px 12px; border-radius: 6px; text-align: center; background: radial-gradient(circle, #1f6a6155, #0000 70%), #0b1312; box-shadow: inset 0 0 0 1px var(--depth); }
+.milestone b { display: block; font: 600 22px var(--serif); font-variant: small-caps; color: #bff5ec; } .milestone p { margin: 4px 0; } .milestone .loot { justify-content: center; }
+.burst.depthburst { background: radial-gradient(circle, #3fb6a640, #0000 60%); } .burst.depthburst b { color: #d8fff8; text-shadow: 0 0 30px #3fb6a6, 0 3px 0 #04201d; }
+.win.outcome.o-depth.end-death .win-head h2 { color: #e2725a; }
+/* a phone's top strip has no room for it: the descent's own title says where the hero is */
+.portrait .dmark.d-depth { display: none; }
+/* a phone: the floor's pips say how far along the floor is; the cards get the room */
+.portrait .depth-title .dt-hand, .portrait .dt-facts span.had { display: none; }
+.portrait .depth-title .dt-where { margin-bottom: -2px; }
+/* a phone on a raid or a descent: a belt of six or eight places and the reserve do not fit beside the companion's bar,
+   so the belt shows as counts there (as it does in a fight) */
+.portrait .m-raid .beltwrap { display: none; } .portrait .m-raid .belt.compact { display: flex; align-items: center; flex: 1 1 40%; height: 32px; gap: 8px; }
+
 </style>
 </head>
 <body>
@@ -1636,6 +1707,7 @@ html, body { text-size-adjust: 100%; }
 (() => {
   // src/content/balance.js
   var lerp = (x, x0, x1, a, b) => a + (b - a) * Math.max(0, Math.min(1, (x - x0) / (x1 - x0)));
+  var depthXp = (L) => L <= 86 ? 0.7 : 0.7 * B.monster.xp(86) / B.monster.xp(L);
   var B = {
     hero: {
       lifeBase: 30,
@@ -1825,6 +1897,58 @@ html, body { text-size-adjust: 100%; }
         // bossDmg: 0.9 was tried; it pushed the frail casters' Hell finish below 100% while the tanks hardly noticed, so 0.8.
         monster: { life: (L) => lerp(L, 67, 86, 2.2, 1.8), dmg: (L) => lerp(L, 67, 86, 1.35, 0.95), ar: 1.8, spell: 1.2, bossDmg: 0.8, xp: 1 }
       }
+    },
+    // The Depths ("A Mélység"): an endless descent, Diablo 1's cathedral. Opens with Normal's last boss.
+    // Floor 1 holds level-40 monsters (Normal's end); every floor is a little harder, without a cap: the level
+    // climbs to 99 (floor 60), and a slow per-floor ramp on life and damage keeps going after that, so any hero
+    // meets its floor. Every number is a smooth function of the floor and stays finite: floors past `floorCap`
+    // count as that floor.
+    depth: {
+      floorCap: 9999,
+      bossEvery: 5,
+      // every 5th floor ends with a boss
+      // Landings ("pihenő") come right after a boss floor: floor 11, 21, 31… can be started from once reached, and the
+      // first arrival there gives a one-off reward. (On the boss floors themselves, 10, 20…, a descent could start with
+      // the boss and loop it: home, start again, the boss again.)
+      checkpointEvery: 10,
+      // floor 1 + k·10 (k ≥ 1) reached can be started from later
+      milestoneEvery: 10,
+      // the first arrival on floor 11, 21, 31… gives a one-off reward
+      level: (f) => Math.min(99, 39 + f),
+      steps: (rng) => rng.int(1, 3),
+      // card hands on an ordinary floor (a boss floor: one or two, then the boss)
+      cardWeights: { pack: 55, champion: 25, chest: 10, shrine: 10 },
+      packSize: (f, rng) => Math.min(5, 2 + rng.int(0, 1) + Math.floor(f / 15)),
+      // A shrine's blessing lasts this many floors (the one it was found on included).
+      buffFloors: 5,
+      // Monster multipliers on top of the level-based numbers: from Normal's (1) towards Hell's at level 86, then the ramp.
+      monster: (f) => {
+        const fl = Math.max(1, Math.min(9999, Math.floor(Number(f)) || 1));
+        const t3 = lerp(Math.min(99, 39 + fl), 40, 86, 0, 1);
+        const ramp = (k) => Math.min(1e3, Math.exp(k * (fl - 1)));
+        return { life: (1 + 0.8 * t3) * ramp(75e-4), dmg: (1 + 0.05 * t3) * ramp(6e-3), ar: 1 + 0.8 * t3, spell: 1 + 0.2 * t3, bossDmg: 1 - 0.2 * t3, bossLife: lerp(fl, 1, 40, 0.7, 1), xp: depthXp };
+      },
+      // What the hero loses on its side, growing smoothly with depth (the share approaches the cap, never passes it).
+      hero: (f) => {
+        const fl = Math.max(1, Math.min(9999, Math.floor(Number(f)) || 1));
+        const s = 1 - Math.exp(-(fl - 1) / 35);
+        return { resPenalty: Math.round(60 * s), leechPenaltyPct: Math.round(50 * s), healPenaltyPct: Math.round(40 * s), blockPenaltyPct: Math.round(35 * s), potionHealBonusPct: Math.round(4 * s) };
+      },
+      // Which base tiers drop (as on that difficulty): exceptional from floor 15, elite from floor 40.
+      lootDifficulty: (f) => f >= 40 ? "hell" : f >= 15 ? "nightmare" : "normal",
+      // Deeper is luckier: rarity weights and gem/rune chances grow with the floor, each to a cap.
+      rarity: (f) => ({ magic: Math.min(1.5, 1 + 0.01 * f), rare: Math.min(2.5, 1 + 0.025 * f), special: Math.min(2, 1 + 0.02 * f) }),
+      matBoost: (f) => Math.min(1.5, 1 + 0.01 * f),
+      // Death down there: everything found on the descent stays below (items, gems and runes, gold); on top of that
+      // a share of the gold carried and of the level's experience, as on the difficulty whose loot the floor drops
+      // (Normal 10%/5% above floor 15, Nightmare 15%/8% to floor 39, Hell 20%/12% from floor 40).
+      deathLoss: (f) => {
+        const d = B.difficulty[B.depth.lootDifficulty(Math.max(1, Math.floor(Number(f)) || 1))];
+        return { gold: d.deathGoldLossPct, xp: d.deathXpLossPct };
+      },
+      // Milestone reward (first arrival on floor 11, 21…): gold, and a rare item (a unique on floor 31, 61, 91…).
+      rewardGold: (floor, heroLevel) => Math.round(20 * heroLevel * Math.sqrt(Math.max(1, floor - 1) / 10)),
+      rewardRarity: (floor) => (floor - 1) % 30 === 0 ? "unique" : "rare"
     },
     item: {
       magicPrefixOnly: 0.375,
@@ -3544,7 +3668,15 @@ html, body { text-size-adjust: 100%; }
     { id: "cave_mother_hide", base: "ancient_plate", qlvl: 35, boss: "cave_mother", mods: { defPct: [100, 140], life: [60, 90], resCold: [35, 45], physRed: [8, 12] } },
     { id: "frostfire_brand", base: "rune_blade", qlvl: 36, boss: "frostfire_lord", mods: { tree_zeal: [1, 2], dmgPct: [140, 180], fireMin: [15, 25], fireMax: [40, 60], coldMin: [10, 20], coldMax: [30, 45] } },
     { id: "ancients_crown", base: "crown_helm", qlvl: 38, boss: "last_ancient", mods: { allSkills: [1, 2], resAll: [20, 30], life: [50, 80], str: [10, 15], dex: [10, 15], vit: [10, 15], ene: [10, 15] } },
-    { id: "primal_shard", base: "elder_staff", qlvl: 40, boss: "primal_curse", mods: { allSkills: [2, 2], spellDmgPct: [100, 140], mana: [100, 140], summonDmgPct: [40, 60], lifePct: [12, 18], resAll: [15, 20] } }
+    { id: "primal_shard", base: "elder_staff", qlvl: 40, boss: "primal_curse", mods: { allSkills: [2, 2], spellDmgPct: [100, 140], mana: [100, 140], summonDmgPct: [40, 60], lifePct: [12, 18], resAll: [15, 20] } },
+    // The Depths: found only down there (`depthFloor`: from that floor on), each a step deeper and stronger.
+    // No weapons, so every class has the same reason to dig.
+    { id: "deepwalker_treads", base: "frost_boots", qlvl: 48, depthFloor: 10, mods: { speedPct: [12, 18], dodge: [10, 14], resAll: [15, 22], life: [50, 80], defPct: [80, 120] } },
+    { id: "bottomless_band", base: "ring", qlvl: 53, depthFloor: 15, mods: { lifeSteal: [5, 8], manaSteal: [4, 6], crit: [6, 10], str: [10, 15], dex: [10, 15] } },
+    { id: "last_torch", base: "amulet", qlvl: 58, depthFloor: 20, mods: { allSkills: [1, 1], fortune: [30, 45], resAll: [15, 22], life: [40, 60], lifeRegen: [5, 8] } },
+    { id: "stairwarden_ward", base: "ancient_shield", qlvl: 63, depthFloor: 25, mods: { block: [10, 15], resAll: [25, 35], physRed: [8, 12], defPct: [100, 150], life: [50, 80] } },
+    { id: "cathedral_shroud", base: "frost_robe", qlvl: 68, depthFloor: 30, mods: { allSkills: [1, 1], spellDmgPct: [50, 80], lifePct: [12, 18], resAll: [20, 30], mana: [60, 100], defPct: [60, 100] } },
+    { id: "crown_of_the_deep", base: "crown_helm", qlvl: 78, depthFloor: 40, mods: { allSkills: [2, 2], resAll: [25, 35], lifePct: [10, 15], dmgPct: [30, 50], spellDmgPct: [30, 50], physRed: [6, 10] } }
   ];
   var sets = [
     {
@@ -3748,13 +3880,13 @@ html, body { text-size-adjust: 100%; }
     const offClass = opts.gamble ? 0 : content3.B.loot.offClassWeaponWeight;
     return rng.weighted(pool, (b) => (1 + 3 * b.qlvl / Math.max(1, ilvl)) * (b.qlvl < ilvl - 12 ? 0.12 : 1) * (b.jewelry ? content3.B.item.jewelryWeight : 1) * (kinds && b.slot === "weapon" && !kinds.includes(b.kind ?? "melee") ? offClass : 1));
   }
-  function rollRarity(content3, rng, base, source, fortune) {
+  function rollRarity(content3, rng, base, source, fortune, extra = null) {
     const L = content3.B.loot;
     const boost = L.rarityBoost[source] ?? L.rarityBoost.normal;
     const w = { ...L.rarityWeights };
-    w.magic *= boost.magic * (1 + effectiveFortune(fortune, L.fortuneCap.magic) / 100);
-    w.rare *= boost.rare * (1 + effectiveFortune(fortune, L.fortuneCap.rare) / 100);
-    const special2 = boost.rare * (1 + effectiveFortune(fortune, L.fortuneCap.special) / 100);
+    w.magic *= boost.magic * (1 + effectiveFortune(fortune, L.fortuneCap.magic) / 100) * (extra?.magic ?? 1);
+    w.rare *= boost.rare * (1 + effectiveFortune(fortune, L.fortuneCap.rare) / 100) * (extra?.rare ?? 1);
+    const special2 = boost.rare * (1 + effectiveFortune(fortune, L.fortuneCap.special) / 100) * (extra?.special ?? 1);
     w.set *= special2;
     w.unique *= special2;
     let rarity = rng.weighted(Object.entries(w), (e) => e[1])[0];
@@ -3786,7 +3918,7 @@ html, body { text-size-adjust: 100%; }
     const ilvl = Math.max(1, Math.floor(opts.ilvl));
     const base = opts.forceBase ? content3.bases[opts.forceBase] : pickBase(content3, rng, ilvl, opts.slot, opts.classId, opts.difficulty, opts);
     if (!base) throw new Error(`unknown base ${opts.forceBase}`);
-    let rarity = opts.forceRarity ?? rollRarity(content3, rng, base, opts.source ?? "normal", opts.fortune ?? 0);
+    let rarity = opts.forceRarity ?? rollRarity(content3, rng, base, opts.source ?? "normal", opts.fortune ?? 0, opts.boost);
     if (rarity === "unique" || rarity === "set") {
       const special2 = rollSpecial(content3, rng, rarity, ilvl, opts);
       if (special2) return special2;
@@ -3847,7 +3979,7 @@ html, body { text-size-adjust: 100%; }
   }
   function rollSpecial(content3, rng, rarity, ilvl, opts) {
     const all = Object.values(rarity === "unique" ? content3.uniques : content3.setPieces);
-    const pool = all.filter((d) => d.qlvl <= ilvl && (!opts.slot || content3.bases[d.base].slot === opts.slot) && (!opts.forceSpecial || d.id === opts.forceSpecial) && (!opts.gamble || gambleFits(content3, content3.bases[d.base], opts.classId, opts.oneHanded)));
+    const pool = all.filter((d) => d.qlvl <= ilvl && (!d.depthFloor || (opts.depthFloor ?? 0) >= d.depthFloor) && (!opts.slot || content3.bases[d.base].slot === opts.slot) && (!opts.forceSpecial || d.id === opts.forceSpecial) && (!opts.gamble || gambleFits(content3, content3.bases[d.base], opts.classId, opts.oneHanded)));
     if (!pool.length) return null;
     const def = rng.weighted(pool, (d) => d.boss && d.boss === opts.bossId ? content3.B.loot.bossUniqueWeight : 1);
     const fixed = {};
@@ -3973,6 +4105,9 @@ html, body { text-size-adjust: 100%; }
   function difficultyRules(content3, d) {
     return content3.B.difficulty[cleanDifficulty(d)];
   }
+  function rulesOf(content3, d) {
+    return d && typeof d === "object" ? d : difficultyRules(content3, d);
+  }
   function clearedIn(hero2, d = difficultyOf(hero2)) {
     const diff = cleanDifficulty(d);
     if (diff === "normal") return hero2?.cleared ?? {};
@@ -4030,7 +4165,7 @@ html, body { text-size-adjust: 100%; }
     return monsterLevel(content3, d, content3.bosses[bossId].level);
   }
   function resPenalty(content3, d) {
-    return difficultyRules(content3, d).resPenalty ?? 0;
+    return rulesOf(content3, d).resPenalty ?? 0;
   }
 
   // src/engine/hero.js
@@ -4078,6 +4213,8 @@ html, body { text-size-adjust: 100%; }
       inRun: false,
       scrolls: content3.B.run.startScrolls,
       // Homeward Scrolls in the pack
+      depth: { v: 2, deepest: 0, deepestAt: null, descents: 0, seen: false, paidTo: 0, unclaimed: [] },
+      // the Depths: the deepest floor reached and when (depth.js)
       hardcore: false,
       // a hardcore hero falls for good
       dead: false,
@@ -4190,10 +4327,11 @@ html, body { text-size-adjust: 100%; }
     const dmgMult = 1 + (str2 * H.strDmgPct + g("dmgPct")) / 100;
     const dmgMin = Math.max(0, w.min * dmgMult + g("minDmg"));
     const dmgMax = Math.max(dmgMin, w.max * dmgMult + g("maxDmg"));
-    const diff = cleanDifficulty(difficulty);
-    const penalty = resPenalty(content3, diff);
+    const custom = !!difficulty && typeof difficulty === "object";
+    const diff = custom ? "normal" : cleanDifficulty(difficulty);
+    const DR = rulesOf(content3, custom ? difficulty : diff);
+    const penalty = resPenalty(content3, DR);
     const res = (k) => clamp(g(k) + g("resAll") - penalty, C.minRes, C.maxRes);
-    const DR = content3.B.difficulty[diff];
     const leechKeep = 1 - (DR.leechPenaltyPct ?? 0) / 100;
     const added = [];
     for (const [el, key] of [["fire", "fire"], ["cold", "cold"], ["lightning", "light"]]) {
@@ -4242,7 +4380,8 @@ html, body { text-size-adjust: 100%; }
       leechKeep,
       healKeep: 1 - (DR.healPenaltyPct ?? 0) / 100,
       difficulty: diff,
-      resPenalty: penalty
+      resPenalty: penalty,
+      potionHealBonusPct: DR.potionHealBonusPct ?? 0
     };
   }
   var potionCount = (p) => (p?.life ?? 0) + (p?.mana ?? 0);
@@ -4356,7 +4495,7 @@ html, body { text-size-adjust: 100%; }
         threshold: hero2.potionThreshold,
         manaThreshold: P.manaThreshold,
         // Nightmare and Hell add a little to a life potion (B.difficulty[d].potionHealBonusPct).
-        lifeHealPct: P.lifeHealPct + (content3.B.difficulty[s.difficulty]?.potionHealBonusPct ?? 0),
+        lifeHealPct: P.lifeHealPct + s.potionHealBonusPct,
         manaHealPct: P.manaHealPct,
         cooldownTurns: P.cooldownTurns
       },
@@ -4993,17 +5132,17 @@ html, body { text-size-adjust: 100%; }
   }
 
   // src/engine/monsters.js
-  function buildMonster(content3, spec, uid) {
+  function buildMonster(content3, spec2, uid) {
     const M = content3.B.monster;
-    const boss = content3.bosses[spec.id];
-    const arch = content3.monsters[boss ? boss.archetype : spec.id];
-    if (!arch) throw new Error(`unknown monster ${spec.id}`);
-    const rank = boss ? boss.rank : spec.rank ?? "normal";
-    const level = boss ? spec.level ?? boss.level : spec.level;
+    const boss = content3.bosses[spec2.id];
+    const arch = content3.monsters[boss ? boss.archetype : spec2.id];
+    if (!arch) throw new Error(`unknown monster ${spec2.id}`);
+    const rank = boss ? boss.rank : spec2.rank ?? "normal";
+    const level = boss ? spec2.level ?? boss.level : spec2.level;
     const D = content3.B.difficulty ?? {};
-    const dmRaw = Object.hasOwn(D, spec.difficulty ?? "") && D[spec.difficulty].monster || {};
+    const dmRaw = spec2.depth != null && content3.B.depth ? content3.B.depth.monster(spec2.depth) : Object.hasOwn(D, spec2.difficulty ?? "") && D[spec2.difficulty].monster || {};
     const dm = Object.fromEntries(Object.entries(dmRaw).map(([k, v]) => [k, typeof v === "function" ? v(level) : v]));
-    const modifiers = boss ? boss.modifiers ?? [] : spec.modifiers ?? [];
+    const modifiers = boss ? boss.modifiers ?? [] : spec2.modifiers ?? [];
     const rk = M[rank] ?? { life: 1, dmg: 1, xp: 1 };
     const lifeMult = boss ? boss.life ?? 1 : arch.life;
     const dmgMult = boss ? boss.dmg ?? 1 : arch.dmg;
@@ -5014,7 +5153,7 @@ html, body { text-size-adjust: 100%; }
       uid,
       side: "enemies",
       kind: "monster",
-      key: spec.id,
+      key: spec2.id,
       archetype: arch.id,
       rank,
       level,
@@ -5230,9 +5369,11 @@ html, body { text-size-adjust: 100%; }
   }
 
   // src/engine/loot.js
-  function rollMats(content3, rng, level, source) {
+  function rollMats(content3, rng, level, source, boost = 1) {
     const L = content3.B.loot;
-    const [gemChance, runeChance] = L.matChance[source] ?? L.matChance.normal;
+    const [g0, r0] = L.matChance[source] ?? L.matChance.normal;
+    const gemChance = Math.min(1, g0 * boost);
+    const runeChance = Math.min(1, r0 * boost);
     const out = [];
     if (rng.chance(gemChance)) {
       let quality = rng.chance(L.gemQuality2Chance(level)) ? 2 : 1;
@@ -5273,12 +5414,12 @@ html, body { text-size-adjust: 100%; }
     if (rng.chance(L.itemChance[rank] ?? L.itemChance.normal)) {
       const count = (L.itemCount[rank] ?? L.itemCount.normal)(rng);
       for (let i = 0; i < count; i++) {
-        out.items.push(generateItem(content3, rng, { ilvl: mon.level, source: rank, fortune: finder.fortune ?? 0, bossId: ownUniqueFits(content3, mon.key, finder.classId) ? mon.key : void 0, classId: finder.classId, difficulty: finder.difficulty }));
+        out.items.push(generateItem(content3, rng, { ilvl: mon.level, source: rank, fortune: finder.fortune ?? 0, bossId: ownUniqueFits(content3, mon.key, finder.classId) ? mon.key : void 0, classId: finder.classId, difficulty: finder.difficulty, depthFloor: finder.depthFloor, boost: finder.boost }));
       }
     }
     if (rng.chance(L.lifePotionChance)) out.lifePotions++;
     if (rng.chance(L.manaPotionChance)) out.manaPotions++;
-    out.mats = rollMats(content3, rng, mon.level, rank);
+    out.mats = rollMats(content3, rng, mon.level, rank, finder.matBoost ?? 1);
     return out;
   }
   function rollChest(content3, rng, level, finder = {}) {
@@ -5293,9 +5434,9 @@ html, body { text-size-adjust: 100%; }
     };
     const count = L.chest.items(rng);
     for (let i = 0; i < count; i++) {
-      out.items.push(generateItem(content3, rng, { ilvl: level, source: "chest", fortune: finder.fortune ?? 0, classId: finder.classId, difficulty: finder.difficulty }));
+      out.items.push(generateItem(content3, rng, { ilvl: level, source: "chest", fortune: finder.fortune ?? 0, classId: finder.classId, difficulty: finder.difficulty, depthFloor: finder.depthFloor, boost: finder.boost }));
     }
-    out.mats = rollMats(content3, rng, level, "chest");
+    out.mats = rollMats(content3, rng, level, "chest", finder.matBoost ?? 1);
     return out;
   }
 
@@ -5379,10 +5520,10 @@ html, body { text-size-adjust: 100%; }
       critMult: content3.B.hero.critMult,
       // A shield-bearer blocks with the shield it is given (and its training with one), but never less than on its own.
       // On Nightmare and Hell the shield blocks less, as the hero's does; the merc's own block (without a shield) does not.
-      block: type.block > 0 || shield ? clamp3(shield ? Math.max(type.block, (shield.block + (type.shieldSkill ?? 0) + g("block")) * (1 - (content3.B.difficulty[cleanDifficulty(difficulty)].blockPenaltyPct ?? 0) / 100)) : type.block + g("block"), 0, C.maxBlock) : 0,
+      block: type.block > 0 || shield ? clamp3(shield ? Math.max(type.block, (shield.block + (type.shieldSkill ?? 0) + g("block")) * (1 - (rulesOf(content3, difficulty).blockPenaltyPct ?? 0) / 100)) : type.block + g("block"), 0, C.maxBlock) : 0,
       res: { fire: res("resFire"), cold: res("resCold"), lightning: res("resLight"), poison: res("resPoison") },
       physRed: clamp3(g("physRed"), 0, C.maxPhysRed),
-      lifeSteal: clamp3(g("lifeSteal") * (1 - (content3.B.difficulty[cleanDifficulty(difficulty)].leechPenaltyPct ?? 0) / 100), 0, content3.B.hero.maxLifeSteal),
+      lifeSteal: clamp3(g("lifeSteal") * (1 - (rulesOf(content3, difficulty).leechPenaltyPct ?? 0) / 100), 0, content3.B.hero.maxLifeSteal),
       lifeRegen: Math.max(0, g("lifeRegen")),
       added,
       poisonDmg: g("poisonDmg"),
@@ -5512,7 +5653,7 @@ html, body { text-size-adjust: 100%; }
     if (i < 0) return false;
     return i === 0 || !!clearedIn(hero2, difficulty)[content3.zoneOrder[i - 1]];
   }
-  var tag = (spec, d) => d === "normal" ? spec : { ...spec, difficulty: d };
+  var tag = (spec2, d) => d === "normal" ? spec2 : { ...spec2, difficulty: d };
   function rollPack(content3, zone, station, rng, d) {
     const n = content3.B.run.packSize(station, rng);
     const [lo, hi] = zoneLevels(content3, zone, d);
@@ -5568,10 +5709,7 @@ html, body { text-size-adjust: 100%; }
     run2.cards = cards;
     return cards;
   }
-  function startRun(content3, hero2, zoneId, env = LOCAL_ENV) {
-    if (hero2.dead) return { ok: false, error: "hero_fallen" };
-    if (hero2.inRun) return { ok: false, error: "in_raid" };
-    if (!isZoneUnlocked(content3, hero2, zoneId)) return { ok: false, error: "zone_locked" };
+  function setOut(content3, hero2) {
     const s = deriveStats(content3, hero2);
     let mercLife = 0;
     try {
@@ -5594,6 +5732,21 @@ html, body { text-size-adjust: 100%; }
     }
     hero2.reserve = { life: 0, mana: 0 };
     hero2.inRun = true;
+    return {
+      life: s.maxLife,
+      mana: s.maxMana,
+      belt: { life, mana },
+      reserve,
+      // the belt is refilled between stations the way hero.beltPlan says (it cannot change on a raid)
+      // The mercenary comes along if the hero has one that is alive; null otherwise.
+      merc: mercLife > 0 ? { life: mercLife } : null
+    };
+  }
+  function startRun(content3, hero2, zoneId, env = LOCAL_ENV) {
+    if (hero2.dead) return { ok: false, error: "hero_fallen" };
+    if (hero2.inRun) return { ok: false, error: "in_raid" };
+    if (!isZoneUnlocked(content3, hero2, zoneId)) return { ok: false, error: "zone_locked" };
+    const kit = setOut(content3, hero2);
     const run2 = {
       zoneId,
       difficulty: difficultyOf(hero2),
@@ -5601,13 +5754,11 @@ html, body { text-size-adjust: 100%; }
       seed: hero2.raidSeed,
       station: 0,
       played: 0,
-      life: s.maxLife,
-      mana: s.maxMana,
-      belt: { life, mana },
-      reserve,
-      // the belt is refilled between stations the way hero.beltPlan says (it cannot change on a raid)
-      // The mercenary comes along if the hero has one that is alive; null otherwise.
-      merc: mercLife > 0 ? { life: mercLife } : null,
+      life: kit.life,
+      mana: kit.mana,
+      belt: kit.belt,
+      reserve: kit.reserve,
+      merc: kit.merc,
       buffs: [],
       xpPct: 0,
       rested: false,
@@ -5622,8 +5773,11 @@ html, body { text-size-adjust: 100%; }
   function carryOf(run2) {
     return { life: run2.life, mana: run2.mana, belt: run2.belt, buffs: run2.buffs };
   }
+  function fightRules(content3, run2) {
+    return run2.mode === "depth" && content3.B.depth ? { id: "depth", ...content3.B.depth.hero(run2.floor) } : cleanDifficulty(run2.difficulty);
+  }
   function alliesOf(content3, hero2, run2, carry) {
-    const d = cleanDifficulty(run2.difficulty);
+    const d = fightRules(content3, run2);
     const list = [heroCombatant(content3, hero2, { ...carry, difficulty: d })];
     if (run2.merc?.life > 0 && hero2.merc && !hero2.merc.dead) {
       const m = mercCombatant(content3, hero2, run2.merc.life, run2.buffs, d);
@@ -5694,7 +5848,7 @@ html, body { text-size-adjust: 100%; }
       }
     }
   }
-  function endRun(content3, hero2, run2, result, env) {
+  function closeRun(content3, hero2, run2, result, env) {
     run2.over = true;
     run2.result = result;
     run2.cards = [];
@@ -5706,6 +5860,9 @@ html, body { text-size-adjust: 100%; }
     hero2.inRun = false;
     settleBelt(content3, hero2);
     if (run2.played > 0) hero2.raidSeed = env.nextRaidSeed(hero2);
+  }
+  function endRun(content3, hero2, run2, result, env) {
+    closeRun(content3, hero2, run2, result, env);
     const d = cleanDifficulty(run2.difficulty);
     if (result === "death") {
       const R2 = difficultyRules(content3, d);
@@ -5747,6 +5904,7 @@ html, body { text-size-adjust: 100%; }
   }
   function retreat(content3, hero2, run2, env = LOCAL_ENV) {
     if (run2.over) return { ok: false, error: "run_over" };
+    if (run2.mode === "depth") return { ok: false, error: "bad_mode" };
     if (!(hero2.scrolls > 0)) return { ok: false, error: "no_scroll" };
     hero2.scrolls--;
     endRun(content3, hero2, run2, "retreat", env);
@@ -5754,6 +5912,7 @@ html, body { text-size-adjust: 100%; }
   }
   function chooseCard(content3, hero2, run2, index, { record = true } = {}, env = LOCAL_ENV) {
     if (run2.over) return { ok: false, error: "run_over" };
+    if (run2.mode === "depth") return { ok: false, error: "bad_mode" };
     if (!validIndex(run2.cards, index)) return { ok: false, error: "bad_card" };
     const card = run2.cards[index];
     const R2 = content3.B.run;
@@ -6097,8 +6256,385 @@ html, body { text-size-adjust: 100%; }
     return { ok: true, price };
   }
 
+  // src/engine/depth.js
+  var FLOOR_STREAM = 4243;
+  var REWARD_STREAM = 5;
+  function depthUnlocked(content3, hero2) {
+    return !!clearedIn(hero2, "normal")[finalZone(content3)];
+  }
+  var UNCLAIMED_MAX = 40;
+  var DEPTH_V = 2;
+  function cleanDepth(raw, content3 = null) {
+    const d = raw && typeof raw === "object" && !Array.isArray(raw) ? raw : {};
+    const whole = (v) => Number.isFinite(v) ? Math.max(0, Math.floor(v)) : 0;
+    const deepest = Math.min(whole(d.deepest), 9999);
+    const paidTo = d.v === DEPTH_V ? Math.min(whole(d.paidTo), 9999) : deepest >= 10 ? Math.floor(deepest / 10) * 10 + 1 : 0;
+    const items = Array.isArray(d.unclaimed) ? d.unclaimed : [];
+    const unclaimed = items.filter((it) => it && typeof it === "object" && !Array.isArray(it) && typeof it.base === "string").map((it) => content3 ? cleanItem(content3, it) : it).filter(Boolean).slice(0, UNCLAIMED_MAX);
+    return {
+      v: DEPTH_V,
+      deepest,
+      deepestAt: Number.isFinite(d.deepestAt) && d.deepestAt > 0 ? d.deepestAt : null,
+      descents: whole(d.descents),
+      seen: !!d.seen,
+      paidTo,
+      unclaimed
+    };
+  }
+  function depthOf(hero2) {
+    return cleanDepth(hero2?.depth);
+  }
+  var isMilestone = (content3, f) => Number.isInteger(f) && f > 1 && (f - 1) % content3.B.depth.milestoneEvery === 0;
+  var nextLanding = (content3, f) => {
+    const every = content3.B.depth.checkpointEvery;
+    return Math.floor((Math.max(1, Math.floor(f)) - 1) / every + 1) * every + 1;
+  };
+  function cleanFloor(content3, f) {
+    return Math.max(1, Math.min(content3.B.depth.floorCap, Math.floor(Number(f)) || 1));
+  }
+  function checkpoints(content3, hero2) {
+    const every = content3.B.depth.checkpointEvery;
+    const deepest = depthOf(hero2).deepest;
+    const out = [1];
+    for (let f = every + 1; f <= deepest; f += every) out.push(f);
+    return out;
+  }
+  function floorLevel(content3, f) {
+    return content3.B.depth.level(cleanFloor(content3, f));
+  }
+  var isBossFloor = (content3, f) => cleanFloor(content3, f) % content3.B.depth.bossEvery === 0;
+  var floorZones = (content3) => content3.zoneOrder.slice(2);
+  var bossZones = (content3) => content3.zoneOrder.filter((z) => (content3.zones[z].act ?? 1) >= 3);
+  function floorPlan(content3, seed, floor) {
+    const f = cleanFloor(content3, floor);
+    const rng = createRng(seedFrom(seed >>> 0, f, FLOOR_STREAM));
+    const boss = isBossFloor(content3, f);
+    if (boss) {
+      const zoneId = rng.pick(bossZones(content3));
+      return { floor: f, boss: true, steps: rng.int(1, 2) + 1, zoneId, bossId: content3.zones[zoneId].boss };
+    }
+    return { floor: f, boss: false, steps: content3.B.depth.steps(rng), zoneId: rng.pick(floorZones(content3)) };
+  }
+  function floorRules(content3, f) {
+    return { id: "depth", ...content3.B.depth.hero(cleanFloor(content3, f)) };
+  }
+  function finderOf(content3, hero2, f) {
+    const sheet = deriveStats(content3, hero2, floorRules(content3, f));
+    const P = content3.B.depth;
+    return { ...sheet, difficulty: P.lootDifficulty(f), depthFloor: f, boost: P.rarity(f), matBoost: P.matBoost(f) };
+  }
+  var spec = (id, level, rank, f, extra = {}) => ({ id, level, rank, depth: f, ...extra });
+  function rollPack2(content3, zone, f, rng) {
+    const L = floorLevel(content3, f);
+    const n = content3.B.depth.packSize(f, rng);
+    const out = [];
+    for (let i = 0; i < n; i++) out.push(spec(rng.weighted(zone.monsters).id, rng.int(L - 1, L), "normal", f));
+    return out;
+  }
+  function rollChampion2(content3, zone, f, rng) {
+    const L = floorLevel(content3, f);
+    const out = [spec(rng.weighted(zone.monsters).id, L, "champion", f, { modifiers: [rng.pick(Object.keys(content3.modifiers))] })];
+    const minions = content3.B.run.championMinions(rng);
+    for (let i = 0; i < minions; i++) out.push(spec(rng.weighted(zone.monsters).id, rng.int(L - 1, L), "normal", f));
+    return out;
+  }
+  function bossCard2(content3, plan) {
+    const f = plan.floor;
+    const L = floorLevel(content3, f);
+    const zone = content3.zones[plan.zoneId];
+    const specs = [{ id: plan.bossId, level: L, depth: f }];
+    for (let i = 0; i < (zone.bossMinionCount ?? content3.B.run.bossMinions); i++) specs.push(spec(zone.bossMinions, L - 1, "normal", f));
+    return { type: "boss", encounter: specs };
+  }
+  function drawDepthCards(content3, run2, rng) {
+    const P = content3.B.depth;
+    const R2 = content3.B.run;
+    const plan = floorPlan(content3, run2.seed, run2.floor);
+    const zone = content3.zones[plan.zoneId];
+    if (plan.boss && run2.step >= plan.steps - 1) {
+      run2.cards = [bossCard2(content3, plan)];
+      return run2.cards;
+    }
+    const all = Object.entries(P.cardWeights);
+    const fightsOnly = all.filter(([type]) => type === "pack" || type === "champion");
+    let peaceful = run2.rested || run2.played === 0 ? 1 : 0;
+    const cards = [];
+    for (let i = 0; i < R2.cardsPerStation; i++) {
+      const type = rng.weighted(peaceful ? fightsOnly : all, (e) => e[1])[0];
+      if (type === "pack") cards.push({ type, encounter: rollPack2(content3, zone, run2.floor, rng) });
+      else if (type === "champion") cards.push({ type, encounter: rollChampion2(content3, zone, run2.floor, rng) });
+      else {
+        peaceful++;
+        if (type === "chest") cards.push({ type });
+        else cards.push({ type: "shrine", shrine: rng.pick(Object.keys(R2.shrines)) });
+      }
+    }
+    run2.cards = cards;
+    return cards;
+  }
+  function enterFloor(content3, run2, f) {
+    const plan = floorPlan(content3, run2.seed, f);
+    run2.floor = plan.floor;
+    run2.step = 0;
+    run2.steps = plan.steps;
+    run2.boss = plan.boss;
+    run2.zoneId = plan.zoneId;
+    run2.buffs = (run2.buffs ?? []).filter((b) => !(b.until < run2.floor));
+    if (run2.xpUntil != null && run2.xpUntil < run2.floor) {
+      run2.xpPct = 0;
+      run2.xpUntil = null;
+    }
+  }
+  function reachFloor(content3, hero2, run2, f, env) {
+    var _a;
+    const P = content3.B.depth;
+    const d = cleanDepth(hero2.depth, content3);
+    hero2.depth = d;
+    if (f <= d.deepest) return null;
+    d.deepest = f;
+    d.deepestAt = (env.now ?? Date.now)();
+    run2.gained.deepest = f;
+    if (!isMilestone(content3, f) || f <= d.paidTo) return null;
+    d.paidTo = f;
+    const rng = env.rngFor(run2, REWARD_STREAM, f);
+    const gold = P.rewardGold(f, hero2.level);
+    const item = generateItem(content3, rng, { ilvl: floorLevel(content3, f), forceRarity: P.rewardRarity(f), classId: hero2.classId, difficulty: P.lootDifficulty(f), depthFloor: f, source: "actBoss" });
+    const reward = { floor: f, gold, item: publicItem(item), waiting: false };
+    if (!addToBag(content3, hero2, item)) {
+      d.unclaimed.push(item);
+      reward.waiting = true;
+    }
+    hero2.gold += gold;
+    ((_a = run2.gained).rewards ?? (_a.rewards = [])).push(reward);
+    return reward;
+  }
+  function claimDepthRewards(content3, hero2, chest = null, chestSize = 0) {
+    const out = { bag: [], chest: [], waiting: 0 };
+    if (!hero2 || !hero2.depth) return out;
+    const d = cleanDepth(hero2.depth, content3);
+    hero2.depth = d;
+    if (hero2.inRun || hero2.dead) {
+      out.waiting = d.unclaimed.length;
+      return out;
+    }
+    while (d.unclaimed.length) {
+      const it = d.unclaimed[0];
+      if (addToBag(content3, hero2, it)) out.bag.push(it);
+      else if (Array.isArray(chest) && chest.length < chestSize) {
+        chest.push(it);
+        out.chest.push(it);
+      } else break;
+      d.unclaimed.shift();
+    }
+    out.waiting = d.unclaimed.length;
+    return out;
+  }
+  function startDepth(content3, hero2, floor = 1, env = LOCAL_ENV) {
+    if (hero2.dead) return { ok: false, error: "hero_fallen" };
+    if (hero2.inRun) return { ok: false, error: "in_raid" };
+    if (!depthUnlocked(content3, hero2)) return { ok: false, error: "depth_locked" };
+    const f = floor;
+    if (!Number.isInteger(f) || !checkpoints(content3, hero2).includes(f)) return { ok: false, error: "bad_floor" };
+    if (!(hero2.scrolls > 0)) return { ok: false, error: "no_scroll" };
+    const kit = setOut(content3, hero2);
+    hero2.depth = cleanDepth(hero2.depth, content3);
+    hero2.depth.seen = true;
+    const run2 = {
+      mode: "depth",
+      zoneId: null,
+      // the place the floor looks like (enterFloor)
+      difficulty: difficultyOf(hero2),
+      // only kept so the hero's own choice comes back unchanged; the floors set the rules
+      seed: hero2.raidSeed,
+      station: 0,
+      // hands played on this descent (the random streams follow it, as a raid's stations)
+      played: 0,
+      startFloor: f,
+      floor: f,
+      step: 0,
+      steps: 1,
+      boss: false,
+      life: kit.life,
+      mana: kit.mana,
+      belt: kit.belt,
+      reserve: kit.reserve,
+      merc: kit.merc,
+      buffs: [],
+      xpPct: 0,
+      rested: false,
+      over: false,
+      result: null,
+      gained: { xp: 0, gold: 0, items: 0, leftBehind: 0, levels: 0, mats: [], floors: 0, rewards: [], deepest: 0 },
+      cards: []
+    };
+    enterFloor(content3, run2, f);
+    reachFloor(content3, hero2, run2, f, env);
+    drawDepthCards(content3, run2, env.rngFor(run2, STREAM.cards));
+    return { ok: true, run: run2 };
+  }
+  function endDepth(content3, hero2, run2, result, env) {
+    closeRun(content3, hero2, run2, result, env);
+    const P = content3.B.depth;
+    const g = run2.gained;
+    if (result === "death") {
+      const fresh = hero2.bag.filter((it) => it.fresh);
+      g.itemsLost = fresh.map(publicItem);
+      g.itemKept = null;
+      hero2.bag = hero2.bag.filter((it) => !it.fresh);
+      for (const id of g.mats ?? []) {
+        if (hero2.mats?.[id] > 0) hero2.mats[id]--;
+        if (hero2.mats?.[id] === 0) delete hero2.mats[id];
+      }
+      g.matsLost = (g.mats ?? []).length;
+      const loss = P.deathLoss(run2.floor);
+      const found = Math.min(hero2.gold, g.gold);
+      hero2.gold -= found;
+      const share = Math.floor(hero2.gold * loss.gold / 100);
+      hero2.gold -= share;
+      g.goldFoundLost = found;
+      g.goldLost = found + share;
+      const xpLost = Math.min(hero2.xp, Math.floor(content3.B.xp.toNext(hero2.level) * loss.xp / 100));
+      hero2.xp -= xpLost;
+      g.xpLost = xpLost;
+      g.lossPct = loss;
+      if (hero2.hardcore) hero2.dead = true;
+    }
+    for (const it of hero2.bag) delete it.fresh;
+    g.lastFloor = run2.floor;
+    hero2.depth = cleanDepth(hero2.depth, content3);
+    hero2.depth.descents++;
+    const got = claimDepthRewards(content3, hero2);
+    if (got.bag.length) g.claimed = { bag: got.bag.length, chest: 0 };
+  }
+  function retreatDepth(content3, hero2, run2, env = LOCAL_ENV) {
+    if (run2.over) return { ok: false, error: "run_over" };
+    if (run2.mode !== "depth") return { ok: false, error: "bad_mode" };
+    if (!(hero2.scrolls > 0)) return { ok: false, error: "no_scroll" };
+    hero2.scrolls--;
+    endDepth(content3, hero2, run2, "retreat", env);
+    return { ok: true };
+  }
+  function chooseDepthCard(content3, hero2, run2, index, { record = true } = {}, env = LOCAL_ENV) {
+    if (run2.over) return { ok: false, error: "run_over" };
+    if (run2.mode !== "depth") return { ok: false, error: "bad_mode" };
+    if (!validIndex(run2.cards, index)) return { ok: false, error: "bad_card" };
+    const card = run2.cards[index];
+    const R2 = content3.B.run;
+    const P = content3.B.depth;
+    const known = FIGHT_TYPES.includes(card.type) || card.type === "chest" || card.type === "shrine" && Object.hasOwn(R2.shrines, card.shrine);
+    if (!known) return { ok: false, error: "bad_card" };
+    run2.played++;
+    const f = run2.floor;
+    const rng = env.rngFor(run2, STREAM.play);
+    const lootRng = rng.fork();
+    let finder = finderOf(content3, hero2, f);
+    const loot = { gold: 0, items: [], leftBehind: [], potions: { life: 0, mana: 0 }, mats: [] };
+    const result = { ok: true, type: card.type, outcome: "done", events: [], loot, xp: 0, levels: 0, floor: f };
+    if (FIGHT_TYPES.includes(card.type)) {
+      const allies = alliesOf(content3, hero2, run2, carryOf(run2));
+      const heroC = allies[0];
+      const mercC = allies[1] ?? null;
+      const enemies = buildEncounter(content3, card.encounter);
+      if (record) {
+        result.units = [...allies, ...enemies].map((u) => ({
+          uid: u.uid,
+          side: u.side,
+          kind: u.kind,
+          key: u.key,
+          rank: u.rank,
+          level: u.level,
+          modifiers: u.modifiers ?? [],
+          maxLife: u.maxLife,
+          life: Math.round(u.life),
+          maxMana: u.maxMana,
+          mana: Math.round(u.mana)
+        }));
+      }
+      const fight = simulateCombat({ allies, enemies, rng, B: content3.B, record });
+      result.events = fight.events;
+      result.outcome = fight.outcome;
+      run2.belt = { life: heroC.potions.life, mana: heroC.potions.mana };
+      run2.rested = false;
+      if (mercC) {
+        if (mercC.life <= 0) {
+          run2.merc.life = 0;
+          hero2.merc.dead = true;
+          result.mercFell = true;
+        } else run2.merc.life = Math.max(1, Math.round(mercC.life));
+      }
+      if (fight.outcome === "loss") {
+        run2.life = 0;
+        endDepth(content3, hero2, run2, "death", env);
+        return result;
+      }
+      run2.life = Math.max(1, Math.round(heroC.life));
+      run2.mana = Math.max(0, Math.round(heroC.mana));
+      if (fight.outcome === "timeout") {
+        endDepth(content3, hero2, run2, "retreat", env);
+        return result;
+      }
+      let xp = 0;
+      for (const m of enemies) {
+        xp += m.xp * content3.B.xp.levelPenalty(hero2.level, m.level);
+        takeLoot(content3, hero2, run2, rollMonsterDrops(content3, lootRng, m, finder), loot);
+      }
+      xp = Math.round(xp * (1 + run2.xpPct / 100));
+      result.xp = xp;
+      run2.gained.xp += xp;
+      const levels = grantXp(content3, hero2, xp);
+      if (levels > 0) {
+        result.levels = levels;
+        run2.gained.levels += levels;
+        finder = finderOf(content3, hero2, f);
+        run2.life = finder.maxLife;
+        run2.mana = finder.maxMana;
+        if (run2.merc?.life > 0) run2.merc.life = mercSheet(content3, hero2).maxLife;
+      }
+      if (card.type === "boss") result.bossDown = card.encounter[0]?.id ?? null;
+    } else if (card.type === "chest") {
+      takeLoot(content3, hero2, run2, rollChest(content3, lootRng, floorLevel(content3, f), finder), loot);
+      run2.rested = true;
+    } else {
+      const sh = R2.shrines[card.shrine];
+      result.shrine = card.shrine;
+      if (sh.heal) {
+        run2.life = Math.min(finder.maxLife, Math.round(run2.life + finder.maxLife * sh.heal / 100));
+        run2.mana = Math.min(finder.maxMana, Math.round(run2.mana + finder.maxMana * sh.heal / 100));
+        healMerc(content3, hero2, run2, sh.heal);
+      }
+      const until = f + P.buffFloors - 1;
+      if (sh.buff) {
+        const id = `shrine_${card.shrine}`;
+        const had = run2.buffs.find((b) => b.id === id);
+        if (had) had.until = Math.max(had.until ?? 0, until);
+        else run2.buffs.push({ id, mods: { ...sh.buff }, until });
+      }
+      if (sh.xpPct) {
+        run2.xpPct = Math.max(run2.xpPct, sh.xpPct);
+        run2.xpUntil = until;
+      }
+      run2.rested = true;
+    }
+    run2.station++;
+    run2.step++;
+    if (run2.step >= run2.steps) {
+      enterFloor(content3, run2, f + 1);
+      run2.gained.floors++;
+      result.floorReached = run2.floor;
+      const reward = reachFloor(content3, hero2, run2, run2.floor, env);
+      if (reward) result.milestone = reward;
+    }
+    run2.reserve ?? (run2.reserve = { life: 0, mana: 0 });
+    refillBelt(run2.belt, run2.reserve, syncBeltPlan(content3, hero2));
+    run2.life = Math.min(finder.maxLife, Math.round(run2.life + finder.maxLife * R2.betweenStationsHealPct / 100));
+    run2.mana = Math.min(finder.maxMana, Math.round(run2.mana + finder.maxMana * R2.betweenStationsManaPct / 100));
+    healMerc(content3, hero2, run2, R2.betweenStationsHealPct);
+    drawDepthCards(content3, run2, env.rngFor(run2, STREAM.cards));
+    return result;
+  }
+
   // src/client/version.js
-  var CONTENT_VERSION = 1;
+  var CONTENT_VERSION = 2;
   var contentVersionOf = (save) => save && typeof save === "object" && Number.isFinite(save.contentVersion) ? save.contentVersion : 0;
 
   // src/client/sync.js
@@ -6668,6 +7204,16 @@ html, body { text-size-adjust: 100%; }
     hero2.difficulty = cleanDifficulty(hero2.difficulty);
     if (!isDifficultyUnlocked(content, hero2, hero2.difficulty)) hero2.difficulty = highestDifficulty(content, hero2);
     if (!DIFFICULTIES.includes(hero2.diffSeen) || !isDifficultyUnlocked(content, hero2, hero2.diffSeen)) hero2.diffSeen = hero2.difficulty;
+    hero2.depth = cleanDepth(hero2.depth, content);
+    if (run2 && run2.mode === "depth") {
+      run2.floor = cleanFloor(content, run2.floor);
+      const plan = floorPlan(content, Number(run2.seed) >>> 0, run2.floor);
+      run2.steps = plan.steps;
+      run2.boss = plan.boss;
+      run2.step = Math.max(0, Math.min(plan.steps - 1, Math.floor(Number(run2.step)) || 0));
+      run2.startFloor = cleanFloor(content, run2.startFloor ?? run2.floor);
+      run2.gained = { floors: 0, rewards: [], deepest: 0, ...run2.gained ?? {} };
+    } else if (run2 && run2.mode != null) delete run2.mode;
     if (run2) {
       run2.difficulty = cleanDifficulty(run2.difficulty);
       if (!run2.over) hero2.difficulty = run2.difficulty;
@@ -6806,6 +7352,7 @@ html, body { text-size-adjust: 100%; }
     };
     activate(state.active);
     const save = () => {
+      settleDepthRewards();
       if (state.active != null && state.hero) state.slots[state.active] = { hero: state.hero, run: state.run, name: state.name, seenCamp: state.seenCamp };
       if (frozen) return;
       try {
@@ -6827,6 +7374,16 @@ html, body { text-size-adjust: 100%; }
       }
     }
     const chestItems = () => state.hero?.hardcore ? state.hcStash : state.stash;
+    function settleDepthRewards() {
+      const h = state.hero;
+      if (!h || h.inRun || h.dead || !h.depth?.unclaimed?.length) return;
+      const got = claimDepthRewards(content, h, h.hardcore ? state.hcStash : state.stash, STASH_SIZE);
+      const r = state.run;
+      if (r?.over && r.mode === "depth" && r.gained && (got.bag.length || got.chest.length)) {
+        const c = r.gained.claimed ?? { bag: 0, chest: 0 };
+        r.gained.claimed = { bag: c.bag + got.bag.length, chest: c.chest + got.chest.length };
+      }
+    }
     const chestMats = () => state.hero?.hardcore ? state.hcStashMats : state.stashMats;
     const setChestMats = (m) => {
       if (state.hero?.hardcore) state.hcStashMats = m;
@@ -7203,17 +7760,46 @@ html, body { text-size-adjust: 100%; }
       }),
       choose(index) {
         if (!state.hero || inCamp()) return { ok: false, error: "no_raid" };
-        const res = chooseCard(content, state.hero, state.run, index);
+        const res = state.run.mode === "depth" ? chooseDepthCard(content, state.hero, state.run, index) : chooseCard(content, state.hero, state.run, index);
         estimateCards();
         save();
         return res;
       },
       retreat() {
         if (!state.hero || inCamp()) return { ok: false, error: "no_raid" };
-        const res = retreat(content, state.hero, state.run);
+        const res = state.run.mode === "depth" ? retreatDepth(content, state.hero, state.run) : retreat(content, state.hero, state.run);
         save();
         return res;
       },
+      // ---------------- the Depths (entered from the Waystone once Normal is beaten) ----------------
+      depthUnlocked: () => !!state.hero && depthUnlocked(content, state.hero),
+      /** The hero's record: deepest floor and when, descents, the floors a descent may start from, the next milestone. */
+      depthInfo() {
+        if (!state.hero) return null;
+        const d = depthOf(state.hero);
+        const every = content.B.depth.milestoneEvery;
+        const { unclaimed, ...rest } = d;
+        return { ...rest, waiting: unclaimed.length, unlocked: depthUnlocked(content, state.hero), checkpoints: checkpoints(content, state.hero), nextMilestone: nextLanding(content, Math.max(d.paidTo, d.deepest)), every };
+      },
+      /** The Depths was opened and looked at (the camp stops pointing at it). */
+      markDepthSeen() {
+        if (!state.hero || state.hero.dead || !depthUnlocked(content, state.hero) || depthOf(state.hero).seen) return;
+        state.hero.depth = { ...depthOf(state.hero), seen: true };
+        save();
+      },
+      /** A floor's numbers, for the screens: monster level, the hero's losses there (resistance…), boss or not. */
+      depthFloor: (f) => {
+        const L = floorLevel(content, f);
+        return { floor: cleanFloor(content, f), level: L, levelLo: Math.max(1, L - 1), boss: isBossFloor(content, f), rules: floorRules(content, f), death: content.B.depth.deathLoss(cleanFloor(content, f)) };
+      },
+      startDepth: campOnly((floor) => {
+        const res = startDepth(content, state.hero, Number(floor));
+        if (res.ok) {
+          state.run = res.run;
+          estimateCards();
+        }
+        return res;
+      }),
       leaveRun() {
         if (state.run?.over) state.run = null;
         save();
@@ -7639,7 +8225,13 @@ html, body { text-size-adjust: 100%; }
       cave_mother_hide: "Cave Mother's Hide",
       frostfire_brand: "Frostfire Brand",
       ancients_crown: "Ancients' Crown",
-      primal_shard: "Shard of the Primal Curse"
+      primal_shard: "Shard of the Primal Curse",
+      deepwalker_treads: "Deepwalker Treads",
+      bottomless_band: "The Bottomless Band",
+      last_torch: "The Last Torch",
+      stairwarden_ward: "Stairwarden's Ward",
+      cathedral_shroud: "Cathedral Shroud",
+      crown_of_the_deep: "Crown of the Deep"
     },
     set: { cinderwalker: "Cinderwalker's Garb", saltborn: "Saltborn Garb", mirewarden: "Mirewarden's Armor", hellwalker: "Hellwalker's Harness", winterking: "Winter King's Regalia" },
     setPiece: { cinderwalker_grips: "Cinderwalker's Grips", cinderwalker_treads: "Cinderwalker's Treads", cinderwalker_girdle: "Cinderwalker's Girdle", saltborn_veil: "Saltborn Veil", saltborn_wraps: "Saltborn Wraps", saltborn_sash: "Saltborn Sash", mirewarden_helm: "Mirewarden's Helm", mirewarden_greaves: "Mirewarden's Greaves", mirewarden_ward: "Mirewarden's Ward", hellwalker_plate: "Hellwalker's Plate", hellwalker_grips: "Hellwalker's Grips", hellwalker_band: "Hellwalker's Band", winterking_crown: "Winter King's Crown", winterking_mail: "Winter King's Mail", winterking_seal: "Winter King's Seal" },
@@ -8182,7 +8774,13 @@ html, body { text-size-adjust: 100%; }
       cave_mother_hide: "A Barlanganya b\u0151re",
       frostfire_brand: "Fagyt\u0171zpenge",
       ancients_crown: "Az \u0151s\xF6k koron\xE1ja",
-      primal_shard: "Az \u0150s\xE1tok szil\xE1nkja"
+      primal_shard: "Az \u0150s\xE1tok szil\xE1nkja",
+      deepwalker_treads: "M\xE9lyj\xE1r\xF3 csizma",
+      bottomless_band: "A feneketlen gy\u0171r\u0171",
+      last_torch: "Az utols\xF3 f\xE1klya",
+      stairwarden_ward: "A L\xE9pcs\u0151\u0151r pajzsa",
+      cathedral_shroud: "A katedr\xE1lis lepele",
+      crown_of_the_deep: "A M\xE9lys\xE9g koron\xE1ja"
     },
     set: { cinderwalker: "A Pernyej\xE1r\xF3 \xF6lt\xF6z\xE9ke", saltborn: "A S\xF3v\xE1ndor \xF6lt\xF6z\xE9ke", mirewarden: "A L\xE1p\u0151r v\xE9rtezete", hellwalker: "A Pokolj\xE1r\xF3 p\xE1nc\xE9lzata", winterking: "A T\xE9lkir\xE1ly \xE9kess\xE9gei" },
     setPiece: { cinderwalker_grips: "A Pernyej\xE1r\xF3 keszty\u0171je", cinderwalker_treads: "A Pernyej\xE1r\xF3 csizm\xE1ja", cinderwalker_girdle: "A Pernyej\xE1r\xF3 \xF6ve", saltborn_veil: "A S\xF3v\xE1ndor f\xE1tyla", saltborn_wraps: "A S\xF3v\xE1ndor keszty\u0171je", saltborn_sash: "A S\xF3v\xE1ndor \xF6ve", mirewarden_helm: "A L\xE1p\u0151r sisakja", mirewarden_greaves: "A L\xE1p\u0151r l\xE1bv\xE9rtje", mirewarden_ward: "A L\xE1p\u0151r pajzsa", hellwalker_plate: "A Pokolj\xE1r\xF3 v\xE9rtje", hellwalker_grips: "A Pokolj\xE1r\xF3 keszty\u0171je", hellwalker_band: "A Pokolj\xE1r\xF3 gy\u0171r\u0171je", winterking_crown: "A T\xE9lkir\xE1ly koron\xE1ja", winterking_mail: "A T\xE9lkir\xE1ly p\xE1nc\xE9lja", winterking_seal: "A T\xE9lkir\xE1ly pecs\xE9tje" },
@@ -8508,6 +9106,63 @@ html, body { text-size-adjust: 100%; }
         merc: '"A good sword is costly. A bad one costs more."'
       }
     },
+    depth: {
+      name: "The Depths",
+      mark: "Depths",
+      tabChapters: "Chapters",
+      newTag: "New!",
+      recordShort: "Deepest: {n}",
+      say: '"The stair goes down. Nobody has ever reached the bottom."',
+      intro: "A stair that never ends. Every floor down holds stronger monsters, and better loot. Every {every}th floor ends with a boss guarding the way on.",
+      record: "The deepest floor you have reached",
+      recordWhen: "{when} \xB7 trips down so far: {times}",
+      noRecord: "You have not been down yet.",
+      noRecordInfo: "Your first trip down starts on floor 1.",
+      whenUnknown: "date unknown",
+      startFrom: "Where do you start?",
+      floorN: "Floor {n}",
+      monLevel: "level {lo}\u2013{lvl} monsters",
+      pickInfo: "Level {lo}\u2013{lvl} monsters wait here: every resistance you have is \u2212{res}%, and life steal, healing and blocking are weaker too.",
+      pickInfoFirst: "Level {lo}\u2013{lvl} monsters wait here. Further down your resistances, life steal, healing and blocking all get weaker.",
+      go: "Go down to floor {floor}",
+      scrolls: "Scrolls on you: {n}",
+      noScroll: "You cannot go down without a Homeward Scroll: it is the only way back up.",
+      toMerchant: "To the merchant",
+      ruleCheckpoint: "After every {every}th floor comes a landing: next time you can start from there.",
+      nextMilestone: "Next milestone: floor {n}. The first time you get there, you get gold and a guaranteed rare item.",
+      nextMilestoneUnique: "Next milestone: floor {n}. The first time you get there, you get gold and a guaranteed unique item.",
+      ruleRetreat: "Between two fights you can go home with a Homeward Scroll at any time and keep everything you found.",
+      ruleDeath: "If you fall down there, everything you found on that trip stays below \u2013 items, gems, runes and gold too \u2013, and you lose {gold}% of the gold you carry and {xp}% of a level's experience. Milestone items stay yours.",
+      ruleDeathDeeper: "From floor {n} on it is {gold}% and {xp}%.",
+      ruleHc: "A hardcore hero falls for good here too.",
+      where: "The Depths \xB7 {zone}",
+      handOf: "Step {n} of {max} on this floor",
+      deepestNow: "Deepest: {n}",
+      nextCheckpoint: "Next landing: {n}",
+      nextCheckpointHad: "Next landing: {n} (already yours)",
+      bossAhead: "A boss waits at the end of this floor",
+      bossNow: "The boss is here!",
+      activeBuffs: "Blessed:",
+      buffUntil: "(until floor {n})",
+      retreatConfirm: "Go home from the Depths? You keep everything you found. Next time you can start from any landing you have reached.",
+      floorDown: "Further down: floor {n}",
+      newRecord: "New record!",
+      checkpointNew: "This floor is a landing now: next time you can start here.",
+      milestone: "Milestone: floor {n}!",
+      milestoneGold: "You have never been this deep before. Your reward: {gold} gold and this item:",
+      milestoneWaiting: "It did not fit in your bag, so it waits for you in camp.",
+      waiting: "Your reward is waiting in camp: make room in your bag or your chest.",
+      claimedBag: "The milestone item is in your bag now.",
+      claimedChest: "The milestone item went into your chest, as your bag was full.",
+      celebrate: "Floor {n}!",
+      result_death: "The Depths took you",
+      result_retreat: "Back in camp",
+      lostAll: "Everything you found on this trip stays below.",
+      lostAllList: "Everything you found on this trip stays below: {list}.",
+      retreatInfo: "You brought home everything you found down there.",
+      rewardsKept: "The milestone items stay yours ({n}).",
+      summary: "This trip: floor {from} \u2192 {to} (deepest: {deepest}) \xB7 {xp} experience, {gold} gold, {items} items."
+    },
     celebrate: { level: "Level {v}", cleared: "Cleared", fallen: "Defeated", nightmare: "Nightmare is open!", hell: "Hell is open!" },
     diff: {
       title: "Difficulty",
@@ -8714,7 +9369,8 @@ html, body { text-size-adjust: 100%; }
       ready: "All set. Pick a zone on the Waystone.",
       first: "Welcome to the camp. The Cinder Road is waiting \u2013 set out when you are ready.",
       newNightmare: "Nightmare is open! Pick it at the Waystone.",
-      newHell: "Hell is open! Pick it at the Waystone."
+      newHell: "Hell is open! Pick it at the Waystone.",
+      newDepth: "The Depths is open! You find it at the Waystone \u2013 have a look before you go down."
     },
     equipment: "Equipped",
     bag: "Bag ({n}/{max})",
@@ -8796,7 +9452,10 @@ html, body { text-size-adjust: 100%; }
       bad_tactics: "The battle order holds four rows at most.",
       bad_row: "That row cannot move there.",
       bad_merc: "There is no such mercenary.",
-      bad_option: "That setting is not available."
+      bad_option: "That setting is not available.",
+      depth_locked: "The Depths is still closed: beat the Primal Curse on Normal first.",
+      bad_floor: "You cannot start from that floor yet.",
+      bad_mode: "That does not work right now."
     },
     skillLevel: "{n}/{max}",
     skillReq: "From level {v}",
@@ -9189,6 +9848,8 @@ html, body { text-size-adjust: 100%; }
         line: "{gold} gold \xB7 bag: {bag} items \xB7 {mats} gems and runes \xB7 unspent: {attr} attribute and {skill} skill points",
         cleared: "Cleared",
         inRaid: "on a raid now: {zone}",
+        inDepth: "in the Depths right now",
+        deepest: "Depths: floor {n}",
         merc: "Mercenary",
         noGear: "Wears nothing."
       },
@@ -9213,7 +9874,10 @@ html, body { text-size-adjust: 100%; }
         sync_conflict: "Save conflict",
         sync_outdated: "Old version",
         sync_rejected: "Save refused",
-        admin_edit: "Admin change"
+        admin_edit: "Admin change",
+        depth_start: "Depths: descent",
+        depth_floor: "Depths: floor",
+        depth_end: "Depths: end"
       },
       ev: {
         who: "{name} ({cls}, lvl {lvl}{hc})",
@@ -9238,6 +9902,13 @@ html, body { text-size-adjust: 100%; }
         sync_outdated: "{name}: plays an older version of the game, the save does not go up",
         sync_rejected: "{name}: the server refused the save",
         admin_edit: "{who} \u2013 admin change: {what}",
+        depthAt: "the Depths (floor {floor})",
+        depth_start: "{who} went down into the Depths from floor {floor} (deepest so far: {deepest})",
+        depth_floor: "{who} reached floor {floor} of the Depths",
+        depth_floorReward: "{who} reached floor {floor} of the Depths \u2013 milestone, {gold} gold reward",
+        depth_end_death: "{who} perished in the Depths (floor {floor}, deepest: {deepest})",
+        depth_end_retreat: "{who} came home from the Depths (floor {floor}, deepest: {deepest}; +{xp} XP, +{gold} gold, {items} items)",
+        depth_end_timeout: "{who} pulled out of a drawn-out fight in the Depths (floor {floor}, deepest: {deepest})",
         other: "{name}: {kind}"
       },
       op: {
@@ -9276,6 +9947,7 @@ html, body { text-size-adjust: 100%; }
       hero: {
         none: "No hero is picked. Pick one of your heroes and edit it here.",
         inRaid: "Your hero is on a raid ({zone}). Meanwhile you can only heal, set gold and scrolls, and end the raid.",
+        inDepth: "Your hero is down in the Depths (floor {floor}). Meanwhile you can only heal, set gold and scrolls, and end the descent.",
         deadNote: "This hero has fallen. Revive it before changing anything.",
         head: "XP: {xp} / {next} \xB7 {gold} gold \xB7 unspent: {attr} attribute and {skill} skill points \xB7 life: {life} \xB7 scrolls: {scrolls}",
         levelTitle: "Level, experience, gold",
@@ -9297,12 +9969,15 @@ html, body { text-size-adjust: 100%; }
         unlockAsk: "Open {diff}? Every zone of the difficulties before it will count as cleared.",
         lifeTitle: "Healing and raid",
         healRaid: "Full heal (on the raid)",
+        healDepth: "Full heal (down in the Depths)",
         healMerc: "Revive the mercenary",
         revive: "Revive",
         reviveAsk: "Revive the hero?",
         reviveHc: "This is a hardcore hero who fell for good. In the game that cannot be undone \u2013 revive only for testing. Revive anyway?",
         endRaid: "End the raid",
         endRaidAsk: "End the raid? It ends like going home: the loot stays, no scroll is used.",
+        endDepth: "End the descent",
+        endDepthAsk: "End the descent? It ends like going home: what was found stays, no scroll is used.",
         newCards: "New cards on the next raid",
         potTitle: "Belt and reserve",
         beltLife: "Belt: life",
@@ -9451,6 +10126,63 @@ html, body { text-size-adjust: 100%; }
         merchant: "\u201EArany ide, port\xE9ka oda. Mit adhatok?\u201D",
         merc: "\u201EA j\xF3 kard dr\xE1ga. A rossz m\xE9g dr\xE1g\xE1bb.\u201D"
       }
+    },
+    depth: {
+      name: "A M\xE9lys\xE9g",
+      mark: "M\xE9lys\xE9g",
+      tabChapters: "Fejezetek",
+      newTag: "\xDAj!",
+      recordShort: "Legm\xE9lyebb: {n}.",
+      say: "\u201EA l\xE9pcs\u0151 lefel\xE9 visz. Az alj\xE1ra m\xE9g senki sem \xE9rt le.\u201D",
+      intro: "Egy l\xE9pcs\u0151, amely sosem \xE9r v\xE9get. Szintr\u0151l szintre egyre er\u0151sebb sz\xF6rnyek v\xE1rnak, de a zs\xE1km\xE1ny is egyre jobb. Minden {every}. szint v\xE9g\xE9n f\u0151sz\xF6rny \u0151rzi a tov\xE1bbjut\xE1st.",
+      record: "A legm\xE9lyebb szint, ahov\xE1 eljutott\xE1l",
+      recordWhen: "{when} \xB7 eddig {times} j\xE1rt\xE1l lent",
+      noRecord: "M\xE9g nem j\xE1rt\xE1l odalent.",
+      noRecordInfo: "Az els\u0151 utad az 1. szintr\u0151l indul.",
+      whenUnknown: "nem tudni, mikor",
+      startFrom: "Honnan indulsz?",
+      floorN: "{n}. szint",
+      monLevel: "{lo}\u2013{lvl}. szint\u0171 sz\xF6rnyek",
+      pickInfo: "Itt {lo}\u2013{lvl}. szint\u0171 sz\xF6rnyek v\xE1rnak: minden ellen\xE1ll\xE1sod \u2212{res}%, \xE9s a sz\xEDv\xE1s, a gy\xF3gy\xEDt\xE1s meg a h\xE1r\xEDt\xE1s is gyeng\xE9bb.",
+      pickInfoFirst: "Itt {lo}\u2013{lvl}. szint\u0171 sz\xF6rnyek v\xE1rnak. Lejjebb az ellen\xE1ll\xE1sod, a sz\xEDv\xE1s, a gy\xF3gy\xEDt\xE1s \xE9s a h\xE1r\xEDt\xE1s is egyre gyeng\xE9bb lesz.",
+      go: "Lemegyek {floor} szintre",
+      scrolls: "N\xE1lad: {n} tekercs",
+      noScroll: "Hazat\xE9r\u0151 tekercs n\xE9lk\xFCl nem indulhatsz: csak azzal j\xF6hetsz vissza.",
+      toMerchant: "Ir\xE1ny a kalm\xE1r",
+      ruleCheckpoint: "Minden {every}. szint ut\xE1n pihen\u0151 k\xF6vetkezik: legk\xF6zelebb onnan is indulhatsz.",
+      nextMilestone: "K\xF6vetkez\u0151 m\xE9rf\xF6ldk\u0151: {n}. szint. Ha el\u0151sz\xF6r \xE9rsz le oda, aranyat \xE9s egy biztos ritka t\xE1rgyat kapsz.",
+      nextMilestoneUnique: "K\xF6vetkez\u0151 m\xE9rf\xF6ldk\u0151: {n}. szint. Ha el\u0151sz\xF6r \xE9rsz le oda, aranyat \xE9s egy biztos egyedi t\xE1rgyat kapsz.",
+      ruleRetreat: "K\xE9t harc k\xF6z\xF6tt b\xE1rmikor hazat\xE9rhetsz egy Hazat\xE9r\u0151 tekerccsel, \xE9s mindent megtartasz, amit tal\xE1lt\xE1l.",
+      ruleDeath: "Ha odalent esel el, ott marad minden, amit azon az \xFAton tal\xE1lt\xE1l \u2013 t\xE1rgy, dr\xE1gak\u0151, r\xFAna \xE9s arany is \u2013, \xE9s elvesz\xEDted a n\xE1lad l\xE9v\u0151 arany {gold}%\u2011\xE1t meg egy szint tapasztalat\xE1nak {xp}%\u2011\xE1t. A m\xE9rf\xF6ldk\xF6vek t\xE1rgyjutalma megmarad.",
+      ruleDeathDeeper: "A {n}. szintt\u0151l ez m\xE1r {gold}% \xE9s {xp}%.",
+      ruleHc: "Hardcore h\u0151sk\xE9nt itt is v\xE9gleg elesel.",
+      where: "A M\xE9lys\xE9g \xB7 {zone}",
+      handOf: "{n}/{max}. l\xE9p\xE9s ezen a szinten",
+      deepestNow: "Legm\xE9lyebb: {n}.",
+      nextCheckpoint: "K\xF6vetkez\u0151 pihen\u0151: {n}.",
+      nextCheckpointHad: "K\xF6vetkez\u0151 pihen\u0151: {n}. (m\xE1r megvan)",
+      bossAhead: "A szint v\xE9g\xE9n f\u0151sz\xF6rny v\xE1r",
+      bossNow: "Itt a f\u0151sz\xF6rny!",
+      activeBuffs: "\xC1ld\xE1s:",
+      buffUntil: "(a {n}. szintig)",
+      retreatConfirm: "Hazat\xE9rsz a M\xE9lys\xE9gb\u0151l? Mindent megtartasz, amit tal\xE1lt\xE1l. Legk\xF6zelebb b\xE1rmelyik el\xE9rt pihen\u0151r\u0151l indulhatsz.",
+      floorDown: "Lejjebb jutott\xE1l: {n}. szint",
+      newRecord: "\xDAj cs\xFAcs!",
+      checkpointNew: "Ez a szint mostant\xF3l pihen\u0151: legk\xF6zelebb innen is indulhatsz.",
+      milestone: "M\xE9rf\xF6ldk\u0151: {n}. szint!",
+      milestoneGold: "El\u0151sz\xF6r jutott\xE1l ilyen m\xE9lyre. Jutalmad {gold} arany \xE9s ez a t\xE1rgy:",
+      milestoneWaiting: "Nem f\xE9rt a zs\xE1kodba, ez\xE9rt a t\xE1borban v\xE1r r\xE1d, amint haza\xE9rsz.",
+      waiting: "A jutalom a t\xE1borban v\xE1r: csin\xE1lj helyet a zs\xE1kodban vagy a l\xE1d\xE1dban.",
+      claimedBag: "A m\xE9rf\xF6ldk\u0151 t\xE1rgyjutalma beker\xFClt a zs\xE1kodba.",
+      claimedChest: "A m\xE9rf\xF6ldk\u0151 t\xE1rgyjutalma a l\xE1d\xE1dba ker\xFClt, mert a zs\xE1kod tele volt.",
+      celebrate: "{n}. szint!",
+      result_death: "A M\xE9lys\xE9g elnyelt",
+      result_retreat: "\xDAjra a t\xE1borban",
+      lostAll: "Odalent maradt minden, amit ezen az \xFAton tal\xE1lt\xE1l.",
+      lostAllList: "Odalent maradt minden, amit ezen az \xFAton tal\xE1lt\xE1l: {list}.",
+      retreatInfo: "Hazahozt\xE1l mindent, amit odalent tal\xE1lt\xE1l.",
+      rewardsKept: "A m\xE9rf\xF6ldk\xF6vek t\xE1rgyjutalma megmarad ({n}).",
+      summary: "Ez az \xFAt: {from}. \u2192 {to}. szint (legm\xE9lyebb: {deepest}.) \xB7 {xp} tapasztalat, {gold} arany, {items} t\xE1rgy."
     },
     celebrate: { level: "{v}. szint", cleared: "Teljes\xEDtve", fallen: "Elest\xE9l", nightmare: "Megny\xEDlt a R\xE9m\xE1lom!", hell: "Megny\xEDlt a Pokol!" },
     diff: {
@@ -9658,7 +10390,8 @@ html, body { text-size-adjust: 100%; }
       ready: "Minden rendben. V\xE1lassz helysz\xEDnt az \xDAtk\xF6v\xF6n.",
       first: "Isten hozott a t\xE1borban. A Perny\xE9s \xFAt m\xE1r v\xE1r \u2013 indulj, ha k\xE9szen \xE1llsz.",
       newNightmare: "Megny\xEDlt a R\xE9m\xE1lom! Az \xDAtk\xF6v\xF6n v\xE1laszthatod ki.",
-      newHell: "Megny\xEDlt a Pokol! Az \xDAtk\xF6v\xF6n v\xE1laszthatod ki."
+      newHell: "Megny\xEDlt a Pokol! Az \xDAtk\xF6v\xF6n v\xE1laszthatod ki.",
+      newDepth: "Megny\xEDlt a M\xE9lys\xE9g! Az \xDAtk\xF6v\xF6n tal\xE1lod \u2013 n\xE9zz be, miel\u0151tt lem\xE9sz."
     },
     equipment: "Rajtad",
     bag: "Zs\xE1k ({n}/{max})",
@@ -9740,7 +10473,10 @@ html, body { text-size-adjust: 100%; }
       bad_tactics: "A harcrendbe legfeljebb n\xE9gy sor f\xE9r.",
       bad_row: "Ezt a sort nem lehet oda mozgatni.",
       bad_merc: "Nincs ilyen zsoldos.",
-      bad_option: "Ilyen be\xE1ll\xEDt\xE1s nincs."
+      bad_option: "Ilyen be\xE1ll\xEDt\xE1s nincs.",
+      depth_locked: "A M\xE9lys\xE9g m\xE9g z\xE1rva van: el\u0151bb gy\u0151zd le az \u0150s\xE1tkot Norm\xE1l neh\xE9zs\xE9gen.",
+      bad_floor: "Err\u0151l a szintr\u0151l m\xE9g nem indulhatsz.",
+      bad_mode: "Ez most nem megy."
     },
     skillLevel: "{n}/{max}",
     skillReq: "{v}. szintt\u0151l",
@@ -10133,6 +10869,8 @@ html, body { text-size-adjust: 100%; }
         line: "{gold} arany \xB7 zs\xE1k: {bag} t\xE1rgy \xB7 {mats} dr\xE1gak\u0151 \xE9s r\xFAna \xB7 elk\xF6ltetlen: {attr} tulajdons\xE1g- \xE9s {skill} k\xE9pess\xE9gpont",
         cleared: "Teljes\xEDtve",
         inRaid: "\xE9ppen porty\xE1n: {zone}",
+        inDepth: "\xE9ppen a M\xE9lys\xE9gben",
+        deepest: "M\xE9lys\xE9g: {n}. szint",
         merc: "Zsoldos",
         noGear: "Nincs rajta semmi."
       },
@@ -10157,7 +10895,10 @@ html, body { text-size-adjust: 100%; }
         sync_conflict: "Ment\xE9si \xFCtk\xF6z\xE9s",
         sync_outdated: "R\xE9gi verzi\xF3",
         sync_rejected: "Elutas\xEDtott ment\xE9s",
-        admin_edit: "Admin m\xF3dos\xEDt\xE1s"
+        admin_edit: "Admin m\xF3dos\xEDt\xE1s",
+        depth_start: "M\xE9lys\xE9g: lemenet",
+        depth_floor: "M\xE9lys\xE9g: \xFAj szint",
+        depth_end: "M\xE9lys\xE9g: v\xE9ge"
       },
       ev: {
         who: "{name} ({cls}, {lvl}.{hc})",
@@ -10182,6 +10923,13 @@ html, body { text-size-adjust: 100%; }
         sync_outdated: "{name}: r\xE9gebbi j\xE1t\xE9kverzi\xF3val j\xE1tszik, a ment\xE9se nem megy fel",
         sync_rejected: "{name}: a szerver nem fogadta el a ment\xE9s\xE9t",
         admin_edit: "{who} \u2013 admin m\xF3dos\xEDt\xE1s: {what}",
+        depthAt: "lent a M\xE9lys\xE9gben ({floor}. szint)",
+        depth_start: "{who} lement a M\xE9lys\xE9gbe ({floor}. szintt\u0151l, eddigi legm\xE9lyebb: {deepest}.)",
+        depth_floor: "{who} el\xE9rte a M\xE9lys\xE9g {floor}. szintj\xE9t",
+        depth_floorReward: "{who} el\xE9rte a M\xE9lys\xE9g {floor}. szintj\xE9t \u2013 m\xE9rf\xF6ldk\u0151, {gold} arany jutalom",
+        depth_end_death: "{who} odaveszett a M\xE9lys\xE9gben ({floor}. szint, legm\xE9lyebb: {deepest}.)",
+        depth_end_retreat: "{who} hazat\xE9rt a M\xE9lys\xE9gb\u0151l ({floor}. szint, legm\xE9lyebb: {deepest}.; +{xp} TP, +{gold} arany, {items} t\xE1rgy)",
+        depth_end_timeout: "{who} visszavonult egy elh\xFAz\xF3d\xF3 harcb\xF3l a M\xE9lys\xE9gben ({floor}. szint, legm\xE9lyebb: {deepest}.)",
         other: "{name}: {kind}"
       },
       op: {
@@ -10220,6 +10968,7 @@ html, body { text-size-adjust: 100%; }
       hero: {
         none: "Nincs kiv\xE1lasztott h\u0151s. V\xE1lassz egyet a h\u0151seid k\xF6z\xFCl, \xE9s itt szerkesztheted.",
         inRaid: "A h\u0151s\xF6d \xE9ppen porty\xE1n van ({zone}). K\xF6zben csak gy\xF3gy\xEDtani, aranyat \xE9s tekercset \xE1ll\xEDtani, meg a porty\xE1t lez\xE1rni lehet.",
+        inDepth: "A h\u0151s\xF6d \xE9ppen lent van a M\xE9lys\xE9gben ({floor}. szint). K\xF6zben csak gy\xF3gy\xEDtani, aranyat \xE9s tekercset \xE1ll\xEDtani, meg a lemenetet lez\xE1rni lehet.",
         deadNote: "Ez a h\u0151s elesett. Felt\xE1maszt\xE1s n\xE9lk\xFCl nem m\xF3dos\xEDthat\xF3.",
         head: "TP: {xp} / {next} \xB7 {gold} arany \xB7 elk\xF6ltetlen: {attr} tulajdons\xE1g- \xE9s {skill} k\xE9pess\xE9gpont \xB7 \xE9leter\u0151: {life} \xB7 tekercs: {scrolls}",
         levelTitle: "Szint, tapasztalat, arany",
@@ -10241,12 +10990,15 @@ html, body { text-size-adjust: 100%; }
         unlockAsk: "Megnyitod ezt a neh\xE9zs\xE9get: {diff}? Ehhez az el\u0151tte l\xE9v\u0151 neh\xE9zs\xE9gek minden helysz\xEDne teljes\xEDtettnek sz\xE1m\xEDt majd.",
         lifeTitle: "Gy\xF3gy\xEDt\xE1s \xE9s portya",
         healRaid: "Teljes gy\xF3gy\xEDt\xE1s (porty\xE1n)",
+        healDepth: "Teljes gy\xF3gy\xEDt\xE1s (lent a M\xE9lys\xE9gben)",
         healMerc: "Zsoldos felt\xE1maszt\xE1sa",
         revive: "Felt\xE1maszt\xE1s",
         reviveAsk: "Felt\xE1masztod a h\u0151st?",
         reviveHc: "Ez egy hardcore h\u0151s, aki v\xE9gleg elesett. A j\xE1t\xE9kban ez visszaford\xEDthatatlan \u2013 csak tesztel\xE9sre t\xE1maszd fel. Biztosan felt\xE1masztod?",
         endRaid: "Portya lez\xE1r\xE1sa",
         endRaidAsk: "Lez\xE1rod a porty\xE1t? \xDAgy \xE9r v\xE9get, mint egy hazat\xE9r\xE9s: a zs\xE1km\xE1ny megmarad, tekercs nem fogy.",
+        endDepth: "Lemenet lez\xE1r\xE1sa",
+        endDepthAsk: "Lez\xE1rod a lemenetet? \xDAgy \xE9r v\xE9get, mint egy hazat\xE9r\xE9s: amit tal\xE1lt, megmarad, tekercs nem fogy.",
         newCards: "\xDAj k\xE1rty\xE1k a k\xF6vetkez\u0151 porty\xE1n",
         potTitle: "\xD6v \xE9s tartal\xE9k",
         beltLife: "\xD6v: \xE9leter\u0151",
@@ -31967,6 +32719,11 @@ ${suffix}`;
     const runEnded = (run2, res, info) => {
       const g = run2.gained ?? {};
       const result = run2.result === "cleared" ? "win" : run2.result === "death" ? "death" : res?.outcome === "timeout" ? "timeout" : "retreat";
+      if (run2.mode === "depth") {
+        if (result === "death") say("death", { ...info, zone: run2.zoneId, depth: run2.floor, killer: killerOf(res), dead: !!st().hero?.dead });
+        say("depth_end", { ...info, result, floor: run2.floor, from: run2.startFloor ?? 1, deepest: depthOf(st().hero).deepest, xp: g.xp ?? 0, gold: g.gold ?? 0, items: g.items ?? 0, lvl: st().hero?.level ?? info.lvl });
+        return;
+      }
       if (result === "death") say("death", { ...info, zone: run2.zoneId, killer: killerOf(res), dead: !!st().hero?.dead });
       if (g.unlocked) say("difficulty_unlocked", { ...info, unlocked: g.unlocked });
       say("raid_end", { ...info, result, zone: run2.zoneId, xp: g.xp ?? 0, gold: g.gold ?? 0, items: g.items ?? 0, lvl: st().hero?.level ?? info.lvl });
@@ -31989,17 +32746,24 @@ ${suffix}`;
       if (r?.ok) say("raid_start", { ...heroFacts(st().hero), zone: zoneId });
       return r;
     });
+    wrap("startDepth", (orig) => (floor) => {
+      const r = orig(floor);
+      if (r?.ok) say("depth_start", { ...heroFacts(st().hero), diff: "depth", floor: st().run?.floor ?? Number(floor), deepest: depthOf(st().hero).deepest });
+      return r;
+    });
     wrap("choose", (orig) => (index) => {
       const run2 = st().run;
       const h = st().hero;
       const live = !!(run2 && !run2.over);
       const card = live ? run2.cards?.[index] : null;
       const before = h?.level ?? 0;
-      const info = { ...heroFacts(h), diff: live ? cleanDifficulty(run2.difficulty) : difficultyOf(h) };
+      const info = { ...heroFacts(h), diff: live ? run2.mode === "depth" ? "depth" : cleanDifficulty(run2.difficulty) : difficultyOf(h) };
+      const zoneOf = live ? run2.zoneId : null;
       const r = orig(index);
       if (!r?.ok || !live) return r;
       if (r.levels > 0) say("level_up", { ...info, from: before, lvl: st().hero.level });
-      foundItems(r.loot?.items, { ...info, zone: run2.zoneId });
+      foundItems(r.loot?.items, { ...info, zone: zoneOf, ...run2.mode === "depth" ? { depth: r.floor } : {} });
+      if (run2.mode === "depth" && r.floorReached && (r.floorReached % 5 === 0 || r.milestone)) say("depth_floor", { ...info, floor: r.floorReached, deepest: depthOf(st().hero).deepest, reward: r.milestone ? r.milestone.gold : 0 });
       if (card?.type === "boss" && r.outcome === "win" && run2.firstClear) say("boss_kill", { ...info, zone: run2.zoneId, boss: card.encounter?.[0]?.id ?? null });
       if (run2.over) runEnded(run2, r, { ...info, lvl: before });
       return r;
@@ -32007,7 +32771,7 @@ ${suffix}`;
     wrap("retreat", (orig) => () => {
       const run2 = st().run;
       const live = !!(run2 && !run2.over);
-      const info = live ? { ...heroFacts(st().hero), diff: cleanDifficulty(run2.difficulty) } : null;
+      const info = live ? { ...heroFacts(st().hero), diff: run2.mode === "depth" ? "depth" : cleanDifficulty(run2.difficulty) } : null;
       const r = orig();
       if (r?.ok && live && run2.over) runEnded(run2, r, info);
       return r;
@@ -32088,26 +32852,26 @@ ${suffix}`;
     if (!w) return [];
     return content3.baseList.filter((b) => !b.jewelry && socketGroup(b) === w.group && (!w.slot || w.slot === b.slot) && b.maxSockets >= w.runes.length);
   }
-  function makeItem(content3, rng, spec) {
-    const ilvl0 = clampInt(spec.ilvl ?? 1, 1, 99);
-    const difficulty = cleanDifficulty(spec.difficulty);
+  function makeItem(content3, rng, spec2) {
+    const ilvl0 = clampInt(spec2.ilvl ?? 1, 1, 99);
+    const difficulty = cleanDifficulty(spec2.difficulty);
     let item = null;
-    if (spec.kind === "base") {
-      const base = content3.bases[spec.id];
+    if (spec2.kind === "base") {
+      const base = content3.bases[spec2.id];
       if (!base) return { ok: false, error: "bad_item" };
-      const rarity = ["common", "socketed", "magic", "rare"].includes(spec.rarity) ? spec.rarity : "magic";
+      const rarity = ["common", "socketed", "magic", "rare"].includes(spec2.rarity) ? spec2.rarity : "magic";
       if (rarity === "socketed" && !(base.maxSockets > 0)) return { ok: false, error: "no_sockets" };
-      item = generateItem(content3, rng, { ilvl: Math.max(ilvl0, base.qlvl), forceBase: base.id, forceRarity: rarity, difficulty, classId: spec.classId });
-    } else if (spec.kind === "unique" || spec.kind === "set") {
-      const def = spec.kind === "unique" ? content3.uniques[spec.id] : content3.setPieces[spec.id];
+      item = generateItem(content3, rng, { ilvl: Math.max(ilvl0, base.qlvl), forceBase: base.id, forceRarity: rarity, difficulty, classId: spec2.classId });
+    } else if (spec2.kind === "unique" || spec2.kind === "set") {
+      const def = spec2.kind === "unique" ? content3.uniques[spec2.id] : content3.setPieces[spec2.id];
       if (!def) return { ok: false, error: "bad_item" };
-      item = generateItem(content3, rng, { ilvl: Math.max(ilvl0, def.qlvl), forceRarity: spec.kind, forceSpecial: def.id, difficulty, classId: spec.classId });
-      if (item[spec.kind === "unique" ? "unique" : "setPiece"] !== def.id) return { ok: false, error: "bad_item" };
-    } else if (spec.kind === "runeword") {
-      const w = content3.runewords[spec.id];
+      item = generateItem(content3, rng, { ilvl: Math.max(ilvl0, def.qlvl), forceRarity: spec2.kind, forceSpecial: def.id, difficulty, classId: spec2.classId, depthFloor: def.depthFloor });
+      if (item[spec2.kind === "unique" ? "unique" : "setPiece"] !== def.id) return { ok: false, error: "bad_item" };
+    } else if (spec2.kind === "runeword") {
+      const w = content3.runewords[spec2.id];
       if (!w) return { ok: false, error: "bad_item" };
       const fits = runewordBases(content3, w.id);
-      const base = fits.find((b) => b.id === spec.base) ?? fits.slice().sort((a, b) => a.qlvl - b.qlvl)[0];
+      const base = fits.find((b) => b.id === spec2.base) ?? fits.slice().sort((a, b) => a.qlvl - b.qlvl)[0];
       if (!base) return { ok: false, error: "bad_item" };
       item = generateItem(content3, rng, { ilvl: Math.max(ilvl0, base.qlvl), forceBase: base.id, forceRarity: "socketed", difficulty });
       if (item.rarity !== "socketed") return { ok: false, error: "bad_item" };
@@ -32119,13 +32883,13 @@ ${suffix}`;
       item.runeword = word.id;
       item.fixed = { ...word.mods };
     } else return { ok: false, error: "bad_item" };
-    if (spec.identified !== false) item.identified = true;
+    if (spec2.identified !== false) item.identified = true;
     const clean = cleanItem(content3, item);
     return clean ? { ok: true, item: clean } : { ok: false, error: "bad_item" };
   }
-  function giveItem(content3, hero2, spec, rng) {
+  function giveItem(content3, hero2, spec2, rng) {
     if (hero2.bag.length >= content3.B.hero.bagSize) return { ok: false, error: "bag_full" };
-    const r = makeItem(content3, rng, { classId: hero2.classId, ...spec });
+    const r = makeItem(content3, rng, { classId: hero2.classId, ...spec2 });
     if (!r.ok) return r;
     addToBag(content3, hero2, r.item);
     return r;
@@ -32181,7 +32945,7 @@ ${suffix}`;
     const run2 = state.run;
     if (run2 && !run2.over) {
       hero2.scrolls = (hero2.scrolls ?? 0) + 1;
-      const r = retreat(content3, hero2, run2);
+      const r = run2.mode === "depth" ? retreatDepth(content3, hero2, run2) : retreat(content3, hero2, run2);
       if (!r.ok) {
         hero2.scrolls--;
         return r;
@@ -32378,7 +33142,9 @@ ${suffix}`;
         mats: isObj3(h.mats) ? Object.values(h.mats).reduce((a, n) => a + (Number(n) || 0), 0) : 0,
         merc: isObj3(h.merc) ? { type: h.merc.type, dead: !!h.merc.dead } : null,
         unspentAttr: Number(h.unspentAttr) || 0,
-        unspentSkill: Number(h.unspentSkill) || 0
+        unspentSkill: Number(h.unspentSkill) || 0,
+        deepest: depthOf(h).deepest,
+        inDepth: !!(isObj3(sl.run) && !sl.run.over && sl.run.mode === "depth")
       };
     }).filter(Boolean);
     return {
@@ -32392,9 +33158,9 @@ ${suffix}`;
   }
 
   // src/client/admin.js
-  var BUILD_TIME = true ? "2026-11-14T16:24:58.090Z" : null;
+  var BUILD_TIME = true ? "2026-11-14T18:59:38.756Z" : null;
   var TABS = ["players", "log", "hero", "test", "balance", "system"];
-  var KINDS = ["raid_start", "raid_end", "level_up", "death", "boss_kill", "unique_found", "set_found", "runeword_found", "difficulty_unlocked", "hero_created", "hero_deleted", "sync_conflict", "sync_outdated", "sync_rejected", "admin_edit"];
+  var KINDS = ["raid_start", "raid_end", "level_up", "death", "boss_kill", "unique_found", "set_found", "runeword_found", "difficulty_unlocked", "depth_start", "depth_floor", "depth_end", "hero_created", "hero_deleted", "sync_conflict", "sync_outdated", "sync_rejected", "admin_edit"];
   var POLL_MS = 15e3;
   var isObj2 = (v) => !!v && typeof v === "object" && !Array.isArray(v);
   var str = (v, n = 40) => typeof v === "string" ? v.slice(0, n) : typeof v === "number" && Number.isFinite(v) ? String(v) : "";
@@ -32416,7 +33182,9 @@ ${suffix}`;
     const cls = own(loc.class, d.cls)?.name ?? (str(d.cls, 20) || "?");
     const lvl = int(d.lvl) ?? "?";
     const who = d.cls != null ? t3("admin.ev.who", { name, cls, lvl, hc: d.hc === true ? t3("admin.ev.hc") : "" }) : name;
-    const zone = own(loc.zone, d.zone) ?? (str(d.zone) || "?");
+    const floor = int(d.floor) ?? "?";
+    const deepest = int(d.deepest) ?? "?";
+    const zone = int(d.depth) != null ? t3("admin.ev.depthAt", { floor: int(d.depth) }) : own(loc.zone, d.zone) ?? (str(d.zone) || "?");
     const diff = DIFFICULTIES.includes(d.diff) ? t3(`diff.${d.diff}`) : "";
     const unit = (key, mods) => {
       if (!(own(loc.boss, key) || own(loc.monster, key))) return str(key) || "?";
@@ -32448,6 +33216,14 @@ ${suffix}`;
         return t3("admin.ev.runeword_found", { who, item: item("runeword") });
       case "difficulty_unlocked":
         return t3("admin.ev.difficulty_unlocked", { who, diff: DIFFICULTIES.includes(d.unlocked) ? t3(`diff.${d.unlocked}`) : str(d.unlocked) || "?" });
+      case "depth_start":
+        return t3("admin.ev.depth_start", { who, floor, deepest });
+      case "depth_floor":
+        return n(d.reward) > 0 ? t3("admin.ev.depth_floorReward", { who, floor, gold: n(d.reward) }) : t3("admin.ev.depth_floor", { who, floor });
+      case "depth_end": {
+        const r = ["death", "retreat", "timeout"].includes(d.result) ? d.result : "retreat";
+        return t3(`admin.ev.depth_end_${r}`, { who, floor, deepest, xp: n(d.xp), gold: n(d.gold), items: n(d.items) });
+      }
       case "hero_created":
         return t3("admin.ev.hero_created", { name, cls, hc: d.hc === true ? t3("admin.ev.hc") : "" });
       case "hero_deleted":
@@ -32755,7 +33531,7 @@ ${suffix}`;
         const s = saveSummary(content3, A2.pickSave.data);
         const heroes = (s?.heroes ?? []).map((h) => `<div class="adm-card ${h.dead ? "dead" : ""}"><h4>${esc2(h.name || t3("defaultName"))} <small>${esc2(clsName(h.classId))} \xB7 ${t3("levelN", { n: h.level })} \xB7 ${esc2(diffName(h.difficulty))}${h.hardcore ? " \xB7 HC" : ""}${h.dead ? ` \xB7 ${t3("admin.fallen")}` : ""}${s.active === h.slot ? ` \xB7 ${t3("admin.activeHero")}` : ""}</small></h4>
         <p class="small">${t3("admin.sum.line", { gold: fmt2(h.gold), bag: h.bag, mats: h.mats, attr: h.unspentAttr, skill: h.unspentSkill })}</p>
-        <p class="small">${t3("admin.sum.cleared")}: ${DIFFICULTIES.map((d) => `${esc2(diffName(d))} ${h.cleared[d]}/${content3.zoneOrder.length}`).join(" \xB7 ")}${h.inRaid ? ` \xB7 <b>${t3("admin.sum.inRaid", { zone: esc2(L().zone[h.raidZone] ?? str(h.raidZone)) })}</b>` : ""}</p>
+        <p class="small">${t3("admin.sum.cleared")}: ${DIFFICULTIES.map((d) => `${esc2(diffName(d))} ${h.cleared[d]}/${content3.zoneOrder.length}`).join(" \xB7 ")}${h.inRaid ? ` \xB7 <b>${h.inDepth ? t3("admin.sum.inDepth") : t3("admin.sum.inRaid", { zone: esc2(L().zone[h.raidZone] ?? str(h.raidZone)) })}</b>` : ""}${h.deepest ? ` \xB7 ${t3("admin.sum.deepest", { n: int(h.deepest) })}` : ""}</p>
         ${h.merc ? `<p class="small">${t3("admin.sum.merc")}: ${esc2(L().merc[h.merc.type]?.name ?? str(h.merc.type))}${h.merc.dead ? ` (${t3("admin.fallen")})` : ""}</p>` : ""}
         <p class="small adm-gear">${h.gear.length ? h.gear.map((g) => `<span>${esc2(t3(`slot.${g.slot}`) === `slot.${g.slot}` ? g.slot : t3(`slot.${g.slot}`))}: ${itemLabel(g.item)}</span>`).join("") : `<span class="dim">${t3("admin.sum.noGear")}</span>`}</p></div>`).join("");
         body = `<p class="small dim">${t3("admin.sum.meta", { rev: int(A2.pickSave.rev) ?? "?", when: esc2(when(A2.pickSave.updated_at)), size: kb(cloudSize(JSON.stringify(A2.pickSave.data))), cv: s?.contentVersion ?? "?", stash: s?.stash ?? 0, hc: s?.hcStash ?? 0 })}</p>${heroes || `<p class="dim">${t3("admin.noHeroes")}</p>`}`;
@@ -32804,7 +33580,8 @@ ${suffix}`;
       const dis = h.dead ? "disabled" : "";
       const mats = allMatIds(content3).map((id) => [id, R2().matName(id)]);
       const last = A2.lastItem;
-      return `${inRaid ? `<p class="adm-note">${t3("admin.hero.inRaid", { zone: esc2(loc.zone[run2.zoneId] ?? run2.zoneId) })}</p>` : ""}${h.dead ? `<p class="adm-note bad">${t3("admin.hero.deadNote")}</p>` : ""}
+      const deep = inRaid && run2.mode === "depth";
+      return `${inRaid ? `<p class="adm-note">${deep ? t3("admin.hero.inDepth", { floor: int(run2.floor) ?? "?" }) : t3("admin.hero.inRaid", { zone: esc2(loc.zone[run2.zoneId] ?? run2.zoneId) })}</p>` : ""}${h.dead ? `<p class="adm-note bad">${t3("admin.hero.deadNote")}</p>` : ""}
     <div class="adm-herohead"><b>${esc2(api2.state.name || t3("defaultName"))}</b> <span>${esc2(clsName(h.classId))} \xB7 ${t3("levelN", { n: h.level })} \xB7 ${esc2(diffName(d))}${h.hardcore ? " \xB7 HC" : ""}</span>
       <span class="dim">${t3("admin.hero.head", { xp: fmt2(h.xp), next: fmt2(toNext), gold: fmt2(h.gold), attr: h.unspentAttr, skill: h.unspentSkill, life: fmt2(s.maxLife), scrolls: h.scrolls ?? 0 })}</span></div>
     <div class="adm-grid">
@@ -32840,9 +33617,9 @@ ${suffix}`;
         <div class="row">${DIFFICULTIES.slice(1).map((dd) => `<button class="btn mini ghost" data-a="unlockDiff" data-v="${dd}" ${camp} ${dis} ${isDifficultyUnlocked(content3, h, dd) ? "disabled" : ""}>${t3("admin.hero.unlock", { diff: esc2(diffName(dd)) })}</button>`).join("")}</div>
       </section>
       <section class="adm-card"><h4>${t3("admin.hero.lifeTitle")}</h4>
-        <div class="row"><button class="btn mini ${inRaid || h.merc?.dead ? "" : "ghost"}" data-a="heal" ${h.dead || !(inRaid || h.merc?.dead) ? "disabled" : ""}>${inRaid ? t3("admin.hero.healRaid") : t3("admin.hero.healMerc")}</button>
+        <div class="row"><button class="btn mini ${inRaid || h.merc?.dead ? "" : "ghost"}" data-a="heal" ${h.dead || !(inRaid || h.merc?.dead) ? "disabled" : ""}>${inRaid ? t3(deep ? "admin.hero.healDepth" : "admin.hero.healRaid") : t3("admin.hero.healMerc")}</button>
           <button class="btn mini ${h.dead ? "" : "ghost"}" data-a="revive" ${h.dead ? "" : "disabled"}>${t3("admin.hero.revive")}</button>
-          <button class="btn mini ghost" data-a="endRaid" ${inRaid ? "" : "disabled"}>${t3("admin.hero.endRaid")}</button>
+          <button class="btn mini ghost" data-a="endRaid" ${inRaid ? "" : "disabled"}>${t3(deep ? "admin.hero.endDepth" : "admin.hero.endRaid")}</button>
           <button class="btn mini ghost" data-a="newCards" ${camp} ${dis}>${t3("admin.hero.newCards")}</button></div>
         <h4>${t3("admin.hero.potTitle")}</h4>
         <div class="adm-inline"><label>${t3("admin.hero.beltLife")} <input id="pL" type="number" min="0" max="${s.beltSlots}" value="${h.belt.life}"></label><label>${t3("admin.hero.beltMana")} <input id="pM" type="number" min="0" max="${s.beltSlots}" value="${h.belt.mana}"></label></div>
@@ -33110,11 +33887,11 @@ ${suffix}`;
         g.identified = !!el.querySelector("#gIdent")?.checked;
         if (g.kind === "base") g.rarity = val2("gRar") || g.rarity;
         if (g.kind === "runeword") g.base = val2("gBase") || "";
-        const spec = { kind: g.kind, id: g.id, rarity: g.rarity, ilvl: g.ilvl, difficulty: g.diff ?? difficultyOf(hero2()), base: g.base, identified: g.identified };
+        const spec2 = { kind: g.kind, id: g.id, rarity: g.rarity, ilvl: g.ilvl, difficulty: g.diff ?? difficultyOf(hero2()), base: g.base, identified: g.identified };
         const rng = createRng(Math.random() * 2 ** 32 >>> 0);
         let made = null;
         const res = edit("item", { kind: g.kind, id: g.id, ilvl: g.ilvl }, (h) => {
-          const r = giveItem(content3, h, spec, rng);
+          const r = giveItem(content3, h, spec2, rng);
           made = r.item ?? null;
           return r;
         });
@@ -33140,7 +33917,10 @@ ${suffix}`;
       unlockDiff: (d) => ask(t3("admin.hero.unlockAsk", { diff: diffName(d) }), t3("admin.hero.unlock", { diff: diffName(d) }), () => edit("unlock", { diff2: d }, (h) => unlockDifficulty(content3, h, d))),
       heal: () => edit("heal", {}, (h, st) => heal(content3, h, st.run)),
       revive: () => ask(hero2()?.hardcore ? t3("admin.hero.reviveHc") : t3("admin.hero.reviveAsk"), t3("admin.hero.revive"), () => edit("revive", {}, (h) => revive(h))),
-      endRaid: () => ask(t3("admin.hero.endRaidAsk"), t3("admin.hero.endRaid"), () => edit("endRaid", {}, (h, st) => endRaid(content3, h, st))),
+      endRaid: () => {
+        const deep = api2.state.run && !api2.state.run.over && api2.state.run.mode === "depth";
+        ask(t3(deep ? "admin.hero.endDepthAsk" : "admin.hero.endRaidAsk"), t3(deep ? "admin.hero.endDepth" : "admin.hero.endRaid"), () => edit("endRaid", {}, (h, st) => endRaid(content3, h, st)));
+      },
       newCards: () => edit("newCards", {}, (h, st) => endRaid(content3, h, st, true)),
       setPotions: () => edit("potions", {}, (h) => setPotions(content3, h, { life: numVal("pL"), mana: numVal("pM"), rlife: numVal("pRL"), rmana: numVal("pRM") })),
       // Teszt
@@ -33601,6 +34381,7 @@ ${suffix}`;
   }
   function diffMark() {
     const r = run();
+    if (r && !r.over && r.mode === "depth") return `<span class="dmark d-depth"> \xB7 ${t2("depth.mark")}</span>`;
     const d = r && !r.over ? r.difficulty ?? "normal" : api.difficulty();
     return d === "normal" ? "" : ` \xB7 <span class="dmark d-${d}">${t2(`diff.${d}`)}</span>`;
   }
@@ -33626,7 +34407,7 @@ ${suffix}`;
       mid = `${["gear", "skills", "order"].map((k) => `<button class="hbtn ${view.tab === k ? "on" : ""}" data-act="tab" data-v="${k}">${t2(`tab.${k}`)}${badge[k] ? `<em>${badge[k]}</em>` : ""}</button>`).join("")}
       ${beltView(h.belt, s.beltSlots, h.reserve, { edit: !h.dead ? "hud" : null })}${beltView(h.belt, s.beltSlots, h.reserve, { compact: true, open: !h.dead })}`;
     } else if (mode === "raid") {
-      mid = `${beltView(r.belt, s.beltSlots, r.reserve)}${raidMerc(r)}<span class="hud-gap"></span>${h.scrolls > 0 ? `<button class="hbtn ghost" data-act="ask" data-v="retreat">${t2("ux.retreatN", { n: h.scrolls })}</button>` : `<button class="hbtn ghost" disabled>${t2("ux.noScroll")}</button>`}`;
+      mid = `${beltView(r.belt, s.beltSlots, r.reserve)}${beltView(r.belt, s.beltSlots, r.reserve, { compact: true })}${raidMerc(r)}<span class="hud-gap"></span>${h.scrolls > 0 ? `<button class="hbtn ghost" data-act="ask" data-v="retreat">${t2("ux.retreatN", { n: h.scrolls })}</button>` : `<button class="hbtn ghost" disabled>${t2("ux.noScroll")}</button>`}`;
     } else if (mode === "fight") {
       mid = view.fight.done ? `${fightBelt()}<span class="hud-gap"></span>` : `${fightBelt()}<span class="hud-gap"></span><div class="controls" id="controls">
         <button class="chip ${view.speed === 1 ? "on" : ""}" data-act="speed" data-v="1">${t2("speed1")}</button>
@@ -33704,6 +34485,7 @@ ${suffix}`;
     const s = api.sheet();
     const fresh = api.newDifficulty();
     if (fresh) return [fresh === "hell" ? "newHell" : "newNightmare", "waystone"];
+    if (depthNew()) return ["newDepth", "waystone"];
     const better = h.bag.some((_, i) => (api.compare(i) ?? 0) > 0.01);
     const emptyFill = better && h.bag.some((it, i) => (api.compare(i) ?? 0) > 0.01 && content2.EQUIP_SLOTS.some((sl) => !h.equipment[sl] && content2.bases[it.base].slot === sl.replace(/\d$/, "")));
     if (emptyFill) return ["better", "gear"];
@@ -33716,6 +34498,10 @@ ${suffix}`;
     if (!h.merc && api.mercUnlocked() && h.gold >= content2.B.merc.hirePrice(h.level)) return ["mercNew", "merc"];
     return [api.state.seenCamp ? "ready" : "first", "waystone"];
   }
+  var depthNew = () => {
+    const d = api.depthInfo();
+    return !!d?.unlocked && !d.seen && !hero()?.dead;
+  };
   var SCENE = "zone_camp_scene";
   var CAMP_SPOTS = [
     { tab: "stash", x: 1, y: 26, w: 20, h: 50 },
@@ -33747,7 +34533,7 @@ ${suffix}`;
     const [, hintTab] = hero()?.dead ? [null, null] : campHint();
     const badge = { merc: h.merc?.dead ? "!" : 0 };
     const freshDiff = api.newDifficulty();
-    const glow = (tab) => tab === "waystone" && freshDiff ? ` fresh-diff d-${freshDiff}` : "";
+    const glow = (tab) => tab !== "waystone" ? "" : freshDiff ? ` fresh-diff d-${freshDiff}` : depthNew() ? " fresh-diff d-depth" : "";
     const mercLocked = !api.mercUnlocked();
     const go = frontierZone(content2, h);
     const open = Object.hasOwn(PAGES, view.tab) ? view.tab : null;
@@ -33761,7 +34547,7 @@ ${suffix}`;
     <div class="backdrop" style="--scene:url(${asset(SCENE)})"><div class="scene-img">${spots}</div></div>
     ${topBar()}
     <nav class="tiles">${tiles}${h.dead && !open ? `<p class="fallen-banner">${t2("ux.fallenBanner")}</p>` : ""}${open || h.dead ? "" : `<button class="gobtn ${hintTab === "waystone" && !freshDiff ? "calls" : ""}" data-act="startRun" data-v="${go}"><small>${t2("ux.go")}</small><b>${esc(locales[lang].zone[go])}</b></button>`}</nav>
-    ${open ? windowOf(open, PAGE_TITLE(open), PAGE_SAY(open), PAGES[open]()) : ""}
+    ${open ? open === "waystone" && wsModeNow() === "depth" ? windowOf(open, t2("depth.name"), t2("depth.say"), PAGES[open]()) : windowOf(open, PAGE_TITLE(open), PAGE_SAY(open), PAGES[open]()) : ""}
     ${hud("camp")}
   </div>`;
   }
@@ -33785,12 +34571,73 @@ ${suffix}`;
     return `<div class="diffs" role="tablist" aria-label="${esc(t2("diff.title"))}">${tabs}</div>${picked}<p class="diff-note ${open ? "" : "locked"} d-${shown}">${note}</p>`;
   }
   var ROMAN = ["", "I", "II", "III", "IV", "V"];
+  function wsSwitch(mode) {
+    const b = (m, label, extra = "") => `<button class="ws-tab ws-${m} ${mode === m ? "on" : ""}" role="tab" aria-selected="${mode === m}" data-act="wsMode" data-v="${m}">${label}${extra}</button>`;
+    const rec = api.depthInfo()?.deepest;
+    return `<div class="ws-switch" role="tablist">${b("chapters", `<b>${t2("depth.tabChapters")}</b>`)}${b("depth", `<b>${t2("depth.name")}</b>`, rec ? `<small>${t2("depth.recordShort", { n: rec })}</small>` : depthNew() ? `<small class="new">${t2("depth.newTag")}</small>` : "")}</div>`;
+  }
+  var wsModeNow = () => api.depthUnlocked() && view.wsMode === "depth" ? "depth" : "chapters";
+  var huArticle = (n) => {
+    const s = String(Math.abs(Math.floor(Number(n) || 0)));
+    return s === "1" || s[0] === "5" || s.length === 4 && s[0] === "1" ? "az" : "a";
+  };
+  function huTimes(n) {
+    const v = Math.abs(Math.floor(Number(n) || 0));
+    const ones = ["szor", "szer", "szer", "szor", "szer", "sz\xF6r", "szor", "szer", "szor", "szer"];
+    const tens = ["", "szer", "szor", "szor", "szer", "szer", "szor", "szer", "szor", "szer"];
+    if (v % 10 || v === 0) return ones[v % 10];
+    if (Math.floor(v / 10) % 10) return tens[Math.floor(v / 10) % 10];
+    return v % 1e3 ? "szor" : "szer";
+  }
+  function depthPage() {
+    const d = api.depthInfo();
+    const h = hero();
+    const cps = d.checkpoints.length > 7 ? [1, ...d.checkpoints.slice(-6)] : d.checkpoints;
+    const pick = cps.includes(view.depthPick) ? view.depthPick : cps.at(-1);
+    const P = content2.B.depth;
+    const fl = (f) => api.depthFloor(f);
+    const record = d.deepest ? `<div class="dp-record"><span class="dp-num">${d.deepest}.</span><div><b>${t2("depth.record")}</b><small>${t2("depth.recordWhen", { when: esc(fmtWhen(d.deepestAt, "depth.whenUnknown")), times: lang === "hu" ? `${d.descents}\u2011${huTimes(d.descents)}` : d.descents })}</small></div></div>` : `<div class="dp-record none"><div><b>${t2("depth.noRecord")}</b><small>${t2("depth.noRecordInfo")}</small></div></div>`;
+    const starts = cps.map((f) => `<button class="dp-start ${f === pick ? "on" : ""}" role="radio" aria-checked="${f === pick}" data-act="depthPick" data-v="${f}"><b>${t2("depth.floorN", { n: f })}</b><small>${t2("depth.monLevel", { lo: fl(f).levelLo, lvl: fl(f).level })}</small></button>`).join("");
+    const here = fl(pick);
+    const goes = `<p class="dp-floorinfo">${t2(here.rules.resPenalty ? "depth.pickInfo" : "depth.pickInfoFirst", { lo: here.levelLo, lvl: here.level, res: here.rules.resPenalty })}</p>`;
+    const loss = here.death;
+    let deeper = null;
+    for (let f = pick + 1; f <= pick + 100 && !deeper; f++) {
+      const l = fl(f).death;
+      if (l.gold !== loss.gold || l.xp !== loss.xp) deeper = { n: f, ...l };
+    }
+    const death = `<p class="dp-death">${t2("depth.ruleDeath", { gold: loss.gold, xp: loss.xp })}${deeper ? ` ${t2("depth.ruleDeathDeeper", deeper)}` : ""}${h.hardcore ? ` <b>${t2("depth.ruleHc")}</b>` : ""}</p>`;
+    const scrolls = h.scrolls ?? 0;
+    const kit = `<div class="dp-kit ${scrolls ? "" : "none"}"><span class="dp-scrolls">${t2("depth.scrolls", { n: scrolls })}</span>${scrolls ? "" : `<button class="btn mini" data-act="toScrolls">${t2("depth.toMerchant")}</button><p class="dp-noscroll">${t2("depth.noScroll")}</p>`}</div>`;
+    const next = t2(P.rewardRarity(d.nextMilestone) === "unique" ? "depth.nextMilestoneUnique" : "depth.nextMilestone", { n: d.nextMilestone });
+    const intro = `<p class="dp-intro">${t2("depth.intro", { every: P.bossEvery })}</p>`;
+    return `<div class="depth-page">
+    ${d.deepest ? "" : intro}
+    ${d.waiting ? `<p class="dp-waiting">${t2("depth.waiting")}</p>` : ""}
+    ${record}
+    <h4 class="dp-h">${t2("depth.startFrom")}</h4>
+    <div class="dp-starts" role="radiogroup" aria-label="${esc(t2("depth.startFrom"))}">${starts}</div>
+    ${goes}
+    ${death}
+    ${kit}
+    ${h.dead ? "" : `<button class="btn big dp-go" data-act="startDepth" data-v="${pick}" ${scrolls ? "" : "disabled"}>${t2("depth.go", { floor: lang === "hu" ? `${huArticle(pick)}\xA0${pick}.` : pick })}</button>`}
+    <ul class="dp-rules">
+      <li>${t2("depth.ruleCheckpoint", { every: P.checkpointEvery })}</li>
+      <li>${next}</li>
+      <li>${t2("depth.ruleRetreat")}</li>
+    </ul>
+    ${d.deepest ? intro : ""}
+  </div>`;
+  }
   function tabWaystone() {
     const h = hero();
     const L = locales[lang];
+    const mode = wsModeNow();
+    const sw = api.depthUnlocked() ? wsSwitch(mode) : "";
+    if (mode === "depth") return sw + depthPage();
     const cleared = api.clearedIn();
     const here = content2.zones[frontierZone(content2, h)].act ?? 1;
-    return diffTabs() + (content2.acts ?? [1]).map((act2) => {
+    return sw + diffTabs() + (content2.acts ?? [1]).map((act2) => {
       const ids = content2.zoneOrder.filter((id) => (content2.zones[id].act ?? 1) === act2);
       const open = isZoneUnlocked(content2, h, ids[0]);
       const done = ids.every((id) => cleared[id]);
@@ -34684,20 +35531,20 @@ ${suffix}`;
     let many = "";
     if (card.encounter) {
       const groups = /* @__PURE__ */ new Map();
-      for (const spec of card.encounter) {
-        const key = `${spec.id}|${(spec.modifiers ?? []).join()}|${spec.level ?? ""}`;
-        const g = groups.get(key) ?? { spec, n: 0 };
+      for (const spec2 of card.encounter) {
+        const key = `${spec2.id}|${(spec2.modifiers ?? []).join()}|${spec2.level ?? ""}`;
+        const g = groups.get(key) ?? { spec: spec2, n: 0 };
         g.n++;
         groups.set(key, g);
       }
-      const rows = [...groups.values()].map(({ spec, n }) => {
-        const bossDef = content2.bosses[spec.id];
-        const unit = { key: spec.id, modifiers: spec.modifiers ?? [] };
-        const lvl = bossDef ? bossDef.level : spec.level;
-        const rank = bossDef ? "boss" : spec.rank;
-        const mods = [...spec.modifiers ?? [], ...bossDef?.modifiers ?? []];
+      const rows = [...groups.values()].map(({ spec: spec2, n }) => {
+        const bossDef = content2.bosses[spec2.id];
+        const unit = { key: spec2.id, modifiers: spec2.modifiers ?? [] };
+        const lvl = spec2.level ?? bossDef?.level;
+        const rank = bossDef ? "boss" : spec2.rank;
+        const mods = [...spec2.modifiers ?? [], ...bossDef?.modifiers ?? []];
         const name = `${n > 1 ? `${n}\xD7 ` : ""}${R.unitTitle(unit)}`;
-        return { rank, name, lvl, art: art(bossDef ? "boss" : "monster", spec.id, R.unitTitle(unit)), traits: traitsOf([...new Set(mods)]), trait1: traitsOf([...new Set(mods)].slice(0, 1)) };
+        return { rank, name, lvl, art: art(bossDef ? "boss" : "monster", spec2.id, R.unitTitle(unit)), traits: traitsOf([...new Set(mods)]), trait1: traitsOf([...new Set(mods)].slice(0, 1)) };
       });
       many = rows.length >= 4 ? "many" : rows.length === 3 ? "some" : "";
       const lv = rows.map((r) => r.lvl);
@@ -34726,9 +35573,10 @@ ${suffix}`;
   function buffLine(r) {
     const L = locales[lang];
     const short = (s) => s.short ?? s.desc;
-    const names = (r.buffs ?? []).map((b) => b.id.replace(/^shrine_/, "")).filter((id) => L.shrine[id]).map((id) => short(L.shrine[id]));
-    if (r.xpPct > 0 && L.shrine.insight) names.push(short(L.shrine.insight));
-    return names.length ? `<p class="buffs">${t2("ux.activeBuffs")} ${names.map((n) => `<span>${esc(n)}</span>`).join("")}</p>` : "";
+    const till = (u) => r.mode === "depth" && u != null ? ` ${t2("depth.buffUntil", { n: u })}` : "";
+    const names = (r.buffs ?? []).map((b) => [b.id.replace(/^shrine_/, ""), b.until]).filter(([id]) => L.shrine[id]).map(([id, u]) => short(L.shrine[id]) + till(u));
+    if (r.xpPct > 0 && L.shrine.insight) names.push(short(L.shrine.insight) + till(r.xpUntil));
+    return names.length ? `<p class="buffs">${t2(r.mode === "depth" ? "depth.activeBuffs" : "ux.activeBuffs")} ${names.map((n) => `<span>${esc(n)}</span>`).join("")}</p>` : "";
   }
   function renderRaid() {
     const r = run();
@@ -34748,6 +35596,34 @@ ${suffix}`;
       ${hero().level <= 3 ? `<p class="tip">${t2("raidTip")}</p>` : ""}
     </div>
     ${view.confirm === "retreat" ? `<div class="shade" data-act="ask" data-v=""></div><section class="win small"><div class="win-body"><p>${t2("retreatConfirm")}</p><div class="row center-row"><button class="btn" data-act="retreat">${t2("retreatYes")}</button><button class="btn ghost" data-act="ask" data-v="">${t2("stay")}</button></div></div></section>` : ""}
+    ${hud("raid")}
+  </div>`;
+  }
+  function renderDepth() {
+    const r = run();
+    const hand = `depth:${r.station}:${r.played}`;
+    const dealing = view.dealt !== hand;
+    view.dealt = hand;
+    const L = locales[lang];
+    const d = api.depthInfo();
+    const P = content2.B.depth;
+    const steps = r.steps ?? 1;
+    const track = Array.from({ length: steps }, (_, i) => `<span class="st ${i < r.step ? "past" : i === r.step ? "now" : ""} ${r.boss && i === steps - 1 ? "boss" : ""}"></span>`).join("");
+    const nextCp = Math.floor((r.floor - 1) / P.checkpointEvery + 1) * P.checkpointEvery + 1;
+    const facts = [
+      `<span>${t2("depth.deepestNow", { n: Math.max(d.deepest, r.floor) })}</span>`,
+      nextCp > d.deepest ? `<span>${t2("depth.nextCheckpoint", { n: nextCp })}</span>` : `<span class="had">${t2("depth.nextCheckpointHad", { n: nextCp })}</span>`,
+      r.boss ? `<span class="boss">${t2(r.step >= steps - 1 ? "depth.bossNow" : "depth.bossAhead")}</span>` : ""
+    ].filter(Boolean).join("");
+    return `
+  <div class="screen raid depth">
+    <div class="backdrop zone depth-bg" style="--scene:url(${asset(`zone_${r.zoneId}`)})"></div>
+    ${topBar()}
+    <div class="raid-mid">
+      <div class="raid-title depth-title"><small class="dt-where">${esc(t2("depth.where", { zone: L.zone[r.zoneId] }))}</small><h2>${t2("depth.floorN", { n: r.floor })}</h2>${buffLine(r)}<div class="track" title="${t2("depth.handOf", { n: Math.min(r.step + 1, steps), max: steps })}">${track}</div><p class="dt-facts">${facts}</p><p class="dt-hand">${t2("depth.handOf", { n: Math.min(r.step + 1, steps), max: steps })} \xB7 ${t2("chooseCard")}</p></div>
+      <div class="cards n${r.cards.length} ${dealing ? "dealing" : ""}">${r.cards.map(cardView).join("")}</div>
+    </div>
+    ${view.confirm === "retreat" ? `<div class="shade" data-act="ask" data-v=""></div><section class="win small"><div class="win-body"><p>${t2("depth.retreatConfirm")}</p><div class="row center-row"><button class="btn" data-act="retreat">${t2("retreatYes")}</button><button class="btn ghost" data-act="ask" data-v="">${t2("stay")}</button></div></div></section>` : ""}
     ${hud("raid")}
   </div>`;
   }
@@ -35213,7 +36089,34 @@ ${suffix}`;
       extra += `<div class="levelup"><b>${t2("result.levelUp", { v: hero().level })}</b><span>${t2("result.levelUpInfo")}</span></div>`;
       if (fresh && !(over && r.result === "cleared" && r.gained?.unlocked)) burst += `<div class="burst lvl"><b>${t2("celebrate.level", { v: hero().level })}</b></div>`;
     }
-    if (over) {
+    const deep = r?.mode === "depth";
+    if (deep && res.floorReached && !over) {
+      const record = r.gained?.deepest === res.floorReached;
+      extra += `<div class="floordown"><b>${t2("depth.floorDown", { n: res.floorReached })}</b>${record ? `<span class="tag rec">${t2("depth.newRecord")}</span>` : ""}${res.floorReached > 1 && (res.floorReached - 1) % content2.B.depth.checkpointEvery === 0 && record ? `<p>${t2("depth.checkpointNew", { n: res.floorReached })}</p>` : ""}</div>`;
+      const m = res.milestone;
+      if (m) {
+        extra += `<div class="milestone"><b>${t2("depth.milestone", { n: m.floor })}</b><p>${t2("depth.milestoneGold", { gold: fmt(m.gold) })}</p><ul class="loot"><li class="r-${m.item.rarity} drop"><span class="loot-ico"><img src="${asset(`item_${content2.bases[m.item.base]?.icon ?? m.item.base}`)}" alt=""></span><span>${esc(R.itemName(m.item))}</span></li></ul>${m.waiting ? `<p class="m-wait">${t2("depth.milestoneWaiting")}</p>` : ""}</div>`;
+        if (fresh) burst += `<div class="burst depthburst"><b>${t2("depth.celebrate", { n: m.floor })}</b></div>`;
+      }
+    }
+    if (over && deep) {
+      const g = r.gained;
+      if (res.type !== "retreat" && res.outcome !== "timeout") extra += `<h3>${t2(`depth.result_${r.result === "death" ? "death" : "retreat"}`)}</h3>`;
+      if (r.result === "death") {
+        const lost = [...(g.itemsLost ?? []).map((it) => esc(R.itemName(it))), ...g.matsLost ? (g.mats ?? []).map((id) => esc(R.matName(id))) : []];
+        const bits = [lost.length ? t2("depth.lostAllList", { list: lost.join(", ") }) : g.goldFoundLost ? t2("depth.lostAll") : ""].filter(Boolean);
+        if (g.goldLost) bits.push(t2("ux.goldLostOnly", { gold: fmt(g.goldLost) }));
+        if (g.xpLost) bits.push(t2("ux.xpLost", { n: fmt(g.xpLost) }));
+        extra += `<p>${bits.join(" ")}</p>`;
+        if (hero().dead) extra += `<p class="bad"><b>${t2("ux.hcDead")}</b></p>`;
+      } else extra += `<p>${t2("depth.retreatInfo")}${res.type === "retreat" ? ` ${t2("ux.scrollUsed", { n: hero().scrolls ?? 0 })}` : ""}</p>`;
+      if ((g.rewards ?? []).length) extra += `<p class="ok">${t2("depth.rewardsKept", { n: g.rewards.length })}</p>`;
+      if (g.claimed?.bag) extra += `<p class="ok">${t2("depth.claimedBag")}</p>`;
+      if (g.claimed?.chest) extra += `<p class="ok">${t2("depth.claimedChest")}</p>`;
+      if (api.depthInfo()?.waiting) extra += `<p class="bad">${t2("depth.waiting")}</p>`;
+      extra += `<p class="dim">${t2("depth.summary", { from: r.startFloor ?? 1, to: g.lastFloor ?? r.floor, deepest: api.depthInfo()?.deepest ?? r.floor, xp: fmt(g.xp), gold: fmt(r.result === "death" ? 0 : g.gold), items: g.items - (g.itemsLost?.length ?? 0) })}</p>`;
+      if (fresh && r.result === "death") burst += `<div class="burst dead"><b>${t2("celebrate.fallen")}</b></div>`;
+    } else if (over) {
       if (res.type !== "retreat" && res.outcome !== "timeout") extra += `<h3>${t2(`result.${r.result}`)}</h3>`;
       if (r.result === "death") {
         const g = r.gained;
@@ -35251,7 +36154,7 @@ ${suffix}`;
     const coins = fresh && res.loot?.gold ? `<div class="coins">${Array.from({ length: 10 }, (_, i) => `<i style="--a:${(i * 36 + 10) % 360}deg;--d:${i % 5 * 40}ms"></i>`).join("")}</div>` : "";
     const best = (res.loot?.items ?? []).reduce((m, it) => Math.max(m, RARITY_RANK.indexOf(it.rarity)), -1);
     const head2 = res.type === "shrine" ? t2("result.shrine") : res.type === "chest" ? t2("result.chest") : res.type === "retreat" ? t2("result.retreat") : t2(`result.${res.outcome}`);
-    return `${burst}<section class="win outcome ${fresh ? "fresh" : ""} ${waits ? "wait" : ""} o-${res.outcome} ${res.levels ? "lvl" : ""} ${best >= 4 ? "treasure" : ""} ${over ? `end-${r.result}` : ""}" role="dialog">
+    return `${burst}<section class="win outcome ${fresh ? "fresh" : ""} ${waits ? "wait" : ""} o-${res.outcome} ${res.levels ? "lvl" : ""} ${best >= 4 || res.milestone ? "treasure" : ""} ${over ? `end-${r.result}` : ""} ${deep ? "o-depth" : ""}" role="dialog">
     <header class="win-head"><h2>${head2}</h2>${res.xp ? `<p class="xp-line">${t2("result.xp", { v: fmt(res.xp) })}</p>` : ""}</header>
     <div class="win-body" id="winbody" data-keep="outcome">
       ${res.type === "shrine" && locales[lang].shrine[res.shrine] ? `<p class="shrine-eff">${esc(locales[lang].shrine[res.shrine].desc)}</p>` : ""}
@@ -35350,7 +36253,7 @@ ${suffix}`;
     else if (!hero()) html = renderTitle();
     else if (view.fight) html = renderFight();
     else if (view.modal) html = renderModal();
-    else if (run() && !run().over) html = renderRaid();
+    else if (run() && !run().over) html = run().mode === "depth" ? renderDepth() : renderRaid();
     else html = renderCamp();
     if (run()?.zoneId) view.lastZone = run().zoneId;
     const a = document.activeElement;
@@ -35529,9 +36432,11 @@ ${suffix}`;
       view.prevSheet = null;
       view.diffPicked = null;
       if (v === "waystone") {
+        if (depthNew() && !api.newDifficulty()) view.wsMode = "depth";
         view.openActs = [];
         view.diffPeek = null;
         api.markDifficultySeen();
+        if (wsModeNow() === "depth") api.markDepthSeen();
       }
       try {
         if (v !== "camp" && !history.state?.win) history.pushState({ win: 1 }, "");
@@ -35559,6 +36464,22 @@ ${suffix}`;
       view.openActs = [];
       view.diffPicked = v;
       render();
+    },
+    wsMode(v) {
+      view.wsMode = v === "depth" && api.depthUnlocked() ? "depth" : "chapters";
+      if (view.wsMode === "depth") api.markDepthSeen();
+      view.scrollTo = "#winbody > :first-child";
+      render();
+    },
+    depthPick(v) {
+      view.depthPick = Number(v);
+      render();
+    },
+    startDepth(v) {
+      api.markCampSeen();
+      const res = api.startDepth(Number(v));
+      if (res.ok) view.tab = "camp";
+      act(res);
     },
     startRun(v) {
       api.markCampSeen();
@@ -35734,6 +36655,12 @@ ${suffix}`;
       view.sel = null;
       actions.tab("forge");
     },
+    /** From the Depths page without a scroll: the merchant, at its scrolls. */
+    toScrolls() {
+      view.scrollTo = ".scroll-h";
+      view.sel = null;
+      actions.tab("merchant");
+    },
     forgeTab(v) {
       view.forgeTab = v;
       view.sel = null;
@@ -35811,13 +36738,14 @@ ${suffix}`;
       const h0 = hero();
       const pre = { level: h0.level, xp: h0.xp, gold: h0.gold };
       const r0 = run();
+      const zone0 = r0?.zoneId;
       const belt0 = { life: r0?.belt?.life ?? 0, mana: r0?.belt?.mana ?? 0 };
       const reserve0 = { life: r0?.reserve?.life ?? 0, mana: r0?.reserve?.mana ?? 0 };
       const res = api.choose(Number(v));
       if (!res.ok) return fail(res);
       keepUnseen(res);
       if (res.units) {
-        view.fight = { res, pre, belt0, reserve0, zoneId: run().zoneId, events: res.events, i: 0, shown: 0, log: [], done: false, units: Object.fromEntries(res.units.map((u) => [u.uid, { ...u }])) };
+        view.fight = { res, pre, belt0, reserve0, zoneId: zone0 ?? run().zoneId, events: res.events, i: 0, shown: 0, log: [], done: false, units: Object.fromEntries(res.units.map((u) => [u.uid, { ...u }])) };
         render();
         view.fight.timer = setTimeout(stepFight, 500);
       } else {

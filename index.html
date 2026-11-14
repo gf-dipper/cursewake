@@ -2,7 +2,7 @@
 <html lang="en">
 <head>
 <meta charset="utf-8">
-<meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'sha256-plhJxdkoLYZwPM5fv4qvnZBpwBxWGvlQGQu5m4OTBzc=' 'sha256-VPIw1BmBqk/g1SV1GVWXjBrCeJhO99dVI2Rn+BV3gN0='; style-src 'self' 'unsafe-inline'; img-src 'self' data: blob: https://cdn.discordapp.com; font-src 'self' data:; media-src 'self' data: blob:; connect-src 'self' https://zwhsmstbntuwgcgfqhzl.supabase.co wss://zwhsmstbntuwgcgfqhzl.supabase.co; object-src 'none'; base-uri 'none'; form-action 'none'">
+<meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'sha256-plhJxdkoLYZwPM5fv4qvnZBpwBxWGvlQGQu5m4OTBzc=' 'sha256-GncZWWBj6ElvGM3criPLSEDgNh7dTYsIlLFTSvMDlcI='; style-src 'self' 'unsafe-inline'; img-src 'self' data: blob: https://cdn.discordapp.com; font-src 'self' data:; media-src 'self' data: blob:; connect-src 'self' https://zwhsmstbntuwgcgfqhzl.supabase.co wss://zwhsmstbntuwgcgfqhzl.supabase.co; object-src 'none'; base-uri 'none'; form-action 'none'">
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
 <meta name="theme-color" content="#0a0706">
 <meta name="mobile-web-app-capable" content="yes">
@@ -1159,6 +1159,17 @@ small.sync.st-browser { color: var(--dim); }
 .portrait .m-raid .beltwrap { flex: 1 1 50%; justify-content: center; gap: 6px; } .portrait .m-raid .belt { flex: none; }
 .portrait .m-raid .potion { width: 18px; height: 24px; } .portrait .m-raid .belt { gap: 3px; }
 
+/* the belt in the fight bar: the full belt on wide screens, counts on a phone; a short glow when a potion is drunk */
+.fbelt { display: flex; align-items: center; flex: none; min-width: 0; border-radius: 6px; }
+.fbelt.sipped { animation: beltSip .6s ease-out; } .fbelt.sipped.k-mana { animation-name: beltSipMana; }
+@keyframes beltSip { 0% { box-shadow: 0 0 0 1px #ff8a6a, 0 0 18px #ff4a2a99; } 100% { box-shadow: 0 0 0 1px #0000, 0 0 0 #0000; } }
+@keyframes beltSipMana { 0% { box-shadow: 0 0 0 1px #9ab8ff, 0 0 18px #4a7aff99; } 100% { box-shadow: 0 0 0 1px #0000, 0 0 0 #0000; } }
+/* a phone: the counts on a line of their own above the speed and skip buttons */
+.portrait .m-fight .hudrow { flex-wrap: wrap; align-content: center; row-gap: 4px; }
+.portrait .m-fight .fbelt { flex: 1 1 100%; justify-content: center; }
+.portrait .m-fight .fbelt .beltwrap { display: none; } .portrait .m-fight .fbelt .belt.compact { display: flex; align-items: center; height: 28px; gap: 8px; }
+@media (prefers-reduced-motion: reduce) { .fbelt.sipped { animation: none; } }
+
 /* merchant: potions */
 .potbox { display: grid; gap: 8px; padding: 10px 12px; border-radius: 8px; background: linear-gradient(180deg, #0f0b08, #0a0706); box-shadow: inset 0 0 0 1px var(--line), inset 0 2px 10px #000a; }
 .pb-row { display: grid; grid-template-columns: 74px minmax(0, 1fr); align-items: center; gap: 10px; }
@@ -1486,6 +1497,21 @@ h4::before { content: ''; flex: none; width: 6px; height: 6px; margin-right: -2p
 .portrait .unit .bar.num { height: 13px; } .portrait .unit .bar.num > span { font-size: 10px; }
 .portrait .unit .bar.num.mp { height: 11px; } .portrait .unit .bar.num.mp > span { font-size: 9px; }
 .raid-merc .bar.num { height: 13px; } .raid-merc .bar.num > span { font-size: 10px; }
+
+/* ================================================================ hover cards (mouse only): an item's card beside the tile under the pointer */
+.hovercard { position: absolute; z-index: 45; pointer-events: none; display: flex; align-items: flex-start; gap: 8px; max-width: calc(var(--sw) - 12px); max-height: calc(var(--sh) - 12px); overflow: hidden;
+  filter: drop-shadow(0 10px 22px #000d); animation: pop .12s ease-out; }
+.hovercard[hidden] { display: none; }
+.hovercard .hc-col { flex: none; width: 300px; display: grid; gap: 6px; align-content: start; }
+.hovercard .detail { display: block; padding: 10px 12px; }
+.hovercard .detail h3 { font-size: 16px; line-height: 1.2; } .hovercard .detail p { margin: 2px 0; font-size: 14px; }
+.hovercard .detail.worn { opacity: 1; background: linear-gradient(180deg, #120d0a, #0a0706); }
+.hovercard .detail.worn h3 { font-size: 15px; }
+.hovercard .vs { display: grid; gap: 4px; padding: 8px 10px; border-radius: var(--r2, 6px); background: #0a0706f2; box-shadow: inset 0 0 0 1px #4a3a26; }
+.hovercard .change, .hovercard .mchange { background: #0b0908; }
+.hovercard .change ul { font-size: 13.5px; }
+.hovercard .mchange { border: 1px solid #000; box-shadow: inset 0 0 0 1px var(--line); }
+@media (prefers-reduced-motion: reduce) { .hovercard { animation: none; } }
 
 </style>
 </head>
@@ -4389,6 +4415,15 @@ h4::before { content: ''; flex: none; width: 6px; height: 6px; margin-right: -2p
     if (ar <= 0) return B2.combat.minHit;
     const raw = ar / (ar + def) * (2 * attacker.level / (attacker.level + defender.level));
     return clamp2(raw, B2.combat.minHit, B2.combat.maxHit);
+  }
+  function beltAfter(belt, events, n = events.length, uid = "hero") {
+    const out = { life: belt?.life ?? 0, mana: belt?.mana ?? 0 };
+    const end = Math.min(n, events.length);
+    for (let i = 0; i < end; i++) {
+      const ev = events[i];
+      if (ev.t === "potion" && ev.u === uid && out[ev.kind] > 0) out[ev.kind]--;
+    }
+    return out;
   }
   function simulateCombat({ allies, enemies, rng, B: B2, record = true }) {
     const C = B2.combat;
@@ -8576,6 +8611,7 @@ h4::before { content: ''; flex: none; width: 6px; height: 6px; margin-right: -2p
       given: "You gave them {item}.",
       fromBag: "From your bag, they can use",
       ifGiven: "If you give it to them:",
+      wornNow: "They wear now:",
       swapsOut: "What they wear now ({item}) goes back to your bag.",
       give: "Give it to them",
       locked: "The mercenary captain comes to camp once you have cleared this zone: {zone}.",
@@ -9488,6 +9524,7 @@ h4::before { content: ''; flex: none; width: 6px; height: 6px; margin-right: -2p
       given: "Odaadtad: {item}.",
       fromBag: "A zs\xE1kodb\xF3l ezeket adhatod neki",
       ifGiven: "Ha odaadod neki:",
+      wornNow: "Most rajta:",
       swapsOut: "Amit most visel ({item}), visszaker\xFCl a zs\xE1kodba.",
       give: "Odaadom neki",
       locked: "A zsoldoskapit\xE1ny akkor j\xF6n a t\xE1borba, ha megtiszt\xEDtottad ezt a helysz\xEDnt: {zone}.",
@@ -32079,7 +32116,7 @@ ${suffix}`;
   }
 
   // src/client/admin.js
-  var BUILD_TIME = true ? "2026-11-14T07:24:55.017Z" : null;
+  var BUILD_TIME = true ? "2026-11-14T08:10:04.571Z" : null;
   var TABS = ["players", "log", "hero", "test", "balance", "system"];
   var KINDS = ["raid_start", "raid_end", "level_up", "death", "boss_kill", "unique_found", "set_found", "runeword_found", "difficulty_unlocked", "hero_created", "hero_deleted", "sync_conflict", "sync_outdated", "sync_rejected", "admin_edit"];
   var POLL_MS = 15e3;
@@ -33261,7 +33298,7 @@ ${suffix}`;
     } else if (mode === "raid") {
       mid = `${beltView(r.belt, s.beltSlots, r.reserve)}${raidMerc(r)}<span class="hud-gap"></span>${h.scrolls > 0 ? `<button class="hbtn ghost" data-act="ask" data-v="retreat">${t2("ux.retreatN", { n: h.scrolls })}</button>` : `<button class="hbtn ghost" disabled>${t2("ux.noScroll")}</button>`}`;
     } else if (mode === "fight") {
-      mid = view.fight.done ? '<span class="hud-gap"></span>' : `<span class="hud-gap"></span><div class="controls" id="controls">
+      mid = view.fight.done ? `${fightBelt()}<span class="hud-gap"></span>` : `${fightBelt()}<span class="hud-gap"></span><div class="controls" id="controls">
         <button class="chip ${view.speed === 1 ? "on" : ""}" data-act="speed" data-v="1">${t2("speed1")}</button>
         <button class="chip ${view.speed === 2 ? "on" : ""}" data-act="speed" data-v="2">${t2("speed2")}</button>
         <button class="hbtn" data-act="skip">${t2("skip")}</button></div>`;
@@ -33275,6 +33312,15 @@ ${suffix}`;
     </div>
     ${orb("mana", mana, maxMana)}
   </footer>`;
+  }
+  function fightBelt() {
+    const f = view.fight;
+    const s = api.sheet();
+    const r = run();
+    const live = f.done && r && !r.over;
+    const belt = live ? r.belt : beltAfter(f.belt0, f.events, f.shown ?? 0);
+    const reserve = live ? r.reserve ?? { life: 0, mana: 0 } : f.reserve0;
+    return `<div class="fbelt" id="fbelt">${beltView(belt, s.beltSlots, reserve)}${beltView(belt, s.beltSlots, reserve, { compact: true })}</div>`;
   }
   function beltView(belt, slots, reserve = null, { compact = false, bare = false } = {}) {
     const res = reserve ?? { life: 0, mana: 0 };
@@ -33438,9 +33484,16 @@ ${suffix}`;
     ["summonLife", "summonLifePct", "%"],
     ["goldFind", "goldFind", "%"]
   ];
-  function statChange(index) {
+  function trialItem(item) {
+    const h = hero();
+    if (!item?.identified || !canEquip(content2, h, item).ok) return null;
+    const trial = structuredClone(h);
+    trial.bag = [structuredClone(item)];
+    if (!equipFromBag(content2, trial, 0).ok) return null;
+    return withSk(deriveStats(content2, trial), trial);
+  }
+  function statChange(index, then = trialFull(index)) {
     const now = sheetNow();
-    const then = trialFull(index);
     if (!then) return "";
     const rows = [];
     const add = (label, a, b, unit = "", better = (x, y) => y > x) => {
@@ -33482,6 +33535,16 @@ ${suffix}`;
     }
     return `<div class="change"><h5>${t2("ux.change")}</h5>${rows.length ? `<ul>${rows.join("")}</ul>` : `<p class="dim">${t2("ux.noChange")}</p>`}</div>`;
   }
+  function compareParts(item, then, wearOk, slot) {
+    if (!item?.identified) return { change: "", vs: "" };
+    const worn = slot && hero().equipment[slot];
+    return {
+      change: wearOk ? then ? statChange(null, then) : `<p class="bad">${t2("err.bag_full")}</p>` : `<p class="bad">${t2("ux.cantWear")}</p>`,
+      vs: `<div class="vs"><h5>${t2("ux.compareWorn")}</h5>${worn ? itemDetail(worn, "worn", slot) : `<p class="dim">${t2("ux.compareNone")}</p>`}</div>`
+    };
+  }
+  var bagCompare = (i) => compareParts(hero().bag[i], trialFull(i), api.canWear(i).ok, api.targetSlot(i));
+  var chestCompare = (item) => compareParts(item, trialItem(item), canEquip(content2, hero(), item).ok, targetSlot(content2, hero(), item));
   function itemDetail(item, where, key, out = null) {
     const h = hero();
     const base = content2.bases[item.base];
@@ -33630,12 +33693,8 @@ ${suffix}`;
     else if (sel?.w === "bag" && h.bag[sel.k]) {
       const item = h.bag[sel.k];
       detail = itemDetail(item, "bag", sel.k, out);
-      if (item.identified) {
-        const slot = api.targetSlot(sel.k);
-        const worn = slot && h.equipment[slot];
-        detail += api.canWear(sel.k).ok ? trialFull(sel.k) ? statChange(sel.k) : `<p class="bad">${t2("err.bag_full")}</p>` : `<p class="bad">${t2("ux.cantWear")}</p>`;
-        detail += `<div class="vs"><h5>${t2("ux.compareWorn")}</h5>${worn ? itemDetail(worn, "worn", slot) : `<p class="dim">${t2("ux.compareNone")}</p>`}</div>`;
-      }
+      const cmp = bagCompare(sel.k);
+      detail += cmp.change + cmp.vs;
     }
     const unid = h.bag.some((i) => !i.identified);
     const cls = locales[lang].class[h.classId].name;
@@ -33662,6 +33721,100 @@ ${suffix}`;
   }
   function popCard(detail, buttons, closeAttrs) {
     return `<div class="detail-wrap popcard"><button class="x popx" ${closeAttrs} aria-label="${t2("close")}">\u2715</button><div class="pop-scroll">${detail}</div>${buttons ? `<div class="pop-actions row">${buttons}</div>` : ""}</div>`;
+  }
+  var HOVER_SEL = '.win .item[data-w]:not([data-w="mat"]):not(.sel)';
+  var HOVER_TABS = /* @__PURE__ */ new Set(["gear", "stash", "merchant", "forge", "merc"]);
+  var canHover = () => !!window.matchMedia?.("(hover: hover) and (pointer: fine)").matches;
+  var hov = { tile: null, timer: 0, el: null, x: -1, y: -1, calmUntil: 0 };
+  function hoverCard(tile) {
+    const h = hero();
+    if (!h || view.fight || view.modal || !HOVER_TABS.has(view.tab)) return "";
+    const { w, v } = tile.dataset;
+    const i = Number(v);
+    let item = null;
+    let where = "bag";
+    let cmp = { change: "", vs: "" };
+    if (w === "eq") {
+      item = h.equipment[v];
+      where = "eq";
+    } else if (w === "mercEq") {
+      item = api.mercEquipment()?.[v];
+      where = "merc";
+    } else if (w === "stash") {
+      item = api.stash()[i];
+      where = "stash";
+      if (item) cmp = chestCompare(item);
+    } else if (w === "bag" || w === "sbag") {
+      item = h.bag[i];
+      if (item && view.tab === "merc") {
+        where = "merc";
+        const worn = api.mercEquipment() ?? {};
+        const slot = api.mercSlotOf(i);
+        cmp = { change: mercChange(i, api.mercSheet(), worn), vs: slot && worn[slot] ? `<div class="vs"><h5>${t2("merc.wornNow")}</h5>${itemDetail(worn[slot], "worn", slot)}</div>` : "" };
+      } else if (item) {
+        where = view.tab === "merchant" ? "shop" : "bag";
+        cmp = bagCompare(i);
+      }
+    }
+    if (!item) return "";
+    const main = itemDetail(item, where, w === "eq" || w === "mercEq" ? v : i, {});
+    return `<div class="hc-col">${main}${cmp.change}</div>${cmp.vs ? `<div class="hc-col hc-vs">${cmp.vs}</div>` : ""}`;
+  }
+  function showHover(tile) {
+    const html = hoverCard(tile);
+    if (!html || !tile.isConnected) return;
+    let el = hov.el;
+    if (!el || !stage.contains(el)) {
+      el = document.createElement("div");
+      el.className = "hovercard";
+      el.setAttribute("aria-hidden", "true");
+      stage.appendChild(el);
+      hov.el = el;
+    }
+    el.innerHTML = html;
+    el.hidden = false;
+    if (tile.title) {
+      tile.dataset.title = tile.title;
+      tile.removeAttribute("title");
+    }
+    const sr = stage.getBoundingClientRect();
+    const sc = sr.width / stage.offsetWidth || 1;
+    const r = tile.getBoundingClientRect();
+    const W2 = el.offsetWidth;
+    const H = el.offsetHeight;
+    const SW = stage.offsetWidth;
+    const SH = stage.offsetHeight;
+    const left = (r.left - sr.left) / sc;
+    const right = (r.right - sr.left) / sc;
+    const top = (r.top - sr.top) / sc;
+    let x = right + 10;
+    if (x + W2 > SW - 6) x = left - W2 - 10;
+    if (x < 6) x = Math.max(6, Math.min(SW - W2 - 6, right + 10));
+    const y = Math.max(6, Math.min(top - 8, SH - H - 6));
+    el.style.left = `${Math.round(x)}px`;
+    el.style.top = `${Math.round(y)}px`;
+  }
+  function hideHover() {
+    clearTimeout(hov.timer);
+    if (hov.tile?.dataset.title) {
+      hov.tile.title = hov.tile.dataset.title;
+      delete hov.tile.dataset.title;
+    }
+    hov.tile = null;
+    if (hov.el) hov.el.hidden = true;
+  }
+  function hoverBefore() {
+    const open = hov.el && !hov.el.hidden && hov.tile ? { w: hov.tile.dataset.w, v: hov.tile.dataset.v } : null;
+    hideHover();
+    return open;
+  }
+  function hoverAfter(open) {
+    if (!open || !canHover()) return;
+    const tile = document.elementFromPoint(hov.x, hov.y)?.closest(HOVER_SEL);
+    if (tile && tile.dataset.w === open.w && tile.dataset.v === open.v) {
+      hov.tile = tile;
+      showHover(tile);
+    }
   }
   function tabStash() {
     const h = hero();
@@ -34050,24 +34203,27 @@ ${suffix}`;
     ${s.block ? `<dt>${t2("stats.block")}</dt><dd>${fmt(s.block)}%</dd>` : ""}
   </dl>`;
   }
-  function mercPick(fits, now, worn) {
-    const h = hero();
-    const L = locales[lang];
-    const pick = fits.find((f) => view.sel?.w === "bag" && view.sel.k === f.i) ?? fits[0];
-    const then = api.mercTrialSheet(pick.i);
-    const slot = api.mercSlotOf(pick.i);
+  function mercChange(i, now, worn) {
+    const then = api.mercTrialSheet(i);
+    if (!then) return "";
+    const slot = api.mercSlotOf(i);
     const old = slot && worn[slot];
     const row = (label, a, b, unit = "") => {
       const d = Math.round(b) - Math.round(a);
       return `<dt>${label}</dt><dd>${fmt(a)}${unit}${d ? ` \u2192 <b class="${d > 0 ? "up" : "down"}">${fmt(b)}${unit}</b>` : ""}</dd>`;
     };
-    const dmg = then ? `<dt>${t2("stats.damage")}</dt><dd>${fmt(now.dmgMin)}\u2013${fmt(now.dmgMax)}${then.dmgMin + then.dmgMax !== now.dmgMin + now.dmgMax ? ` \u2192 <b class="${then.dmgMin + then.dmgMax > now.dmgMin + now.dmgMax ? "up" : "down"}">${fmt(then.dmgMin)}\u2013${fmt(then.dmgMax)}</b>` : ""}</dd>` : "";
+    const dmg = `<dt>${t2("stats.damage")}</dt><dd>${fmt(now.dmgMin)}\u2013${fmt(now.dmgMax)}${then.dmgMin + then.dmgMax !== now.dmgMin + now.dmgMax ? ` \u2192 <b class="${then.dmgMin + then.dmgMax > now.dmgMin + now.dmgMax ? "up" : "down"}">${fmt(then.dmgMin)}\u2013${fmt(then.dmgMax)}</b>` : ""}</dd>`;
+    return `<div class="mchange"><h5>${t2("merc.ifGiven")}</h5><dl class="stats">
+        ${row(t2("life"), now.maxLife, then.maxLife)}${dmg}${row(t2("stats.defense"), now.def, then.def)}${row(t2("stats.speed"), now.speed, then.speed, "%")}${now.block || then.block ? row(t2("stats.block"), now.block, then.block, "%") : ""}
+      </dl>${old ? `<p class="dim">${t2("merc.swapsOut", { item: esc(R.itemName(old)) })}</p>` : ""}</div>`;
+  }
+  function mercPick(fits, now, worn) {
+    const h = hero();
+    const pick = fits.find((f) => view.sel?.w === "bag" && view.sel.k === f.i) ?? fits[0];
     return `<div class="mercpick">
     <div class="baggrid">${fits.map(({ item, i }) => `<div class="bagcell">${itemTile(item, `data-act="sel" data-w="bag" data-v="${i}"`, pick.i === i, true)}</div>`).join("")}</div>
     <div class="mercpick-card">${itemDetail(h.bag[pick.i], "merc", pick.i)}
-      ${then ? `<div class="mchange"><h5>${t2("merc.ifGiven")}</h5><dl class="stats">
-        ${row(t2("life"), now.maxLife, then.maxLife)}${dmg}${row(t2("stats.defense"), now.def, then.def)}${row(t2("stats.speed"), now.speed, then.speed, "%")}${now.block || then.block ? row(t2("stats.block"), now.block, then.block, "%") : ""}
-      </dl>${old ? `<p class="dim">${t2("merc.swapsOut", { item: esc(R.itemName(old)) })}</p>` : ""}</div>` : ""}
+      ${mercChange(pick.i, now, worn)}
       <button class="btn" data-act="mercEquip" data-v="${pick.i}">${t2("merc.give")}</button></div>
   </div>`;
   }
@@ -34110,7 +34266,7 @@ ${suffix}`;
     <h4>${t2("merc.gear")} <small class="dim mwears"><span class="sep">\xB7 </span>${t2(wearsKey(content2.mercs[m.type]))}</small></h4>
     <div class="merc-gear2 n${slots.length}">${slots.map((sl) => {
       const item = worn[sl];
-      return `<div class="merc-slot2"><div class="mslot-head"><small>${t2(`slot.${sl}`)}</small>${item ? `<button class="chip" data-act="mercUnequip" data-v="${sl}">${t2("merc.takeBack")}</button>` : ""}</div>${item ? `<div class="mslot-body">${itemTile(item, 'tabindex="-1"', false, true)}<div><b class="r-${item.rarity}">${esc(R.itemName(item))}</b>${R.itemLines(item).map((l) => `<small>${esc(l)}</small>`).join("")}</div></div>` : `<div class="mslot-body empty"><div class="item none"></div><span class="dim">${t2("merc.empty")}</span></div>`}</div>`;
+      return `<div class="merc-slot2"><div class="mslot-head"><small>${t2(`slot.${sl}`)}</small>${item ? `<button class="chip" data-act="mercUnequip" data-v="${sl}">${t2("merc.takeBack")}</button>` : ""}</div>${item ? `<div class="mslot-body">${itemTile(item, `tabindex="-1" data-w="mercEq" data-v="${sl}"`, false, true)}<div><b class="r-${item.rarity}">${esc(R.itemName(item))}</b>${R.itemLines(item).map((l) => `<small>${esc(l)}</small>`).join("")}</div></div>` : `<div class="mslot-body empty"><div class="item none"></div><span class="dim">${t2("merc.empty")}</span></div>`}</div>`;
     }).join("")}</div>
     <h4>${t2("merc.fromBag")}</h4>
     ${fits.length ? mercPick(fits, s, worn) : `<p class="dim">${t2("merc.nothingFits")}</p>`}
@@ -34545,6 +34701,14 @@ ${suffix}`;
     }
     f.shown = f.i;
     if (!animate) return;
+    if (ev.t === "potion" && ev.u === "hero") {
+      const box = document.getElementById("fbelt");
+      if (box) {
+        box.outerHTML = fightBelt();
+        const nb = document.getElementById("fbelt");
+        nb?.classList.add("sipped", ev.kind === "mana" ? "k-mana" : "k-life");
+      }
+    }
     if (ev.t === "summon") {
       render();
       if (!calmMotion()) {
@@ -34797,7 +34961,10 @@ ${suffix}`;
       render();
     }
   });
-  window.addEventListener("resize", fit);
+  window.addEventListener("resize", () => {
+    hideHover();
+    fit();
+  });
   window.addEventListener("orientationchange", fit);
   window.visualViewport?.addEventListener("resize", fit);
   fit();
@@ -34816,6 +34983,7 @@ ${suffix}`;
     const focus = a && a !== document.body && stage.contains(a) && a.dataset?.act ? [a.dataset.act, a.dataset.v, a.dataset.w, a.dataset.r] : null;
     const wb = document.getElementById("winbody");
     const keep = wb ? [wb.dataset.keep, wb.scrollTop] : null;
+    const hovered = hoverBefore();
     stage.innerHTML = html + overlayHtml() + toastHtml() + `<div class="turnmsg"><b>\u21BB</b><span>${t2("rotate")}</span></div>`;
     document.documentElement.lang = lang;
     const shade = stage.querySelector(":scope > .choice-shade");
@@ -34832,15 +35000,15 @@ ${suffix}`;
     if (!focus) document.getElementById("go")?.focus({ preventScroll: true });
     if (opened) {
       stage.querySelector(".win .x")?.focus({ preventScroll: true });
-      return afterRender();
+      return afterRender(hovered);
     }
     if (focus) {
       const again = [...stage.querySelectorAll(`[data-act="${focus[0]}"]`)].find((el) => el.dataset.v === focus[1] && el.dataset.w === focus[2] && el.dataset.r === focus[3]);
       again?.focus({ preventScroll: true });
     }
-    afterRender();
+    afterRender(hovered);
   }
-  function afterRender() {
+  function afterRender(hovered = null) {
     const card = document.querySelector(".gear2 .popcard");
     const wb = document.getElementById("winbody");
     if (card && wb && !document.documentElement.classList.contains("portrait") && !stage.classList.contains("portrait")) {
@@ -34892,6 +35060,8 @@ ${suffix}`;
       }
     }
     if (gestured) setAmbience(!hero() ? null : view.fight || view.modal || run() && !run().over ? "raid" : "camp");
+    hov.calmUntil = performance.now() + 200;
+    hoverAfter(hovered);
   }
   function act(res) {
     if (res && res.ok === false) fail(res);
@@ -35202,11 +35372,14 @@ ${suffix}`;
     choose(v) {
       const h0 = hero();
       const pre = { level: h0.level, xp: h0.xp, gold: h0.gold };
+      const r0 = run();
+      const belt0 = { life: r0?.belt?.life ?? 0, mana: r0?.belt?.mana ?? 0 };
+      const reserve0 = { life: r0?.reserve?.life ?? 0, mana: r0?.reserve?.mana ?? 0 };
       const res = api.choose(Number(v));
       if (!res.ok) return fail(res);
       keepUnseen(res);
       if (res.units) {
-        view.fight = { res, pre, zoneId: run().zoneId, events: res.events, i: 0, shown: 0, log: [], done: false, units: Object.fromEntries(res.units.map((u) => [u.uid, { ...u }])) };
+        view.fight = { res, pre, belt0, reserve0, zoneId: run().zoneId, events: res.events, i: 0, shown: 0, log: [], done: false, units: Object.fromEntries(res.units.map((u) => [u.uid, { ...u }])) };
         render();
         view.fight.timer = setTimeout(stepFight, 500);
       } else {
@@ -35334,6 +35507,32 @@ ${suffix}`;
       render();
     }
   };
+  function armHover(e) {
+    if (e.pointerType !== "mouse" || !canHover()) return;
+    const tile = e.target.closest?.(HOVER_SEL) ?? null;
+    if (tile === hov.tile) return;
+    hideHover();
+    if (!tile) return;
+    hov.tile = tile;
+    hov.timer = setTimeout(() => {
+      if (hov.tile === tile) showHover(tile);
+    }, 120);
+  }
+  root.addEventListener("pointerover", armHover);
+  root.addEventListener("pointerout", (e) => {
+    if (!hov.tile || e.relatedTarget && hov.tile.contains(e.relatedTarget)) return;
+    if (e.target.closest?.(HOVER_SEL) === hov.tile) hideHover();
+  });
+  root.addEventListener("pointermove", (e) => {
+    hov.x = e.clientX;
+    hov.y = e.clientY;
+    if (!hov.tile) armHover(e);
+  }, { passive: true });
+  root.addEventListener("pointerdown", hideHover);
+  window.addEventListener("scroll", () => {
+    if (performance.now() > (hov.calmUntil ?? 0)) hideHover();
+  }, { capture: true, passive: true });
+  window.addEventListener("blur", hideHover);
   root.addEventListener("click", (e) => {
     const el = e.target.closest("[data-act]");
     if (!el || el.disabled) return;

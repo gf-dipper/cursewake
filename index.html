@@ -2,7 +2,7 @@
 <html lang="en">
 <head>
 <meta charset="utf-8">
-<meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'sha256-BAuyZJFkPsRkJtNm1f/31XiwDUTyf8ohU/qX8DtdnXE=' 'sha256-/UMshKnCO4cIX/FsP7LjZtCIbbZJKWyWjf9e6RJN2e8='; style-src 'self' 'unsafe-inline'; img-src 'self' data: blob: https://cdn.discordapp.com; font-src 'self' data:; media-src 'self' data: blob:; connect-src 'self' https://zwhsmstbntuwgcgfqhzl.supabase.co wss://zwhsmstbntuwgcgfqhzl.supabase.co; object-src 'none'; base-uri 'none'; form-action 'none'">
+<meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'sha256-BAuyZJFkPsRkJtNm1f/31XiwDUTyf8ohU/qX8DtdnXE=' 'sha256-bTTEgkADilVn33gJ2unL6YauECRY+MUgZkJxkBc+qVI='; style-src 'self' 'unsafe-inline'; img-src 'self' data: blob: https://cdn.discordapp.com; font-src 'self' data:; media-src 'self' data: blob:; connect-src 'self' https://zwhsmstbntuwgcgfqhzl.supabase.co wss://zwhsmstbntuwgcgfqhzl.supabase.co; object-src 'none'; base-uri 'none'; form-action 'none'">
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
 <meta name="theme-color" content="#0a0706">
 <meta name="mobile-web-app-capable" content="yes">
@@ -1141,7 +1141,10 @@ small.sync.st-browser { color: var(--dim); }
    button beside the text (on a phone, where the window fills the screen, at the foot of the screen) */
 .stage:not(.portrait):has(.win) .toast { top: 4px; max-width: calc(100% - 400px); flex-wrap: nowrap; padding: 6px 14px; font-size: 14px; }
 .stage:not(.portrait):has(.win) .toast .chip { flex: none; }
-.portrait:has(.win) .toast { top: auto; bottom: 12px; }
+/* on a phone the window fills the screen: the message sits just above its "Back" bar (never over the button), and the
+   window's list gets room at its foot so its last row can be scrolled clear of the message */
+.portrait:has(.win) .toast { top: auto; bottom: 80px; }
+.portrait:has(.win):has(.toast) #winbody { padding-bottom: 72px; }
 
 /* ================================================================ potions: belt + reserve, the merchant's potion corner and gamble tiles */
 .beltwrap { display: flex; align-items: center; gap: 8px; flex: none; }
@@ -1697,6 +1700,65 @@ html, body { text-size-adjust: 100%; }
 /* a phone on a raid or a descent: a belt of six or eight places and the reserve do not fit beside the companion's bar,
    so the belt shows as counts there (as it does in a fight) */
 .portrait .m-raid .beltwrap { display: none; } .portrait .m-raid .belt.compact { display: flex; align-items: center; flex: 1 1 40%; height: 32px; gap: 8px; }
+
+/* ---- the leaderboard ("Ranglista", ranks.js) */
+.trophy { width: 18px; height: 18px; flex: none; vertical-align: -3px; }
+.chip.ranks-btn { width: 40px; padding: 2px 0; display: inline-flex; align-items: center; justify-content: center; color: #f0cf6a; }
+.chip.ranks-btn.on { color: #1a1208; }
+.btn .trophy { margin-right: 6px; color: #f0cf6a; }
+.roster-more { margin-top: 12px; }
+.win.w-ranks { width: min(860px, calc(100% - 60px)); }
+.win.w-ranks.free { top: 16px; bottom: 16px; }
+.ranks { display: grid; gap: 10px; min-width: 0; }
+.ranks.busy .rk-list, .ranks.busy .rk-hall { opacity: .55; transition: opacity .2s; }
+.rk-boards, .rk-scopes { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 6px; }
+.rk-tab { display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 1px; min-height: 46px; min-width: 0; padding: 4px 6px; cursor: pointer; color: var(--text);
+  border: 1px solid #000; border-radius: 5px; background: linear-gradient(180deg, #241b14, #120d0a); box-shadow: inset 0 0 0 1px var(--line); text-align: center; transition: color .15s, box-shadow .15s; }
+.rk-tab b { font: 600 16px/1.15 var(--serif); font-variant: small-caps; letter-spacing: .04em; overflow-wrap: normal; max-width: 100%; }
+.rk-tab small { font-size: 12px; color: var(--dim); max-width: 100%; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+.rk-tab:hover { box-shadow: inset 0 0 0 1px var(--frame-hi); }
+.rk-tab.on { color: #fff3cf; background: linear-gradient(180deg, #4a3624, #241c15); box-shadow: inset 0 0 0 1px #ffd27a, 0 0 12px #c9a35a66; }
+.rk-scopes .rk-tab { min-height: 40px; } .rk-scopes .rk-tab b { font-size: 14px; }
+.rk-filters { display: flex; flex-wrap: nowrap; gap: 6px 10px; align-items: center; min-width: 0; }
+.rk-modes { display: flex; flex-wrap: nowrap; gap: 6px; flex: none; }
+.rk-classes { display: flex; align-items: center; gap: 8px; color: #d6c8ad; font-size: 14px; flex: 1 1 auto; min-width: 0; justify-content: flex-end; }
+.rk-classes select { font: inherit; color: var(--text); background: #0b0908; border: 1px solid var(--line2); border-radius: 4px; padding: 4px 8px; min-width: 0; max-width: 100%; }
+.rk-modes .chip.hc.on { background: #7a2a20; border-color: #e0705e; color: #fff; }
+.rk-note { margin: 0; font-size: 13px; color: var(--dim); }
+.rk-note summary { cursor: pointer; color: #d6c8ad; list-style-position: inside; }
+.rk-note p { margin: 4px 0 0; }
+.rk-list { list-style: none; margin: 0; padding: 0; display: grid; gap: 4px; }
+.rk-row { display: grid; grid-template-columns: minmax(34px, max-content) minmax(0, 1fr) auto; align-items: center; gap: 10px; padding: 6px 10px; border-radius: 5px; background: #0006; box-shadow: inset 0 0 0 1px #3b2e2288; }
+.rk-row.mine { background: linear-gradient(90deg, #3a2c16cc, #0006); box-shadow: inset 0 0 0 1px #c9a35a99; }
+.rk-row.fallen .rk-hero { color: #c9a9a0; }
+.rk-pos { font: 700 18px/1 var(--serif); color: #cdbb96; text-align: right; font-variant-numeric: tabular-nums; white-space: nowrap; }
+.rk-row.p1 .rk-pos { color: #ffd76a; text-shadow: 0 0 10px #ffcf5a88; } .rk-row.p2 .rk-pos { color: #e3e7ef; } .rk-row.p3 .rk-pos { color: #e0a070; }
+.rk-who { min-width: 0; display: flex; flex-wrap: wrap; align-items: baseline; column-gap: 8px; }
+.rk-hero { font: 600 16px var(--serif); color: #f1dfb6; min-width: 0; max-width: 100%; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+.rk-tags { display: inline-flex; gap: 4px; flex-wrap: wrap; }
+.rk-who small { flex-basis: 100%; font-size: 13px; color: var(--dim); min-width: 0; overflow-wrap: anywhere; }
+.rk-val { text-align: right; display: flex; flex-direction: column; align-items: flex-end; line-height: 1.1; }
+.rk-val b { font: 700 20px var(--serif); color: #f0cf6a; font-variant-numeric: tabular-nums; white-space: nowrap; } .rk-val b.rk-date { font-size: 15px; }
+.rk-val small { font-size: 12px; color: var(--dim); }
+.tag.warn { color: #1a1208; background: #e0b050; border-color: #e0b050; }
+.rk-me { padding: 8px 10px; border-radius: 6px; background: #1a120a99; box-shadow: inset 0 0 0 1px var(--line2); }
+.rk-me h4 { margin: 0 0 6px; } .rk-me.none { display: flex; flex-wrap: wrap; gap: 6px 12px; align-items: center; justify-content: space-between; } .rk-me.none p { margin: 0; font-size: 14px; color: #d6c8ad; }
+.rk-state { margin: 6px 0; padding: 14px 12px; text-align: center; color: #d6c8ad; background: #0005; border-radius: 6px; }
+.rk-state.err { display: grid; gap: 8px; justify-items: center; } .rk-state.err p { margin: 0; }
+.rk-more { margin: 0; font-size: 13px; text-align: center; }
+.rk-hall { display: grid; gap: 10px; } .rk-season h4 { margin: 0 0 6px; }
+.rk-nick { display: flex; flex-wrap: wrap; gap: 6px 12px; align-items: center; justify-content: space-between; padding: 8px 10px; border-radius: 6px; background: #0005; box-shadow: inset 0 0 0 1px var(--line); }
+.rk-nick > div { display: flex; flex-wrap: wrap; gap: 4px 10px; align-items: baseline; min-width: 0; }
+.rk-nick b { font: 600 15px var(--serif); font-variant: small-caps; color: #ecd7a4; } .rk-nick-now { color: #f1dfb6; overflow-wrap: anywhere; }
+.rk-nick.open { display: grid; justify-content: stretch; } .rk-nick.open .row { margin-top: 0; flex-wrap: wrap; gap: 6px; } .rk-nick small { font-size: 13px; } .rk-nick small.ok { color: var(--ok); }
+.rk-nick input { width: 100%; font: inherit; font-size: 16px; color: var(--text); background: #0b0908; border: 1px solid var(--line2); border-radius: 4px; padding: 6px 8px; }
+.rk-refresh { justify-self: center; }
+.portrait .rk-tab b { font-size: 15px; } .portrait .rk-scopes .rk-tab b { font-size: 13px; }
+.portrait .rk-row { grid-template-columns: minmax(34px, max-content) minmax(0, 1fr) auto; gap: 8px; padding: 6px 8px; }
+.portrait .rk-pos { font-size: 16px; }
+.portrait .rk-modes .chip { padding: 0 10px; } .portrait .rk-filters { gap: 6px 8px; } .portrait .rk-classes select { flex: 1 1 auto; min-width: 0; }
+.portrait .rk-tab { min-height: 40px; } .portrait .rk-scopes .rk-tab { min-height: 36px; } .portrait .ranks { gap: 8px; }
+.portrait .chip.ranks-btn { min-width: 44px; width: 44px; }
 /* the shop's "sell everything up to" row, and the lock that keeps an item */
 .sellrow { display: flex; flex-wrap: wrap; align-items: center; gap: 6px 10px; margin: -2px 0 10px; } .sellrow label { display: flex; flex-wrap: wrap; align-items: center; gap: 6px; }
 .sellrow select { font: inherit; font-size: 14px; } .sellrow small { flex-basis: 100%; }
@@ -4128,6 +4190,11 @@ html, body { text-size-adjust: 100%; }
     if (diff === "normal") (hero2.cleared ?? (hero2.cleared = {}))[zoneId] = true;
     else ((_a = hero2.progress ?? (hero2.progress = {}))[diff] ?? (_a[diff] = {}))[zoneId] = true;
   }
+  function cleanFirsts(raw) {
+    const f = raw && typeof raw === "object" && !Array.isArray(raw) ? raw : {};
+    const at = typeof f.hellClearAt === "string" && f.hellClearAt.length <= 40 && /^\d{4}-\d{2}-\d{2}T\d{2}:\d{2}:\d{2}(\.\d{1,6})?Z$/.test(f.hellClearAt) && Number.isFinite(Date.parse(f.hellClearAt)) ? f.hellClearAt : null;
+    return { hellClearAt: at };
+  }
   function finalZone(content3) {
     return content3.zoneOrder[content3.zoneOrder.length - 1];
   }
@@ -4224,6 +4291,8 @@ html, body { text-size-adjust: 100%; }
       // Homeward Scrolls in the pack
       depth: { v: 2, deepest: 0, deepestAt: null, descents: 0, seen: false, paidTo: 0, unclaimed: [] },
       // the Depths: the deepest floor reached and when (depth.js)
+      firsts: { hellClearAt: null },
+      // when the game was first beaten on Hell (difficulty.js cleanFirsts)
       hardcore: false,
       // a hardcore hero falls for good
       dead: false,
@@ -4328,12 +4397,12 @@ html, body { text-size-adjust: 100%; }
     const C = content3.B.combat;
     const { mods: m, armorDef, weapon, shieldBlock, hasShield, beltSlots } = collectMods(content3, hero2);
     const g = (k) => m[k] ?? 0;
-    const str2 = hero2.attrs.str + g("str");
+    const str3 = hero2.attrs.str + g("str");
     const dex = hero2.attrs.dex + g("dex");
     const vit = hero2.attrs.vit + g("vit");
     const ene = hero2.attrs.ene + g("ene");
     const w = weapon ?? { min: H.unarmed.min, max: H.unarmed.max, speed: 0 };
-    const dmgMult = 1 + (str2 * H.strDmgPct + g("dmgPct")) / 100;
+    const dmgMult = 1 + (str3 * H.strDmgPct + g("dmgPct")) / 100;
     const dmgMin = Math.max(0, w.min * dmgMult + g("minDmg"));
     const dmgMax = Math.max(dmgMin, w.max * dmgMult + g("maxDmg"));
     const custom = !!difficulty && typeof difficulty === "object";
@@ -4349,7 +4418,7 @@ html, body { text-size-adjust: 100%; }
     }
     return {
       level: hero2.level,
-      str: str2,
+      str: str3,
       dex,
       vit,
       ene,
@@ -5105,7 +5174,7 @@ html, body { text-size-adjust: 100%; }
       }
       c.buffs = c.buffs.filter((b) => b.turns > 0);
     }
-    let time = 0;
+    let time2 = 0;
     let outcome = null;
     for (let guard = 0; guard < 2e4; guard++) {
       if (!alive(lead)) {
@@ -5127,8 +5196,8 @@ html, body { text-size-adjust: 100%; }
         }
       }
       for (const c of all) if (alive(c)) c.gauge += speedOf(c) * best;
-      time += best;
-      if (time > C.maxTime) {
+      time2 += best;
+      if (time2 > C.maxTime) {
         outcome = "timeout";
         break;
       }
@@ -5137,7 +5206,7 @@ html, body { text-size-adjust: 100%; }
     }
     if (!outcome) outcome = "timeout";
     emit({ t: "end", outcome });
-    return { outcome, time, events };
+    return { outcome, time: time2, events };
   }
 
   // src/engine/monsters.js
@@ -5925,6 +5994,10 @@ html, body { text-size-adjust: 100%; }
       }
       const opens = run2.firstClear ? opensDifficulty(content3, d, run2.zoneId) : null;
       if (opens) run2.gained.unlocked = opens;
+      if (run2.firstClear && d === "hell" && run2.zoneId === finalZone(content3)) {
+        hero2.firsts = { ...cleanFirsts(hero2.firsts), hellClearAt: new Date((env.now ?? Date.now)()).toISOString() };
+        run2.gained.hellCleared = true;
+      }
     }
   }
   var RARITY_WORTH = { common: 0, socketed: 1, magic: 2, rare: 3, set: 4, unique: 5, runecarved: 5 };
@@ -7234,6 +7307,7 @@ html, body { text-size-adjust: 100%; }
     if (!isDifficultyUnlocked(content, hero2, hero2.difficulty)) hero2.difficulty = highestDifficulty(content, hero2);
     if (!DIFFICULTIES.includes(hero2.diffSeen) || !isDifficultyUnlocked(content, hero2, hero2.diffSeen)) hero2.diffSeen = hero2.difficulty;
     hero2.depth = cleanDepth(hero2.depth, content);
+    hero2.firsts = cleanFirsts(hero2.firsts);
     if (run2 && run2.mode === "depth") {
       run2.floor = cleanFloor(content, run2.floor);
       const plan = floorPlan(content, Number(run2.seed) >>> 0, run2.floor);
@@ -9146,6 +9220,7 @@ html, body { text-size-adjust: 100%; }
       short: { stash: "Chest", gear: "Character", merchant: "Merchant", forge: "Crucible", merc: "Captain", waystone: "Waystone" },
       spot: { stash: "Chest", gear: "Character", merchant: "Merchant", forge: "Crucible", merc: "Mercenary captain", waystone: "Waystone" },
       say: {
+        ranks: "Who went deepest, who is strongest, and who beat Hell first?",
         waystone: '"The stone is cold, but it remembers every road."',
         gear: "What you wear, what you are worth, and what is in your bag.",
         skills: "Here you put to use what the road has taught you.",
@@ -9361,7 +9436,7 @@ html, body { text-size-adjust: 100%; }
     gold: "Gold",
     life: "Life",
     mana: "Mana",
-    tab: { waystone: "Waystone", gear: "Character", skills: "Skills", order: "Battle order", forge: "Crucible", merchant: "Merchant", merc: "Mercenary captain" },
+    tab: { waystone: "Waystone", gear: "Character", skills: "Skills", order: "Battle order", forge: "Crucible", merchant: "Merchant", merc: "Mercenary captain", ranks: "Leaderboard" },
     stats: {
       dodge: "Dodge",
       spell: "Spell damage",
@@ -9870,11 +9945,125 @@ html, body { text-size-adjust: 100%; }
       openOrder: "Open battle order",
       skillBonusShort: "Skill levels:"
     },
+    ranks: {
+      open: "Leaderboard",
+      board: { depth: "Depths", level: "Level", hell: "First Hell clear" },
+      scope: { season: "Season", all: "All time", hall: "Hall of Fame" },
+      softcore: "Softcore",
+      hardcore: "Hardcore",
+      allClasses: "All",
+      classFilter: "Class",
+      note: {
+        depth_season: "New Depths records set this month. Only heroes who went deeper this month than ever before are listed, with the floor they reached this month.",
+        depth_all: "The deepest floors ever reached in the Depths.",
+        level_season: "Heroes who levelled up this month, with the level they reached. On a tie, whoever got there first.",
+        level_all: "The highest-level heroes. On a tie, more experience wins, then whoever got there first.",
+        hell_season: "Heroes who beat Hell for the first time this month, in order.",
+        hell_all: "Everyone who has beaten Hell, in the order they first did it.",
+        seasonLeft: "Days left in this season: {n}",
+        seasonHall: "At the end of the month (Hungarian time) the top three go into the Hall of Fame.",
+        what: "What does this list show?",
+        hall: "The top three of every finished season, month by month."
+      },
+      you: "You",
+      guest: "Wanderer #{n}",
+      levelSub: "level {n}",
+      adminTag: "Admin \u2013 not competing",
+      floorWord: "floor",
+      levelWord: "level",
+      fallen: "Fallen",
+      underReview: "Under review",
+      banned: "Banned",
+      yourPlace: "Your place",
+      signInForMe: "Sign in to see where you stand.",
+      signIn: "Sign in",
+      notListed: "Your heroes aren't on this board yet. Heroes saved to the cloud show up after the next save.",
+      loading: "Loading the leaderboard\u2026",
+      empty: "Nobody here yet. You could be the first!",
+      hallEmpty: "No season has finished yet. The best of each month will show up here.",
+      hallNobody: "Nobody made it this month.",
+      topOf: "Showing the top {n} of {total} heroes.",
+      refresh: "Refresh",
+      retry: "Try again",
+      err: {
+        nocloud: "The leaderboard only works in the online game, not when it is opened from a file.",
+        offline: "Can't reach the leaderboard. Check your connection and try again.",
+        failed: "Couldn't load the leaderboard right now. Try again a bit later."
+      },
+      nick: {
+        title: "Your name on the boards",
+        change: "Change",
+        label: "Nickname",
+        save: "Save",
+        cancel: "Cancel",
+        saved: "Saved",
+        help: "3\u201316 characters: letters (Hungarian accented ones too), digits, spaces, dots, underscores or hyphens. Leave it empty to show up as Wanderer #{n}.",
+        useDiscord: "Use my Discord name",
+        needEntry: "You can pick a nickname once you have a hero on the boards (after saving to the cloud).",
+        err: {
+          length: "Use 3 to 16 characters.",
+          chars: "Only letters (Hungarian accented ones too), digits, spaces, dots, underscores and hyphens, with at least one letter.",
+          bad_word: "That name isn't allowed. Pick another one!",
+          reserved: "You can't use that one: it looks too much like a guest name, an admin's name or the game's name.",
+          no_entry: "You can pick a nickname once you have a hero on the boards.",
+          taken: "Someone else already uses that name.",
+          too_often: "Wait a few seconds before changing it again.",
+          offline: "No connection to the server. Try again later.",
+          failed: "Couldn't save it. Try again."
+        }
+      }
+    },
     admin: {
       title: "Admin",
       open: "Open the admin menu",
       foot: "Only you can see this. Other players' data is read only; every change goes to your own save alone and is written to the log. Key: Ctrl+Shift+A (or Alt+Shift+A), close: Esc.",
-      tab: { players: "Players", log: "Log", hero: "My hero", test: "Test", balance: "Balance", system: "System" },
+      tab: { players: "Players", log: "Log", hero: "My hero", test: "Test", balance: "Balance", system: "System", ranks: "Leaderboard" },
+      lb: {
+        filter: { all: "All", flagged: "Flagged", hidden: "Hidden", banned: "Banned" },
+        col: { player: "Player", uid: "ID", hero: "Hero", level: "Level", deepest: "Depths", hell: "Hell", status: "Status", flag: "Last flag", act: "" },
+        hide: "Hide",
+        show: "Show",
+        ban: "Ban",
+        unban: "Unban",
+        banAsk: "Take every hero of {name} off the boards? Write down why:",
+        banReason: "Reason for the ban",
+        banNeedsReason: "A ban needs a reason.",
+        unbanAsk: "Let {name} back on the boards?",
+        hideAsk: "Hide {hero} ({name}) from the boards?",
+        showAsk: "Show {hero} ({name}) on the boards again? This approves its current state: the checks measure its pace from here, and hide it again if anything after this looks implausible.",
+        st: { hidden: "hidden", fallen: "fallen", banned: "banned", ok: "visible", adminOk: "approved", hc: "HC", admin: "admin" },
+        none: "No such entries.",
+        flagsTitle: "Latest flags",
+        noFlags: "No flags yet.",
+        flagsN: "{n} flags",
+        done: "Done.",
+        note: "The boards are built from heroes saved to the cloud and checked by the server. Anything implausible stays hidden until you look at it.",
+        reason: {
+          level_range: "Level outside 1\u201399",
+          xp_level: "Experience doesn't fit the level",
+          depth_range: "Impossible Depths floor",
+          depth_locked: "Depths without beating Normal",
+          depth_level: "Too deep for its level",
+          hell_early: "Hell too early (level or earlier difficulty missing)",
+          class_changed: "Class changed",
+          mode_changed: "Hardcore flag changed",
+          depth_jump: "Too many floors between two saves",
+          level_jump: "Too many levels between two saves",
+          ingest_error: "Error while reading the save",
+          admin_hide: "Hidden by an admin",
+          admin_show: "Shown by an admin",
+          admin_ban: "Banned by an admin",
+          admin_unban: "Unbanned by an admin",
+          review_top: "Reached the top (level 90, floor 150 or Hell): an admin should take a look",
+          first_seen_high: "First seen already far along (an old local save?)",
+          dup_hero: "The same hero is in another account too",
+          depth_rate: "Went deep too fast overall",
+          level_rate: "Levelled too fast overall",
+          hell_wait: "Hell too soon after Nightmare (doesn't count yet)",
+          hero_cap: "Reached 30 heroes for the account",
+          save_gone: "Deleted the cloud save"
+        }
+      },
       loading: "Loading\u2026",
       refresh: "Refresh",
       retry: "Retry",
@@ -10177,6 +10366,7 @@ html, body { text-size-adjust: 100%; }
       short: { stash: "L\xE1da", gear: "Karakter", merchant: "Kalm\xE1r", forge: "Olvaszt\xF3\xFCst", merc: "Zsoldoskapit\xE1ny", waystone: "\xDAtk\u0151" },
       spot: { stash: "L\xE1da", gear: "Karakter", merchant: "Kalm\xE1r", forge: "Olvaszt\xF3\xFCst", merc: "Zsoldoskapit\xE1ny", waystone: "\xDAtk\u0151" },
       say: {
+        ranks: "Ki jutott a legm\xE9lyebbre, ki a leger\u0151sebb, \xE9s ki gy\u0151zte le els\u0151k\xE9nt a Poklot?",
         waystone: "\u201EA k\u0151 hideg, de minden \xFAtra eml\xE9kszik.\u201D",
         gear: "Mi van rajtad, mennyit \xE9rsz, \xE9s mi lapul a zs\xE1kodban?",
         skills: "Itt veszed haszn\xE1t annak, amit az \xFAton tanult\xE1l.",
@@ -10392,7 +10582,7 @@ html, body { text-size-adjust: 100%; }
     gold: "Arany",
     life: "\xC9leter\u0151",
     mana: "Mana",
-    tab: { waystone: "\xDAtk\u0151", gear: "Karakter", skills: "K\xE9pess\xE9gek", order: "Harcrend", forge: "Olvaszt\xF3\xFCst", merchant: "Kalm\xE1r", merc: "Zsoldoskapit\xE1ny" },
+    tab: { waystone: "\xDAtk\u0151", gear: "Karakter", skills: "K\xE9pess\xE9gek", order: "Harcrend", forge: "Olvaszt\xF3\xFCst", merchant: "Kalm\xE1r", merc: "Zsoldoskapit\xE1ny", ranks: "Ranglista" },
     stats: {
       dodge: "Kit\xE9r\xE9s",
       spell: "Var\xE1zssebz\xE9s",
@@ -10901,11 +11091,125 @@ html, body { text-size-adjust: 100%; }
       openOrder: "Harcrend megnyit\xE1sa",
       skillBonusShort: "K\xE9pess\xE9gszint:"
     },
+    ranks: {
+      open: "Ranglista",
+      board: { depth: "M\xE9lys\xE9g", level: "Szint", hell: "Els\u0151 Pokol" },
+      scope: { season: "Szezon", all: "Mindenkori", hall: "H\xEDress\xE9gek csarnoka" },
+      softcore: "Sima",
+      hardcore: "Hardcore",
+      allClasses: "Mind",
+      classFilter: "Kaszt",
+      note: {
+        depth_season: "Ebben a h\xF3napban fel\xE1ll\xEDtott \xFAj m\xE9lys\xE9gi rekordok. Csak az ker\xFCl fel, aki ebben a h\xF3napban m\xE9lyebbre jutott, mint kor\xE1bban b\xE1rmikor, \xE9s azzal a szinttel, amit ebben a h\xF3napban \xE9rt el.",
+        depth_all: "A valaha el\xE9rt legm\xE9lyebb szintek a M\xE9lys\xE9gben.",
+        level_season: "Akik ebben a h\xF3napban szintet l\xE9ptek, a most el\xE9rt szintj\xFCkkel. Egyenl\u0151 szintn\xE9l az \xE1ll el\xF6l, aki el\u0151bb \xE9rte el.",
+        level_all: "A legmagasabb szint\u0171 h\u0151s\xF6k. Egyenl\u0151 szintn\xE9l a t\xF6bb tapasztalat d\xF6nt, azt\xE1n az, ki \xE9rte el el\u0151bb.",
+        hell_season: "Akik ebben a h\xF3napban gy\u0151zt\xE9k le el\u0151sz\xF6r a Poklot, id\u0151rendben.",
+        hell_all: "Mindenki, aki legy\u0151zte a Poklot, abban a sorrendben, ahogy el\u0151sz\xF6r siker\xFClt neki.",
+        seasonLeft: "M\xE9g {n} nap van h\xE1tra a szezonb\xF3l",
+        seasonHall: "A h\xF3nap v\xE9g\xE9n (magyar id\u0151 szerint) az els\u0151 h\xE1rom beker\xFCl a H\xEDress\xE9gek csarnok\xE1ba.",
+        what: "Mit mutat ez a lista?",
+        hall: "A lez\xE1rt szezonok els\u0151 h\xE1rom helyezettje, h\xF3napr\xF3l h\xF3napra."
+      },
+      you: "Te",
+      guest: "V\xE1ndor #{n}",
+      levelSub: "{n}. szint\u0171",
+      adminTag: "Admin \u2013 nem versenyez",
+      floorWord: "szint",
+      levelWord: "szint",
+      fallen: "Elesett",
+      underReview: "Ellen\u0151rz\xE9s alatt",
+      banned: "Kitiltva",
+      yourPlace: "A te helyed",
+      signInForMe: "A saj\xE1t helyez\xE9sedhez bejelentkez\xE9s kell.",
+      signIn: "Bejelentkez\xE9s",
+      notListed: "A h\u0151seid m\xE9g nincsenek ezen a list\xE1n. A felh\u0151be mentett h\u0151s\xF6k ker\xFClnek fel, a k\xF6vetkez\u0151 ment\xE9s ut\xE1n.",
+      loading: "T\xF6lt\xF6m a ranglist\xE1t\u2026",
+      empty: "Ezen a list\xE1n m\xE9g nincs senki. Lehetsz te az els\u0151!",
+      hallEmpty: "M\xE9g nincs lez\xE1rt szezon. Az els\u0151 h\xF3nap v\xE9g\xE9n itt jelennek meg a legjobbak.",
+      hallNobody: "Ebben a h\xF3napban senki sem ker\xFClt fel.",
+      topOf: "Az els\u0151 {n} h\u0151s l\xE1tszik, \xF6sszesen {total} van a list\xE1n.",
+      refresh: "Friss\xEDt\xE9s",
+      retry: "\xDAjra",
+      err: {
+        nocloud: "A ranglista csak az online j\xE1t\xE9kban \xE9rhet\u0151 el, f\xE1jlb\xF3l ind\xEDtva nem.",
+        offline: "Nem \xE9rem el a ranglist\xE1t. N\xE9zd meg, van-e net, \xE9s pr\xF3b\xE1ld \xFAjra.",
+        failed: "Most nem siker\xFClt bet\xF6lteni a ranglist\xE1t. Pr\xF3b\xE1ld \xFAjra kicsit k\xE9s\u0151bb."
+      },
+      nick: {
+        title: "Neved a ranglist\xE1n",
+        change: "M\xF3dos\xEDt\xE1s",
+        label: "Becen\xE9v",
+        save: "Ment\xE9s",
+        cancel: "M\xE9gse",
+        saved: "Elmentve",
+        help: "3\u201316 karakter: bet\u0171 (az \xE9kezetes magyar bet\u0171k is), sz\xE1m, sz\xF3k\xF6z, pont, al\xE1h\xFAz\xE1s vagy k\xF6t\u0151jel. Ha \xFCresen hagyod, V\xE1ndor #{n} n\xE9ven szerepelsz.",
+        useDiscord: "Discord-nevem haszn\xE1lata",
+        needEntry: "Becenevet akkor adhatsz meg, ha m\xE1r van h\u0151s\xF6d a ranglist\xE1n (a felh\u0151be ment\xE9s ut\xE1n).",
+        err: {
+          length: "A n\xE9v 3\u201316 karakter legyen.",
+          chars: "Csak bet\u0171 (a magyar \xE9kezetesek is), sz\xE1m, sz\xF3k\xF6z, pont, al\xE1h\xFAz\xE1s \xE9s k\xF6t\u0151jel lehet benne, \xE9s legal\xE1bb egy bet\u0171.",
+          bad_word: "Ez a n\xE9v nem megengedett. V\xE1lassz m\xE1sikat!",
+          reserved: "Ezt nem v\xE1laszthatod: t\xFAls\xE1gosan hasonl\xEDt egy vend\xE9gn\xE9vre, egy admin nev\xE9re vagy a j\xE1t\xE9k nev\xE9re.",
+          no_entry: "Becenevet akkor adhatsz meg, ha m\xE1r van h\u0151s\xF6d a ranglist\xE1n.",
+          taken: "Ezt a nevet m\xE1r m\xE1s haszn\xE1lja.",
+          too_often: "V\xE1rj p\xE1r m\xE1sodpercet, miel\u0151tt \xFAjra m\xF3dos\xEDtod.",
+          offline: "Nincs kapcsolat a szerverrel. Pr\xF3b\xE1ld \xFAjra k\xE9s\u0151bb.",
+          failed: "Nem siker\xFClt elmenteni. Pr\xF3b\xE1ld \xFAjra."
+        }
+      }
+    },
     admin: {
       title: "Admin",
       open: "Admin men\xFC megnyit\xE1sa",
       foot: "Csak te l\xE1tod. M\xE1s j\xE1t\xE9kosok adatait csak olvasni tudod; minden v\xE1ltoztat\xE1s kiz\xE1r\xF3lag a saj\xE1t ment\xE9sedbe ker\xFCl, \xE9s beker\xFCl a napl\xF3ba. Billenty\u0171: Ctrl+Shift+A (vagy Alt+Shift+A), bez\xE1r\xE1s: Esc.",
-      tab: { players: "J\xE1t\xE9kosok", log: "Napl\xF3", hero: "H\u0151s\xF6m", test: "Teszt", balance: "Egyens\xFAly", system: "Rendszer" },
+      tab: { players: "J\xE1t\xE9kosok", log: "Napl\xF3", hero: "H\u0151s\xF6m", test: "Teszt", balance: "Egyens\xFAly", system: "Rendszer", ranks: "Ranglista" },
+      lb: {
+        filter: { all: "Mind", flagged: "Megjel\xF6lt", hidden: "Rejtett", banned: "Kitiltott" },
+        col: { player: "J\xE1t\xE9kos", uid: "Azonos\xEDt\xF3", hero: "H\u0151s", level: "Szint", deepest: "M\xE9lys\xE9g", hell: "Pokol", status: "\xC1llapot", flag: "Utols\xF3 jelz\xE9s", act: "" },
+        hide: "Elrejt",
+        show: "Megjelen\xEDt",
+        ban: "Kitilt",
+        unban: "Felold\xE1s",
+        banAsk: "{name} \xF6sszes h\u0151s\xE9t leveszem a ranglist\xE1r\xF3l. \xCDrd be, mi\xE9rt:",
+        banReason: "A kitilt\xE1s oka",
+        banNeedsReason: "A kitilt\xE1shoz \xEDrj be egy okot.",
+        unbanAsk: "{name} \xFAjra felker\xFClhet a ranglist\xE1ra. Mehet?",
+        hideAsk: "{hero} ({name}) ne l\xE1tsszon a ranglist\xE1n?",
+        showAsk: "{hero} ({name}) \xFAjra l\xE1tsszon a ranglist\xE1n? A mostani \xE1llapot\xE1t j\xF3v\xE1hagyod: innen m\xE9ri tov\xE1bb a gyorsas\xE1got az ellen\u0151rz\xE9s, \xE9s ha ezut\xE1n valami nem hihet\u0151, megint elrejti.",
+        st: { hidden: "rejtett", fallen: "elesett", banned: "kitiltva", ok: "l\xE1that\xF3", adminOk: "j\xF3v\xE1hagyva", hc: "HC", admin: "admin" },
+        none: "Nincs ilyen bejegyz\xE9s.",
+        flagsTitle: "Legut\xF3bbi jelz\xE9sek",
+        noFlags: "M\xE9g nincs jelz\xE9s.",
+        flagsN: "{n} jelz\xE9s",
+        done: "K\xE9sz.",
+        note: "A ranglista a felh\u0151be mentett h\u0151s\xF6kb\u0151l \xE9p\xFCl, a szerver ellen\u0151rzi. Ami nem hihet\u0151, az rejtve marad, am\xEDg meg nem n\xE9zed.",
+        reason: {
+          level_range: "A szint 1\u201399-en k\xEDv\xFCl esik",
+          xp_level: "A tapasztalat nem f\xE9r bele a szintbe",
+          depth_range: "Lehetetlen m\xE9lys\xE9gi szint",
+          depth_locked: "M\xE9lys\xE9g a Norm\xE1l teljes\xEDt\xE9se n\xE9lk\xFCl",
+          depth_level: "T\xFAl m\xE9lyen a szintj\xE9hez k\xE9pest",
+          hell_early: "Pokol t\xFAl kor\xE1n (szint vagy el\u0151zm\xE9ny hi\xE1nyzik)",
+          class_changed: "Megv\xE1ltozott a kasztja",
+          mode_changed: "Megv\xE1ltozott a hardcore jel\xF6l\xE9se",
+          depth_jump: "T\xFAl sok m\xE9lys\xE9gi szint k\xE9t ment\xE9s k\xF6z\xF6tt",
+          level_jump: "T\xFAl sok szintl\xE9p\xE9s k\xE9t ment\xE9s k\xF6z\xF6tt",
+          ingest_error: "Hiba a ment\xE9s feldolgoz\xE1sakor",
+          admin_hide: "Admin elrejtette",
+          admin_show: "Admin megjelen\xEDtette",
+          admin_ban: "Admin kitiltotta",
+          admin_unban: "Admin feloldotta a tilt\xE1st",
+          review_top: "Feljutott a lista tetej\xE9re (90. szint, 150. m\xE9lys\xE9g vagy Pokol): egy admin n\xE9zze meg",
+          first_seen_high: "El\u0151sz\xF6r m\xE1r el\u0151rehaladott \xE1llapotban l\xE1tta a szerver (r\xE9gi helyi ment\xE9s?)",
+          dup_hero: "Ugyanez a h\u0151s egy m\xE1sik fi\xF3kban is megvan",
+          depth_rate: "\xD6sszess\xE9g\xE9ben t\xFAl gyorsan jutott m\xE9lyre",
+          level_rate: "\xD6sszess\xE9g\xE9ben t\xFAl gyorsan l\xE9pett szintet",
+          hell_wait: "Pokol t\xFAl hamar a R\xE9m\xE1lom ut\xE1n (m\xE9g nem sz\xE1m\xEDt)",
+          hero_cap: "El\xE9rte a fi\xF3konk\xE9nti 30 h\u0151st",
+          save_gone: "A felh\u0151ment\xE9s\xE9t t\xF6r\xF6lte"
+        }
+      },
       loading: "Bet\xF6lt\xE9s\u2026",
       refresh: "Friss\xEDt\xE9s",
       retry: "\xDAjra",
@@ -11469,13 +11773,13 @@ html, body { text-size-adjust: 100%; }
   }
   var soundOn = () => enabled;
 
-  // ../../home/claude/cursewake/node_modules/@supabase/supabase-js/dist/tracingRegistry.mjs
+  // node_modules/@supabase/supabase-js/dist/tracingRegistry.mjs
   var EXTRACTOR_KEY = /* @__PURE__ */ Symbol.for("@supabase/supabase-js.traceContextExtractor");
   function getTraceContextExtractor() {
     return globalThis[EXTRACTOR_KEY];
   }
 
-  // ../../home/claude/cursewake/node_modules/tslib/tslib.es6.mjs
+  // node_modules/tslib/tslib.es6.mjs
   function __rest(s, e) {
     var t3 = {};
     for (var p in s) if (Object.prototype.hasOwnProperty.call(s, p) && e.indexOf(p) < 0)
@@ -11515,7 +11819,7 @@ html, body { text-size-adjust: 100%; }
     });
   }
 
-  // ../../home/claude/cursewake/node_modules/@supabase/functions-js/dist/module/helper.js
+  // node_modules/@supabase/functions-js/dist/module/helper.js
   var resolveFetch = (customFetch) => {
     if (customFetch) {
       return (...args) => customFetch(...args);
@@ -11523,7 +11827,7 @@ html, body { text-size-adjust: 100%; }
     return (...args) => fetch(...args);
   };
 
-  // ../../home/claude/cursewake/node_modules/@supabase/functions-js/dist/module/types.js
+  // node_modules/@supabase/functions-js/dist/module/types.js
   var FunctionsError = class extends Error {
     constructor(message, name = "FunctionsError", context) {
       super(message);
@@ -11572,7 +11876,7 @@ html, body { text-size-adjust: 100%; }
     FunctionRegion2["UsWest2"] = "us-west-2";
   })(FunctionRegion || (FunctionRegion = {}));
 
-  // ../../home/claude/cursewake/node_modules/@supabase/functions-js/dist/module/FunctionsClient.js
+  // node_modules/@supabase/functions-js/dist/module/FunctionsClient.js
   var FunctionsClient = class {
     /**
      * Creates a new Functions client bound to an Edge Functions URL.
@@ -11847,7 +12151,7 @@ html, body { text-size-adjust: 100%; }
     }
   };
 
-  // ../../home/claude/cursewake/node_modules/@supabase/postgrest-js/dist/index.mjs
+  // node_modules/@supabase/postgrest-js/dist/index.mjs
   var PostgrestError = class extends Error {
     /**
     * @example
@@ -15767,7 +16071,7 @@ ${cause.stack}`;
     }
   };
 
-  // ../../home/claude/cursewake/node_modules/@supabase/realtime-js/dist/module/lib/websocket-factory.js
+  // node_modules/@supabase/realtime-js/dist/module/lib/websocket-factory.js
   var WebSocketFactory = class {
     /**
      * Static-only utility – prevent instantiation.
@@ -15870,10 +16174,10 @@ Suggested solution: ${env.workaround}`;
   };
   var websocket_factory_default = WebSocketFactory;
 
-  // ../../home/claude/cursewake/node_modules/@supabase/realtime-js/dist/module/lib/version.js
+  // node_modules/@supabase/realtime-js/dist/module/lib/version.js
   var version = "2.119.0";
 
-  // ../../home/claude/cursewake/node_modules/@supabase/realtime-js/dist/module/lib/constants.js
+  // node_modules/@supabase/realtime-js/dist/module/lib/constants.js
   var DEFAULT_VERSION = `realtime-js/${version}`;
   var VSN_1_0_0 = "1.0.0";
   var VSN_2_0_0 = "2.0.0";
@@ -15904,7 +16208,7 @@ Suggested solution: ${env.workaround}`;
     closed: "closed"
   };
 
-  // ../../home/claude/cursewake/node_modules/@supabase/realtime-js/dist/module/lib/serializer.js
+  // node_modules/@supabase/realtime-js/dist/module/lib/serializer.js
   var Serializer = class _Serializer {
     constructor(allowedMetadataKeys) {
       this.HEADER_LENGTH = 1;
@@ -16053,7 +16357,7 @@ Suggested solution: ${env.workaround}`;
   Serializer.DEFAULT_METADATA_KEYS = ["persist"];
   var serializer_default = Serializer;
 
-  // ../../home/claude/cursewake/node_modules/@supabase/realtime-js/dist/module/lib/transformers.js
+  // node_modules/@supabase/realtime-js/dist/module/lib/transformers.js
   var PostgresTypes;
   (function(PostgresTypes2) {
     PostgresTypes2["abstime"] = "abstime";
@@ -16216,7 +16520,7 @@ Suggested solution: ${env.workaround}`;
     return wsUrl.href;
   };
 
-  // ../../home/claude/cursewake/node_modules/@supabase/phoenix/priv/static/phoenix.mjs
+  // node_modules/@supabase/phoenix/priv/static/phoenix.mjs
   var closure = (value) => {
     if (typeof value === "function") {
       return (
@@ -18035,7 +18339,7 @@ Suggested solution: ${env.workaround}`;
     }
   };
 
-  // ../../home/claude/cursewake/node_modules/@supabase/realtime-js/dist/module/phoenix/presenceAdapter.js
+  // node_modules/@supabase/realtime-js/dist/module/phoenix/presenceAdapter.js
   var PresenceAdapter = class _PresenceAdapter {
     constructor(channel, opts) {
       const phoenixOptions = phoenixPresenceOptions(opts);
@@ -18127,7 +18431,7 @@ Suggested solution: ${env.workaround}`;
     return (currentPresences === null || currentPresences === void 0 ? void 0 : currentPresences.metas) ? transformState(currentPresences) : [];
   }
 
-  // ../../home/claude/cursewake/node_modules/@supabase/realtime-js/dist/module/RealtimePresence.js
+  // node_modules/@supabase/realtime-js/dist/module/RealtimePresence.js
   var REALTIME_PRESENCE_LISTEN_EVENTS;
   (function(REALTIME_PRESENCE_LISTEN_EVENTS2) {
     REALTIME_PRESENCE_LISTEN_EVENTS2["SYNC"] = "sync";
@@ -18161,7 +18465,7 @@ Suggested solution: ${env.workaround}`;
     }
   };
 
-  // ../../home/claude/cursewake/node_modules/@supabase/realtime-js/dist/module/lib/normalizeChannelError.js
+  // node_modules/@supabase/realtime-js/dist/module/lib/normalizeChannelError.js
   function normalizeChannelError(reason) {
     if (reason instanceof Error) {
       return reason;
@@ -18180,7 +18484,7 @@ Suggested solution: ${env.workaround}`;
     return new Error("channel error: connection lost");
   }
 
-  // ../../home/claude/cursewake/node_modules/@supabase/realtime-js/dist/module/phoenix/channelAdapter.js
+  // node_modules/@supabase/realtime-js/dist/module/phoenix/channelAdapter.js
   var ChannelAdapter = class {
     constructor(socket, topic, params) {
       const phoenixParams = phoenixChannelParams(params);
@@ -18279,7 +18583,7 @@ Suggested solution: ${env.workaround}`;
     };
   }
 
-  // ../../home/claude/cursewake/node_modules/@supabase/realtime-js/dist/module/RealtimePostgresFilterBuilder.js
+  // node_modules/@supabase/realtime-js/dist/module/RealtimePostgresFilterBuilder.js
   var PostgrestReservedCharsRegexp2 = /[,()"\\]/;
   var needsQuoting = (value) => PostgrestReservedCharsRegexp2.test(value) || value !== value.trim();
   var quote = (value) => `"${value.replace(/\\/g, "\\\\").replace(/"/g, '\\"')}"`;
@@ -18393,7 +18697,7 @@ Suggested solution: ${env.workaround}`;
     }
   };
 
-  // ../../home/claude/cursewake/node_modules/@supabase/realtime-js/dist/module/RealtimeChannel.js
+  // node_modules/@supabase/realtime-js/dist/module/RealtimeChannel.js
   var REALTIME_POSTGRES_CHANGES_LISTEN_EVENT;
   (function(REALTIME_POSTGRES_CHANGES_LISTEN_EVENT2) {
     REALTIME_POSTGRES_CHANGES_LISTEN_EVENT2["ALL"] = "*";
@@ -19154,7 +19458,7 @@ Suggested solution: ${env.workaround}`;
     }
   };
 
-  // ../../home/claude/cursewake/node_modules/@supabase/realtime-js/dist/module/phoenix/socketAdapter.js
+  // node_modules/@supabase/realtime-js/dist/module/phoenix/socketAdapter.js
   var SocketAdapter = class {
     constructor(endPoint, options) {
       this.socket = new Socket(endPoint, options);
@@ -19266,7 +19570,7 @@ Suggested solution: ${env.workaround}`;
     }
   };
 
-  // ../../home/claude/cursewake/node_modules/@supabase/realtime-js/dist/module/RealtimeClient.js
+  // node_modules/@supabase/realtime-js/dist/module/RealtimeClient.js
   var CONNECTION_TIMEOUTS = {
     HEARTBEAT_INTERVAL: 25e3,
     RECONNECT_DELAY: 10,
@@ -19932,7 +20236,7 @@ Suggested solution: ${env.workaround}`;
     }
   };
 
-  // ../../home/claude/cursewake/node_modules/iceberg-js/dist/index.mjs
+  // node_modules/iceberg-js/dist/index.mjs
   var IcebergError = class extends Error {
     constructor(message, opts) {
       super(message);
@@ -20465,7 +20769,7 @@ Suggested solution: ${env.workaround}`;
     }
   };
 
-  // ../../home/claude/cursewake/node_modules/@supabase/storage-js/dist/index.mjs
+  // node_modules/@supabase/storage-js/dist/index.mjs
   function _typeof2(o) {
     "@babel/helpers - typeof";
     return _typeof2 = "function" == typeof Symbol && "symbol" == typeof Symbol.iterator ? function(o$1) {
@@ -23455,10 +23759,10 @@ Suggested solution: ${env.workaround}`;
     }
   };
 
-  // ../../home/claude/cursewake/node_modules/@supabase/auth-js/dist/module/lib/version.js
+  // node_modules/@supabase/auth-js/dist/module/lib/version.js
   var version3 = "2.119.0";
 
-  // ../../home/claude/cursewake/node_modules/@supabase/auth-js/dist/module/lib/constants.js
+  // node_modules/@supabase/auth-js/dist/module/lib/constants.js
   var AUTO_REFRESH_TICK_DURATION_MS = 30 * 1e3;
   var AUTO_REFRESH_TICK_THRESHOLD = 3;
   var EXPIRY_MARGIN_MS = AUTO_REFRESH_TICK_THRESHOLD * AUTO_REFRESH_TICK_DURATION_MS;
@@ -23478,7 +23782,7 @@ Suggested solution: ${env.workaround}`;
   var PKCE_MAX_CONCURRENT_FLOWS = 5;
   var JWKS_TTL = 10 * 60 * 1e3;
 
-  // ../../home/claude/cursewake/node_modules/@supabase/auth-js/dist/module/lib/errors.js
+  // node_modules/@supabase/auth-js/dist/module/lib/errors.js
   var AuthError = class extends Error {
     constructor(message, status, code) {
       super(message);
@@ -23601,7 +23905,7 @@ Suggested solution: ${env.workaround}`;
     }
   };
 
-  // ../../home/claude/cursewake/node_modules/@supabase/auth-js/dist/module/lib/base64url.js
+  // node_modules/@supabase/auth-js/dist/module/lib/base64url.js
   var TO_BASE64URL = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789-_".split("");
   var IGNORE_BASE64URL = " 	\n\r=".split("");
   var FROM_BASE64URL = (() => {
@@ -23651,7 +23955,7 @@ Suggested solution: ${env.workaround}`;
       throw new Error(`Invalid Base64-URL character "${String.fromCharCode(charCode)}"`);
     }
   }
-  function stringFromBase64URL(str2) {
+  function stringFromBase64URL(str3) {
     const conv = [];
     const utf8Emit = (codepoint) => {
       conv.push(String.fromCodePoint(codepoint));
@@ -23664,8 +23968,8 @@ Suggested solution: ${env.workaround}`;
     const byteEmit = (byte) => {
       stringFromUTF8(byte, utf8State, utf8Emit);
     };
-    for (let i = 0; i < str2.length; i += 1) {
-      byteFromBase64URL(str2.charCodeAt(i), b64State, byteEmit);
+    for (let i = 0; i < str3.length; i += 1) {
+      byteFromBase64URL(str3.charCodeAt(i), b64State, byteEmit);
     }
     return conv.join("");
   }
@@ -23691,12 +23995,12 @@ Suggested solution: ${env.workaround}`;
     }
     throw new Error(`Unrecognized Unicode codepoint: ${codepoint.toString(16)}`);
   }
-  function stringToUTF8(str2, emit) {
-    for (let i = 0; i < str2.length; i += 1) {
-      let codepoint = str2.charCodeAt(i);
+  function stringToUTF8(str3, emit) {
+    for (let i = 0; i < str3.length; i += 1) {
+      let codepoint = str3.charCodeAt(i);
       if (codepoint > 55295 && codepoint <= 56319) {
         const highSurrogate = (codepoint - 55296) * 1024 & 65535;
-        const lowSurrogate = str2.charCodeAt(i + 1) - 56320 & 65535;
+        const lowSurrogate = str3.charCodeAt(i + 1) - 56320 & 65535;
         codepoint = (lowSurrogate | highSurrogate) + 65536;
         i += 1;
       }
@@ -23736,20 +24040,20 @@ Suggested solution: ${env.workaround}`;
       }
     }
   }
-  function base64UrlToUint8Array(str2) {
+  function base64UrlToUint8Array(str3) {
     const result = [];
     const state = { queue: 0, queuedBits: 0 };
     const onByte = (byte) => {
       result.push(byte);
     };
-    for (let i = 0; i < str2.length; i += 1) {
-      byteFromBase64URL(str2.charCodeAt(i), state, onByte);
+    for (let i = 0; i < str3.length; i += 1) {
+      byteFromBase64URL(str3.charCodeAt(i), state, onByte);
     }
     return new Uint8Array(result);
   }
-  function stringToUint8Array(str2) {
+  function stringToUint8Array(str3) {
     const result = [];
-    stringToUTF8(str2, (byte) => result.push(byte));
+    stringToUTF8(str3, (byte) => result.push(byte));
     return new Uint8Array(result);
   }
   function bytesToBase64URL(bytes) {
@@ -23763,7 +24067,7 @@ Suggested solution: ${env.workaround}`;
     return result.join("");
   }
 
-  // ../../home/claude/cursewake/node_modules/@supabase/auth-js/dist/module/lib/helpers.js
+  // node_modules/@supabase/auth-js/dist/module/lib/helpers.js
   function expiresAt(expiresIn) {
     const timeNow = Math.round(Date.now() / 1e3);
     return timeNow + expiresIn;
@@ -23878,9 +24182,9 @@ Suggested solution: ${env.workaround}`;
     };
     return data;
   }
-  async function sleep2(time) {
+  async function sleep2(time2) {
     return await new Promise((accept) => {
-      setTimeout(() => accept(null), time);
+      setTimeout(() => accept(null), time2);
     });
   }
   function retryable(fn, isRetryable) {
@@ -24079,8 +24383,8 @@ Suggested solution: ${env.workaround}`;
     }
   }
   var UUID_REGEX = /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i;
-  function validateUUID(str2) {
-    if (!UUID_REGEX.test(str2)) {
+  function validateUUID(str3) {
+    if (!UUID_REGEX.test(str3)) {
       throw new Error("@supabase/auth-js: Expected parameter to be UUID but is not");
     }
   }
@@ -24136,7 +24440,7 @@ Suggested solution: ${env.workaround}`;
     return JSON.parse(JSON.stringify(obj));
   }
 
-  // ../../home/claude/cursewake/node_modules/@supabase/auth-js/dist/module/lib/fetch.js
+  // node_modules/@supabase/auth-js/dist/module/lib/fetch.js
   var _getErrorMessage2 = (err) => {
     if (typeof err === "object" && err !== null) {
       const e = err;
@@ -24305,10 +24609,10 @@ Suggested solution: ${env.workaround}`;
     return !!data.access_token && !!data.refresh_token && !!data.expires_in;
   }
 
-  // ../../home/claude/cursewake/node_modules/@supabase/auth-js/dist/module/lib/types.js
+  // node_modules/@supabase/auth-js/dist/module/lib/types.js
   var SIGN_OUT_SCOPES = ["global", "local", "others"];
 
-  // ../../home/claude/cursewake/node_modules/@supabase/auth-js/dist/module/GoTrueAdminApi.js
+  // node_modules/@supabase/auth-js/dist/module/GoTrueAdminApi.js
   var GoTrueAdminApi = class {
     /**
      * Creates an admin API client that can be used to manage users and OAuth clients.
@@ -25390,7 +25694,7 @@ Suggested solution: ${env.workaround}`;
     }
   };
 
-  // ../../home/claude/cursewake/node_modules/@supabase/auth-js/dist/module/lib/local-storage.js
+  // node_modules/@supabase/auth-js/dist/module/lib/local-storage.js
   function memoryLocalStorageAdapter(store = {}) {
     return {
       getItem: (key) => {
@@ -25405,7 +25709,7 @@ Suggested solution: ${env.workaround}`;
     };
   }
 
-  // ../../home/claude/cursewake/node_modules/@supabase/auth-js/dist/module/lib/locks.js
+  // node_modules/@supabase/auth-js/dist/module/lib/locks.js
   var internals = {
     /**
      * @experimental
@@ -25419,7 +25723,7 @@ Suggested solution: ${env.workaround}`;
     }
   };
 
-  // ../../home/claude/cursewake/node_modules/@supabase/auth-js/dist/module/lib/polyfills.js
+  // node_modules/@supabase/auth-js/dist/module/lib/polyfills.js
   function polyfillGlobalThis() {
     if (typeof globalThis === "object")
       return;
@@ -25439,7 +25743,7 @@ Suggested solution: ${env.workaround}`;
     }
   }
 
-  // ../../home/claude/cursewake/node_modules/@supabase/auth-js/dist/module/lib/web3/ethereum.js
+  // node_modules/@supabase/auth-js/dist/module/lib/web3/ethereum.js
   function getAddress(address) {
     if (!/^0x[a-fA-F0-9]{40}$/.test(address)) {
       throw new Error(`@supabase/auth-js: Address "${address}" is invalid.`);
@@ -25507,7 +25811,7 @@ Request ID: ${requestId}`;
 ${suffix}`;
   }
 
-  // ../../home/claude/cursewake/node_modules/@supabase/auth-js/dist/module/lib/webauthn.errors.js
+  // node_modules/@supabase/auth-js/dist/module/lib/webauthn.errors.js
   var WebAuthnError = class extends Error {
     constructor({ message, code, cause, name }) {
       var _a;
@@ -25682,7 +25986,7 @@ ${suffix}`;
     });
   }
 
-  // ../../home/claude/cursewake/node_modules/@supabase/auth-js/dist/module/lib/webauthn.js
+  // node_modules/@supabase/auth-js/dist/module/lib/webauthn.js
   var WebAuthnAbortService = class {
     /**
      * Create an abort signal for a new WebAuthn operation.
@@ -26205,7 +26509,7 @@ ${suffix}`;
     }
   };
 
-  // ../../home/claude/cursewake/node_modules/@supabase/auth-js/dist/module/GoTrueClient.js
+  // node_modules/@supabase/auth-js/dist/module/GoTrueClient.js
   polyfillGlobalThis();
   var DEFAULT_OPTIONS = {
     url: GOTRUE_URL,
@@ -31622,11 +31926,11 @@ ${suffix}`;
   GoTrueClient.nextInstanceID = {};
   var GoTrueClient_default = GoTrueClient;
 
-  // ../../home/claude/cursewake/node_modules/@supabase/auth-js/dist/module/AuthClient.js
+  // node_modules/@supabase/auth-js/dist/module/AuthClient.js
   var AuthClient = GoTrueClient_default;
   var AuthClient_default = AuthClient;
 
-  // ../../home/claude/cursewake/node_modules/@supabase/supabase-js/dist/index.mjs
+  // node_modules/@supabase/supabase-js/dist/index.mjs
   var version4 = "2.119.0";
   var JS_ENV = "";
   var JS_RUNTIME_VERSION;
@@ -32613,6 +32917,52 @@ ${suffix}`;
         if (error) failData(error, status);
         return data ?? [];
       },
+      // ---- the leaderboard (server/leaderboard.sql): reading it needs no account, a signed-in player also gets their own rows
+      /** One board: what lb_board answers ({ season, total, rows, me }). `req`: requestFor() of ranks-core.js. */
+      async leaderboard(req) {
+        if (!req || !["lb_board", "lb_hall"].includes(req.fn)) throw Object.assign(new Error("bad request"), { kind: "rejected" });
+        const { data, error, status } = await sb.rpc(req.fn, req.args);
+        if (error) failData(error, status);
+        return data;
+      },
+      /** The signed-in player's name on the boards: { nickname, name, kind, guestNo }. */
+      async lbProfile() {
+        sameUser();
+        const { data, error, status } = await sb.rpc("lb_profile");
+        if (error) failData(error, status);
+        return data;
+      },
+      /** Sets (or with '' clears) the public nickname: { ok, nickname } or { ok: false, error }. */
+      async setNickname(nickname) {
+        sameUser();
+        const { data, error, status } = await sb.rpc("set_nickname", { p_nickname: nickname });
+        if (error) failData(error, status);
+        return data ?? { ok: false, error: "failed" };
+      },
+      /** Admin only: leaderboard entries ('all' | 'flagged' | 'hidden' | 'banned'). */
+      async adminLbEntries(filter = "all") {
+        const { data, error, status } = await sb.rpc("admin_lb_entries", { p_filter: filter, p_limit: 300 });
+        if (error) failData(error, status);
+        return data ?? [];
+      },
+      /** Admin only: what the leaderboard's checks found, newest first. */
+      async adminLbFlags() {
+        const { data, error, status } = await sb.rpc("admin_lb_flags", { p_limit: 200 });
+        if (error) failData(error, status);
+        return data ?? [];
+      },
+      /** Admin only: hide an entry, or show it again. */
+      async adminLbHide(userId, heroId, hidden) {
+        const { data, error, status } = await sb.rpc("admin_lb_hide", { p_user: userId, p_hero: heroId, p_hidden: !!hidden });
+        if (error) failData(error, status);
+        return data ?? { ok: false };
+      },
+      /** Admin only: keep a player off the boards, or let them back. */
+      async adminLbBan(userId, banned, reason = "") {
+        const { data, error, status } = await sb.rpc("admin_lb_ban", { p_user: userId, p_banned: !!banned, p_reason: reason });
+        if (error) failData(error, status);
+        return data ?? { ok: false };
+      },
       /** Last chance when the page is closed: a small save is sent with keepalive (the answer is never read). */
       pushOnLeave(json, baseRev, expectUid) {
         const token = session2?.access_token;
@@ -33169,7 +33519,7 @@ ${suffix}`;
     let timeouts = 0;
     let lost = 0;
     let turns = 0;
-    let time = 0;
+    let time2 = 0;
     let potions = 0;
     for (let i = 0; i < runs; i++) {
       const r = sandboxFight(content3, hero2, opts, rng.int(1, 2 ** 31 - 1), false);
@@ -33179,10 +33529,10 @@ ${suffix}`;
       else timeouts++;
       lost += r.lifeLost / r.maxLife;
       turns += r.turns;
-      time += r.time;
+      time2 += r.time;
       potions += r.potions;
     }
-    return { n: runs, wins, losses, timeouts, winRate: wins / runs, lifeLostPct: lost / runs * 100, turns: turns / runs, time: time / runs, potions: potions / runs };
+    return { n: runs, wins, losses, timeouts, winRate: wins / runs, lifeLostPct: lost / runs * 100, turns: turns / runs, time: time2 / runs, potions: potions / runs };
   }
   function saveSummary(content3, save) {
     const isObj3 = (v) => !!v && typeof v === "object" && !Array.isArray(v);
@@ -33227,8 +33577,9 @@ ${suffix}`;
   }
 
   // src/client/admin.js
-  var BUILD_TIME = true ? "2026-11-14T21:04:05.129Z" : null;
-  var TABS = ["players", "log", "hero", "test", "balance", "system"];
+  var BUILD_TIME = true ? "2026-11-14T22:00:29.651Z" : null;
+  var TABS = ["players", "log", "ranks", "hero", "test", "balance", "system"];
+  var LB_FILTERS = ["flagged", "hidden", "banned", "all"];
   var KINDS = ["raid_start", "raid_end", "level_up", "death", "boss_kill", "unique_found", "set_found", "runeword_found", "difficulty_unlocked", "depth_start", "depth_floor", "depth_end", "hero_created", "hero_deleted", "sync_conflict", "sync_outdated", "sync_rejected", "admin_edit"];
   var POLL_MS = 15e3;
   var isObj2 = (v) => !!v && typeof v === "object" && !Array.isArray(v);
@@ -33357,7 +33708,8 @@ ${suffix}`;
       fight: null,
       probe: null,
       ov: readOverrides(storage),
-      busy: false
+      busy: false,
+      lb: { filter: "flagged", entries: null, flags: null, err: null, loading: false }
     };
     let el = null;
     let poll = null;
@@ -33455,8 +33807,8 @@ ${suffix}`;
       const v = raw === "" ? NaN : Number(raw);
       return Number.isFinite(v) ? v : NaN;
     };
-    const ask = (text, yes, run2) => {
-      A2.confirm = { text, yes, run: run2 };
+    const ask = (text, yes, run2, opts = {}) => {
+      A2.confirm = { text, yes, run: run2, input: opts.input ?? null, need: opts.need ?? null };
       paint();
     };
     async function loadPlayers() {
@@ -33538,6 +33890,7 @@ ${suffix}`;
       A2.confirm = null;
       if (tab === "log") loadFeed();
       if (tab === "players" && !A2.players) loadPlayers();
+      if (tab === "ranks" && !A2.lb.entries) loadLb();
       setPoll();
       paint();
     }
@@ -33560,8 +33913,8 @@ ${suffix}`;
       const day = all.filter((p) => Date.now() - new Date(p.save_updated_at ?? p.last_sign_in_at ?? 0).getTime() < 864e5).length;
       const q = A2.filter.trim().toLowerCase();
       const maxLvl = (p) => Math.max(0, ...(Array.isArray(p.heroes) ? p.heroes : []).map((h) => Number(h?.level) || 0));
-      const time = (v) => v ? new Date(v).getTime() || 0 : 0;
-      const key = { name: (p) => playerName(p).toLowerCase(), kind: (p) => p.is_guest ? 1 : 0, created: (p) => time(p.created_at), signin: (p) => time(p.last_sign_in_at), save: (p) => time(p.save_updated_at), size: (p) => Number(p.save_bytes) || 0, level: maxLvl }[A2.sort] ?? ((p) => time(p.save_updated_at));
+      const time2 = (v) => v ? new Date(v).getTime() || 0 : 0;
+      const key = { name: (p) => playerName(p).toLowerCase(), kind: (p) => p.is_guest ? 1 : 0, created: (p) => time2(p.created_at), signin: (p) => time2(p.last_sign_in_at), save: (p) => time2(p.save_updated_at), size: (p) => Number(p.save_bytes) || 0, level: maxLvl }[A2.sort] ?? ((p) => time2(p.save_updated_at));
       const list = all.filter((p) => (A2.kindFilter === "all" || A2.kindFilter === "guest" === !!p.is_guest) && (!q || playerName(p).toLowerCase().includes(q) || String(p.user_id).startsWith(q) || Array.isArray(p.heroes) && p.heroes.some((h) => clsName(h?.class).toLowerCase().includes(q) || String(h?.name ?? "").toLowerCase().includes(q)))).sort((a, b) => {
         const x = key(a);
         const y = key(b);
@@ -33608,6 +33961,64 @@ ${suffix}`;
       const evs = A2.pickEvents == null ? A2.pickErr ? "" : `<p class="dim">${t3("admin.loading")}</p>` : A2.pickEvents.length ? `<ul class="adm-feed small">${A2.pickEvents.map((e) => `<li><time title="${esc2(when(e.at))}">${esc2(ago(e.at))}</time><span>${esc2(describe(e))}</span></li>`).join("")}</ul>` : `<p class="dim">${t3("admin.noEvents")}</p>`;
       return `<aside class="adm-detail" aria-label="${esc2(playerName(p))}"><header><h3>${esc2(playerName(p))}</h3><button class="x" data-a="unpick" aria-label="${t3("close")}" title="${t3("close")}">\xD7</button></header>
       <p class="small dim adm-id">${esc2(A2.pick)}</p><div class="adm-detail-body" id="admPD" data-keep="1"><h4>${t3("admin.saveTitle")} <span class="tag">${t3("admin.readOnly")}</span></h4>${body}<h4>${t3("admin.recent")}</h4>${evs}</div></aside>`;
+    }
+    async function loadLb() {
+      const c = ctx2.cloud();
+      if (!c || A2.lb.loading) return;
+      A2.lb.loading = true;
+      paint();
+      try {
+        const [entries, flags] = await Promise.all([c.adminLbEntries(A2.lb.filter), c.adminLbFlags()]);
+        Object.assign(A2.lb, { entries: Array.isArray(entries) ? entries : [], flags: Array.isArray(flags) ? flags : [], err: null });
+      } catch (e) {
+        A2.lb.err = errText(e);
+      }
+      A2.lb.loading = false;
+      paint();
+    }
+    const lbName = (r) => r?.name_kind !== "guest" && r?.player ? str(r.player, 40) : t3("ranks.guest", { n: int(r?.guest_no) ?? "????" });
+    const lbReason = (k) => {
+      const key = `admin.lb.reason.${str(k, 30)}`;
+      const s = t3(key);
+      return s === key ? str(k, 30) || "?" : s;
+    };
+    function tabRanks() {
+      const lb = A2.lb;
+      const chips = LB_FILTERS.map((f) => `<button class="chip ${lb.filter === f ? "on" : ""}" data-a="lbFilter" data-v="${f}">${t3(`admin.lb.filter.${f}`)}</button>`).join("");
+      const head2 = `<p class="adm-note">${t3("admin.lb.note")}</p><div class="adm-filters">${chips}<button class="btn ghost mini" data-a="lbReload" ${lb.loading ? "disabled" : ""}>${lb.loading ? t3("admin.loading") : t3("admin.refresh")}</button></div>`;
+      if (lb.err && !lb.entries) return `${head2}<p class="adm-err">${esc2(lb.err)}</p>`;
+      if (!lb.entries) return `${head2}<p class="dim">${t3("admin.loading")}</p>`;
+      const st = (e) => [
+        e.hidden ? `<span class="tag bad">${t3("admin.lb.st.hidden")}</span>` : `<span class="tag">${t3("admin.lb.st.ok")}</span>`,
+        e.admin_ok ? `<span class="tag okt">${t3("admin.lb.st.adminOk")}</span>` : "",
+        e.banned ? `<span class="tag bad">${t3("admin.lb.st.banned")}</span>` : "",
+        e.fallen ? `<span class="tag">${t3("admin.lb.st.fallen")}</span>` : "",
+        e.hardcore ? `<span class="tag">${t3("admin.lb.st.hc")}</span>` : "",
+        e.is_admin ? `<span class="tag">${t3("admin.lb.st.admin")}</span>` : ""
+      ].join(" ");
+      const rows = lb.entries.filter(isObj2).map((e) => {
+        const ids = `data-u="${esc2(str(e.user_id, 40))}" data-h="${esc2(str(e.hero_id, 40))}"`;
+        return `<tr><td><b>${esc2(lbName(e))}</b><br><small class="dim" title="${t3("admin.lb.col.uid")}">${esc2(str(e.user_id, 8))}\u2026</small></td><td>${esc2(str(e.hero_name, 16) || clsName(e.class_id))}<br><small class="dim">${esc2(clsName(e.class_id))}</small></td>
+        <td class="num">${int(e.level) ?? "?"}</td><td class="num">${int(e.deepest) ?? 0}</td><td class="nw">${e.hell_clear_at ? esc2(short(e.hell_clear_at)) : "\u2013"}</td>
+        <td>${st(e)}${e.hidden_reason ? `<br><small class="dim">${esc2(e.hidden_reason.startsWith("auto:") ? lbReason(e.hidden_reason.slice(5)) : lbReason(`admin_hide`))}</small>` : ""}</td>
+        <td>${e.last_flag ? `${esc2(lbReason(e.last_flag))}<br><small class="dim">${esc2(short(e.last_flag_at))} \xB7 ${t3("admin.lb.flagsN", { n: int(e.flags) ?? 0 })}</small>` : '<span class="dim">\u2013</span>'}</td>
+        <td class="nw"><button class="btn mini ${e.hidden ? "" : "ghost"}" data-a="lbHide" data-v="${e.hidden ? "show" : "hide"}" ${ids}>${t3(e.hidden ? "admin.lb.show" : "admin.lb.hide")}</button>
+          <button class="btn mini ghost" data-a="lbBan" data-v="${e.banned ? "unban" : "ban"}" ${ids}>${t3(e.banned ? "admin.lb.unban" : "admin.lb.ban")}</button></td></tr>`;
+      }).join("");
+      const cols = ["player", "hero", "level", "deepest", "hell", "status", "flag", "act"].map((k) => `<th><span class="adm-sort">${t3(`admin.lb.col.${k}`)}</span></th>`).join("");
+      const flags = (lb.flags ?? []).filter(isObj2).slice(0, 100).map((f) => `<li><time title="${esc2(when(f.at))}">${esc2(ago(f.at))}</time><span><b>${esc2(lbReason(f.reason))}</b> \u2013 ${esc2(lbName(f))}${f.hero_name ? ` \xB7 ${esc2(str(f.hero_name, 16))}` : ""}${isObj2(f.detail) && int(f.detail.level) != null ? ` <small class="dim">(${t3("admin.lb.col.level")} ${int(f.detail.level)}, ${t3("admin.lb.col.deepest")} ${int(f.detail.deepest) ?? 0})</small>` : ""}</span></li>`).join("");
+      return `${head2}<div class="adm-tablewrap adm-lbwrap" id="admLB" data-keep="1"><table class="adm-table"><thead><tr>${cols}</tr></thead><tbody>${rows || `<tr><td colspan="8" class="dim">${t3("admin.lb.none")}</td></tr>`}</tbody></table></div>
+      <h4>${t3("admin.lb.flagsTitle")}</h4>${flags ? `<ul class="adm-feed small">${flags}</ul>` : `<p class="dim">${t3("admin.lb.noFlags")}</p>`}`;
+    }
+    async function lbChange(run2) {
+      try {
+        const r = await run2();
+        if (r && r.ok === false) throw Object.assign(new Error("refused"), { kind: "rejected" });
+        flash(t3("admin.lb.done"));
+      } catch (e) {
+        flash(errText(e), true);
+      }
+      loadLb();
     }
     function tabLog() {
       const players = (A2.players ?? []).slice().sort((a, b) => playerName(a).localeCompare(playerName(b)));
@@ -33838,12 +34249,12 @@ ${suffix}`;
       if (!A2.open || !A2.admin) return badge;
       let body;
       try {
-        body = { players: tabPlayers, log: tabLog, hero: tabHero, test: tabTest, balance: tabBalance, system: tabSystem }[A2.tab]();
+        body = { players: tabPlayers, log: tabLog, ranks: tabRanks, hero: tabHero, test: tabTest, balance: tabBalance, system: tabSystem }[A2.tab]();
       } catch (e) {
         console.error(e);
         body = `<p class="adm-err">${t3("admin.err.failed")}</p>`;
       }
-      const cf = A2.confirm ? `<div class="adm-cf-shade"><div class="adm-cf" role="alertdialog" aria-modal="true" aria-labelledby="admCfT"><p id="admCfT">${esc2(A2.confirm.text)}</p><div class="row center-row"><button class="btn" data-a="cfYes" id="admCfYes">${esc2(A2.confirm.yes)}</button><button class="btn ghost" data-a="cfNo">${t3("admin.cancel")}</button></div></div></div>` : "";
+      const cf = A2.confirm ? `<div class="adm-cf-shade"><div class="adm-cf" role="alertdialog" aria-modal="true" aria-labelledby="admCfT"><p id="admCfT">${esc2(A2.confirm.text)}</p>${A2.confirm.input ? `<label class="field adm-cf-in"><span>${esc2(A2.confirm.input)}</span><input id="admCfIn" maxlength="200" autocomplete="off"></label>` : ""}<div class="row center-row"><button class="btn" data-a="cfYes" id="admCfYes">${esc2(A2.confirm.yes)}</button><button class="btn ghost" data-a="cfNo">${t3("admin.cancel")}</button></div></div></div>` : "";
       return `${badge}<div class="adm-shade" data-a="close"></div>
     <section class="adm-win" role="dialog" aria-modal="true" aria-label="${esc2(t3("admin.title"))}">
       <header class="adm-head"><h3>${t3("admin.title")}</h3><nav class="adm-tabs" role="tablist">${TABS.map((k) => `<button class="adm-tab ${A2.tab === k ? "on" : ""}" role="tab" aria-selected="${A2.tab === k}" data-a="tab" data-v="${k}">${t3(`admin.tab.${k}`)}</button>`).join("")}</nav>
@@ -33890,7 +34301,7 @@ ${suffix}`;
           }
         }
       }
-      if (A2.confirm) el.querySelector("#admCfYes")?.focus({ preventScroll: true });
+      if (A2.confirm) el.querySelector(A2.confirm.input ? "#admCfIn" : "#admCfYes")?.focus({ preventScroll: true });
     }
     const actions2 = {
       close: () => {
@@ -33907,9 +34318,14 @@ ${suffix}`;
       },
       cfYes: () => {
         const c = A2.confirm;
+        const v = c?.input ? (document.getElementById("admCfIn")?.value ?? "").trim() : void 0;
+        if (c?.input && c.need && !v) {
+          flash(c.need, true);
+          return;
+        }
         A2.confirm = null;
         paint();
-        c?.run();
+        c?.run(v);
       },
       reloadPlayers: () => loadPlayers(),
       reloadFeed: () => loadFeed(),
@@ -33927,6 +34343,36 @@ ${suffix}`;
         paint();
       },
       sysRefresh: () => paint(),
+      // Ranglista
+      lbFilter: (v) => {
+        if (LB_FILTERS.includes(v)) {
+          A2.lb.filter = v;
+          A2.lb.entries = null;
+          loadLb();
+        }
+      },
+      lbReload: () => loadLb(),
+      lbHide: (v, b) => {
+        const e = A2.lb.entries?.find((x) => x.user_id === b.dataset.u && x.hero_id === b.dataset.h);
+        if (!e) return;
+        const hide = v === "hide";
+        ask(
+          t3(hide ? "admin.lb.hideAsk" : "admin.lb.showAsk", { hero: str(e.hero_name, 16) || clsName(e.class_id), name: lbName(e) }),
+          t3(hide ? "admin.lb.hide" : "admin.lb.show"),
+          () => lbChange(() => ctx2.cloud().adminLbHide(e.user_id, e.hero_id, hide))
+        );
+      },
+      lbBan: (v, b) => {
+        const e = A2.lb.entries?.find((x) => x.user_id === b.dataset.u && x.hero_id === b.dataset.h);
+        if (!e) return;
+        const ban = v === "ban";
+        ask(
+          t3(ban ? "admin.lb.banAsk" : "admin.lb.unbanAsk", { name: lbName(e) }),
+          t3(ban ? "admin.lb.ban" : "admin.lb.unban"),
+          (why) => lbChange(() => ctx2.cloud().adminLbBan(e.user_id, ban, ban ? why : "")),
+          ban ? { input: t3("admin.lb.banReason"), need: t3("admin.lb.banNeedsReason") } : {}
+        );
+      },
       // Hősöm
       setLevel: () => {
         const n = numVal("hLvl");
@@ -34202,6 +34648,7 @@ ${suffix}`;
 .adm-sort { font: 600 13px system-ui, sans-serif; color: #ecd7a4; background: none; border: 0; padding: 7px 8px; cursor: pointer; width: 100%; text-align: left; white-space: nowrap; } .adm-sort.on { color: var(--gold); }
 .adm-table tbody tr[data-a] { cursor: pointer; } .adm-table tbody tr[data-a]:hover { background: #ffffff0a; } .adm-table tbody tr.on { background: #c9a35a22; outline: 1px solid #c9a35a66; }
 .adm-table td.num, .adm-table td.nw { text-align: right; white-space: nowrap; } .adm-table td.nw { text-align: left; }
+.adm-lbwrap { flex: none; max-height: 52vh; } #cw-admin .tag.okt { color: #0c1a10; background: var(--ok); border-color: var(--ok); } .adm-lbwrap .btn.mini { margin: 1px 0; }
 .adm-you { font: 600 11px system-ui, sans-serif; padding: 1px 7px; border-radius: 3px; color: #0c1a10; background: var(--ok); vertical-align: middle; }
 .adm-zsel { flex: 1 1 110px; min-width: 0; max-width: 100%; }
 .adm-heroes { display: flex; flex-wrap: wrap; gap: 4px; }
@@ -34250,9 +34697,469 @@ ${suffix}`;
 }
 `;
 
+  // src/client/ranks-core.js
+  var BOARDS = ["depth", "level", "hell"];
+  var SCOPES = ["season", "all", "hall"];
+  var CLASSES = ["reaver", "elementalist", "gravecaller", "ranger", "templar"];
+  var PAGE_SIZE = 100;
+  var LB = Object.freeze({
+    maxLevel: 99,
+    maxFloor: 9999,
+    depthCap: (level) => Math.max(10, 3 * level - 60),
+    burstFloors: 30,
+    // floors allowed between two saves whatever the time
+    floorsPerHour: 300,
+    rateFloorsPerHour: 200,
+    // in all, since the starting point (first sight or the last admin approval)
+    burstLevels: 8,
+    levelsPerHour: 40,
+    rateLevelsPerHour: 30,
+    levelCheckFrom: 30,
+    // the level-speed checks only above this level (early levels come fast); also the first-sight bound
+    hellMinLevel: 70,
+    hellAfterNightmareHours: 2,
+    // a Hell clear counts only this long after Nightmare was first seen done
+    heroSlots: 3,
+    // only the first 3 slots of a save are read
+    maxEntries: 30,
+    // heroes ever kept per account
+    flagsPerHour: 20,
+    finalZone: "world_heart"
+  });
+  var isNum2 = (v) => typeof v === "number" && Number.isFinite(v);
+  var isInt2 = (v) => isNum2(v) && Math.floor(v) === v;
+  var BAD_WORDS = [
+    "fasz",
+    "geci",
+    "kurva",
+    "buzi",
+    "kocsog",
+    "picsa",
+    "baszd",
+    "bassz",
+    "baszo",
+    "anyad",
+    "csicska",
+    "punci",
+    "fuck",
+    "cunt",
+    "nigg",
+    "bitch",
+    "whore",
+    "hitler",
+    "nazi",
+    "retard",
+    "fagg",
+    "porn"
+  ];
+  var FOLD_FROM = "\xE1\xE9\xED\xF3\xF6\u0151\xFA\xFC\u0171\xE0\xE2\xE4\xE3\xE5\xE7\xE8\xEA\xEB\xEC\xEE\xEF\xF1\xF2\xF4\xF5\xF8\xF9\xFB\xFD\xFF\xC1\xC9\xCD\xD3\xD6\u0150\xDA\xDC\u0170\u0131\u0130013457@$";
+  var FOLD_TO = "aeiooouuuaaaaaceeeiiinoooouuyyaeiooouuuiioieastas";
+  var FOLD = new Map(Array.from(FOLD_FROM).map((c, i) => [c, Array.from(FOLD_TO)[i]]));
+  var fold = (s) => Array.from(s).map((c) => FOLD.get(c) ?? c).join("");
+  function normalizeForFilter(s) {
+    return fold(fold(String(s ?? "")).toLowerCase()).replace(/[^a-z]/g, "");
+  }
+  var isBadName = (s) => {
+    const f = normalizeForFilter(s);
+    return BAD_WORDS.some((w) => f.includes(w));
+  };
+  function nickSkeleton(s) {
+    return fold(fold(String(s ?? "")).toLowerCase()).replace(/l/g, "i").replace(/[^a-z0-9]/g, "");
+  }
+  var NAME_CHARS_CLASS = "A-Za-z0-9\xE1\xE9\xED\xF3\xF6\u0151\xFA\xFC\u0171\xC1\xC9\xCD\xD3\xD6\u0150\xDA\xDC\u0170 _.-";
+  var NAME_CHARS = new RegExp(`^[${NAME_CHARS_CLASS}]*$`);
+  var NAME_LETTER = /[A-Za-záéíóöőúüűÁÉÍÓÖŐÚÜŰ]/;
+  var nameCharsOk = (s) => NAME_CHARS.test(String(s ?? ""));
+  var NICK_MIN = 3;
+  var NICK_MAX = 16;
+  var NICK_RESERVED = /(vandor|wanderer|guest|vendeg|admin|moderator|cursewake)/;
+  function checkNickname(raw) {
+    const value = String(raw ?? "").replace(/\s+/g, " ").trim();
+    if (value === "") return { ok: true, value };
+    const n = Array.from(value).length;
+    if (n < NICK_MIN || n > NICK_MAX) return { ok: false, value, error: "length" };
+    if (!nameCharsOk(value) || !NAME_LETTER.test(value)) return { ok: false, value, error: "chars" };
+    if (isBadName(value)) return { ok: false, value, error: "bad_word" };
+    if (NICK_RESERVED.test(nickSkeleton(value))) return { ok: false, value, error: "reserved" };
+    return { ok: true, value };
+  }
+  function nickFromName(name) {
+    const kept = Array.from(String(name ?? "").normalize("NFC")).filter((c) => nameCharsOk(c)).join("");
+    return Array.from(kept.replace(/\s+/g, " ").trim()).slice(0, NICK_MAX).join("").trim();
+  }
+  var str2 = (v, n) => typeof v === "string" ? Array.from(v).slice(0, n).join("") : "";
+  var int2 = (v) => isNum2(v) ? Math.round(v) : null;
+  var time = (v) => typeof v === "string" && Number.isFinite(Date.parse(v)) ? v : null;
+  var KINDS2 = ["nick", "guest"];
+  var guestNo = (v) => isInt2(v) && v >= 1 && v <= 999999 ? v : null;
+  function cleanRow(r) {
+    if (!r || typeof r !== "object") return null;
+    return {
+      rank: int2(r.rank),
+      pid: str2(r.pid, 32),
+      hero: str2(r.hero, 16),
+      classId: CLASSES.includes(r.class) ? r.class : null,
+      level: int2(r.level),
+      value: int2(r.value),
+      at: time(r.at),
+      fallen: r.fallen === true,
+      hidden: r.hidden === true,
+      banned: r.banned === true,
+      admin: r.admin === true,
+      mine: r.mine === true,
+      player: r.kind === "nick" ? str2(r.player, NICK_MAX) : "",
+      kind: KINDS2.includes(r.kind) ? r.kind : "guest",
+      guestNo: guestNo(r.guestNo)
+    };
+  }
+  function cleanProfile(p) {
+    if (!p || typeof p !== "object") return null;
+    const nickname = typeof p.nickname === "string" && p.nickname ? str2(p.nickname, NICK_MAX) : null;
+    return { nickname, kind: nickname ? "nick" : "guest", guestNo: guestNo(p.guestNo), hasEntry: p.hasEntry === true, admin: p.admin === true };
+  }
+  function cleanBoard(json) {
+    const j = json && typeof json === "object" ? json : {};
+    const rows = Array.isArray(j.rows) ? j.rows.map(cleanRow).filter(Boolean).slice(0, PAGE_SIZE) : [];
+    return {
+      season: typeof j.season === "string" && /^\d{4}-\d{2}$/.test(j.season) ? j.season : null,
+      board: BOARDS.includes(j.board) ? j.board : "depth",
+      scope: j.scope === "all" ? "all" : "season",
+      hardcore: j.hardcore === true,
+      classId: CLASSES.includes(j.class) ? j.class : null,
+      total: Math.max(0, int2(j.total) ?? rows.length),
+      offset: Math.max(0, int2(j.offset) ?? 0),
+      rows,
+      me: Array.isArray(j.me) ? j.me.map(cleanRow).filter(Boolean).slice(0, 50) : null
+    };
+  }
+  function cleanHall(json) {
+    const j = json && typeof json === "object" ? json : {};
+    const seasons = (Array.isArray(j.seasons) ? j.seasons : []).filter((s) => s && typeof s.season === "string" && /^\d{4}-\d{2}$/.test(s.season)).map((s) => ({ season: s.season, rows: (Array.isArray(s.rows) ? s.rows : []).map(cleanRow).filter(Boolean).slice(0, 3) })).sort((a, b) => a.season < b.season ? 1 : -1).slice(0, 24);
+    return { season: typeof j.season === "string" && /^\d{4}-\d{2}$/.test(j.season) ? j.season : null, seasons };
+  }
+  function requestFor({ board = "depth", scope = "season", hardcore = false, classId = null } = {}) {
+    const b = BOARDS.includes(board) ? board : "depth";
+    const cls = CLASSES.includes(classId) ? classId : null;
+    if (scope === "hall") return { fn: "lb_hall", args: { p_board: b, p_hardcore: !!hardcore, p_class: cls } };
+    return { fn: "lb_board", args: { p_board: b, p_scope: scope === "all" ? "all" : "season", p_hardcore: !!hardcore, p_class: cls, p_offset: 0, p_limit: PAGE_SIZE } };
+  }
+  var viewKey = (v) => JSON.stringify(requestFor(v));
+  var SEASON_TZ = "Europe/Budapest";
+  var tzParts = (t3) => {
+    const o = {};
+    for (const x of new Intl.DateTimeFormat("en-GB", { timeZone: SEASON_TZ, hourCycle: "h23", year: "numeric", month: "2-digit", day: "2-digit", hour: "2-digit", minute: "2-digit", second: "2-digit" }).formatToParts(new Date(t3))) o[x.type] = x.value;
+    return o;
+  };
+  var tzOffset = (t3) => {
+    const p = tzParts(t3);
+    return Date.UTC(+p.year, +p.month - 1, +p.day, +p.hour, +p.minute, +p.second) - Math.floor(new Date(t3).getTime() / 1e3) * 1e3;
+  };
+  function seasonOf(date = /* @__PURE__ */ new Date()) {
+    const p = tzParts(date);
+    return `${p.year}-${p.month}`;
+  }
+  function seasonLabel(key, lang2 = "hu") {
+    if (typeof key !== "string" || !/^\d{4}-\d{2}$/.test(key)) return "";
+    const d = /* @__PURE__ */ new Date(`${key}-01T12:00:00Z`);
+    try {
+      return new Intl.DateTimeFormat(lang2 === "hu" ? "hu-HU" : "en-GB", { year: "numeric", month: "long", timeZone: "UTC" }).format(d);
+    } catch {
+      return key;
+    }
+  }
+  function monthName(key, lang2 = "hu") {
+    if (typeof key !== "string" || !/^\d{4}-\d{2}$/.test(key)) return "";
+    try {
+      return new Intl.DateTimeFormat(lang2 === "hu" ? "hu-HU" : "en-GB", { month: "long", timeZone: "UTC" }).format(/* @__PURE__ */ new Date(`${key}-01T12:00:00Z`));
+    } catch {
+      return key;
+    }
+  }
+  function daysLeft(key, now = /* @__PURE__ */ new Date()) {
+    if (typeof key !== "string" || !/^\d{4}-\d{2}$/.test(key)) return 0;
+    const [y, m] = key.split("-").map(Number);
+    const wall = Date.UTC(y, m, 1);
+    let end = wall - tzOffset(wall);
+    end = wall - tzOffset(end);
+    return Math.max(0, Math.ceil((end - new Date(now).getTime()) / 864e5));
+  }
+  function playerLabel(row, t3) {
+    if (row.kind === "nick" && row.player) return row.player;
+    return t3("ranks.guest", { n: guestNo(row.guestNo) ?? "??????" });
+  }
+  var heroLabel = (row, className) => row.hero && nameCharsOk(row.hero) ? row.hero : className || "?";
+  function shortDate(at, lang2 = "hu", now = /* @__PURE__ */ new Date()) {
+    const d = at ? new Date(at) : null;
+    if (!d || Number.isNaN(d.getTime())) return "";
+    const o = { month: "short", day: "numeric", timeZone: SEASON_TZ };
+    if (tzParts(d).year !== tzParts(now).year) o.year = "numeric";
+    try {
+      return new Intl.DateTimeFormat(lang2 === "hu" ? "hu-HU" : "en-GB", o).format(d);
+    } catch {
+      return d.toISOString().slice(0, 10);
+    }
+  }
+  function errorKind2(err, { cloud = true } = {}) {
+    if (!cloud) return "nocloud";
+    const k = err?.kind;
+    if (k === "offline" || k === "timeout" || err?.code === "timeout") return "offline";
+    return "failed";
+  }
+
+  // src/client/ranks.js
+  function initRanks(ctx2) {
+    const { t: t3, esc: esc2 } = ctx2;
+    const S = {
+      board: "depth",
+      scope: "season",
+      hardcore: false,
+      classId: null,
+      data: null,
+      dataKey: null,
+      loading: false,
+      err: null,
+      at: 0,
+      req: 0,
+      uid: null,
+      profile: null,
+      profileLoading: false,
+      profileTried: null,
+      nickOpen: false,
+      nickErr: null,
+      nickBusy: false,
+      nickDone: false,
+      noteOpen: false
+    };
+    const FRESH_MS = 6e4;
+    const view2 = () => ({ board: S.board, scope: S.scope, hardcore: S.hardcore, classId: S.classId });
+    const clsName = (id) => ctx2.loc().class[id]?.name ?? "";
+    async function load(force = false) {
+      const key = viewKey(view2());
+      const cloud = ctx2.cloud();
+      if (!cloud) {
+        S.err = ctx2.cloudState() === "none" ? "nocloud" : "offline";
+        S.data = null;
+        S.loading = false;
+        ctx2.render();
+        return;
+      }
+      if (!force && S.dataKey === key && S.data && Date.now() - S.at < FRESH_MS) {
+        ctx2.render();
+        return;
+      }
+      const my = ++S.req;
+      S.loading = true;
+      S.err = null;
+      if (S.dataKey !== key) S.data = null;
+      ctx2.render();
+      try {
+        const req = requestFor(view2());
+        const raw = await cloud.leaderboard(req);
+        if (my !== S.req) return;
+        S.data = req.fn === "lb_hall" ? { hall: cleanHall(raw) } : { board: cleanBoard(raw) };
+        S.dataKey = key;
+        S.at = Date.now();
+      } catch (e) {
+        if (my !== S.req) return;
+        S.err = errorKind2(e);
+      }
+      S.loading = false;
+      ctx2.render();
+    }
+    async function loadProfile() {
+      const cloud = ctx2.cloud();
+      const u = ctx2.user();
+      if (!cloud || !u || S.profileLoading || S.profileTried === u.id) return;
+      S.profileLoading = true;
+      S.profileTried = u.id;
+      try {
+        S.profile = cleanProfile(await cloud.lbProfile());
+      } catch {
+        S.profile = null;
+      }
+      S.profileLoading = false;
+      ctx2.render();
+    }
+    const tabs = (cls, list2, cur, act2, label, extra = () => "") => `<div class="${cls}" role="tablist">${list2.map((k) => `<button class="rk-tab ${k === cur ? "on" : ""}" role="tab" aria-selected="${k === cur}" data-act="${act2}" data-v="${k}"><b>${label(k)}</b>${extra(k)}</button>`).join("")}</div>`;
+    function filters() {
+      const season = S.data?.board?.season ?? S.data?.hall?.season ?? seasonOf();
+      const boards = tabs("rk-boards", BOARDS, S.board, "rkBoard", (k) => t3(`ranks.board.${k}`));
+      const scopes = tabs("rk-scopes", SCOPES, S.scope, "rkScope", (k) => t3(`ranks.scope.${k}`), (k) => k === "season" ? `<small>${esc2(monthName(season, ctx2.lang()))}</small>` : "");
+      const modes = `<div class="rk-modes" role="tablist">${[false, true].map((hc) => `<button class="chip ${hc === S.hardcore ? "on" : ""} ${hc ? "hc" : ""}" role="tab" aria-selected="${hc === S.hardcore}" data-act="rkMode" data-v="${hc ? "hc" : "sc"}">${t3(hc ? "ranks.hardcore" : "ranks.softcore")}</button>`).join("")}</div>`;
+      const classes = `<label class="rk-classes"><select id="rkClass" data-chg="rkClass" aria-label="${t3("ranks.classFilter")}">${[null, ...CLASSES].map((c) => `<option value="${c ?? ""}" ${c === S.classId ? "selected" : ""}>${c ? esc2(clsName(c)) : t3("ranks.allClasses")}</option>`).join("")}</select></label>`;
+      return `${boards}${scopes}<div class="rk-filters">${modes}${classes}</div>`;
+    }
+    function note() {
+      let head2;
+      let text;
+      if (S.scope === "hall") {
+        head2 = t3("ranks.note.what");
+        text = t3("ranks.note.hall");
+      } else {
+        const season = S.data?.board?.season ?? seasonOf();
+        head2 = S.scope === "season" ? t3("ranks.note.seasonLeft", { n: daysLeft(season) }) : t3("ranks.note.what");
+        text = `${t3(`ranks.note.${S.board}_${S.scope}`)}${S.scope === "season" ? ` ${t3("ranks.note.seasonHall")}` : ""}`;
+      }
+      return `<details class="rk-note" ${S.noteOpen ? "open" : ""}><summary data-act="rkNote">${esc2(head2)}</summary><p>${text}</p></details>`;
+    }
+    function row(r, { me = false } = {}) {
+      const cls = clsName(r.classId);
+      const who = me ? t3("ranks.you") : playerLabel(r, t3);
+      const sub = [who, cls, S.board === "level" ? null : r.level != null ? t3("ranks.levelSub", { n: r.level }) : null].filter(Boolean).map(esc2).join(" \xB7 ");
+      let val2;
+      if (S.board === "hell") val2 = `<b class="rk-date">${esc2(shortDate(r.at, ctx2.lang()))}</b>`;
+      else val2 = r.value != null ? `<b>${ctx2.fmt(r.value)}${ctx2.lang() === "hu" ? "." : ""}</b><small>${t3(S.board === "depth" ? "ranks.floorWord" : "ranks.levelWord")}</small>` : "<b>\u2013</b>";
+      const tags = [r.fallen ? `<em class="tag bad">${t3("ranks.fallen")}</em>` : "", me && r.hidden ? `<em class="tag warn">${t3("ranks.underReview")}</em>` : "", me && r.banned ? `<em class="tag bad">${t3("ranks.banned")}</em>` : "", me && r.admin ? `<em class="tag">${t3("ranks.adminTag")}</em>` : ""].join("");
+      const pos = r.rank != null ? `${ctx2.fmt(r.rank)}.` : "\u2013";
+      return `<li class="rk-row ${r.mine ? "mine" : ""} ${r.fallen ? "fallen" : ""} ${r.rank != null && r.rank <= 3 ? `podium p${r.rank}` : ""}">
+      <span class="rk-pos">${pos}</span>
+      <span class="rk-who"><b class="rk-hero">${esc2(heroLabel(r, cls))}</b>${tags ? `<span class="rk-tags">${tags}</span>` : ""}<small class="rk-sub">${sub}</small></span>
+      <span class="rk-val">${val2}</span></li>`;
+    }
+    function meBox(b) {
+      const u = ctx2.user();
+      if (!u) {
+        return `<div class="rk-me none"><p>${t3("ranks.signInForMe")}</p>${ctx2.cloudState() === "local" ? `<button class="btn ghost mini" data-act="cloudSignIn">${t3("ranks.signIn")}</button>` : ""}</div>`;
+      }
+      if (!b.me || !b.me.length) return `<div class="rk-me none"><p>${t3("ranks.notListed")}</p></div>`;
+      return `<div class="rk-me"><h4>${t3("ranks.yourPlace")}</h4><ol class="rk-list">${b.me.map((r) => row(r, { me: true })).join("")}</ol></div>`;
+    }
+    function list() {
+      if (S.err) {
+        return `<div class="rk-state err"><p>${t3(`ranks.err.${S.err}`)}</p>${S.err === "nocloud" ? "" : `<button class="btn ghost" data-act="rkRetry">${t3("ranks.retry")}</button>`}</div>`;
+      }
+      if (!S.data) return `<p class="rk-state" role="status">${t3("ranks.loading")}</p>`;
+      if (S.data.hall) {
+        const ss = S.data.hall.seasons;
+        if (!ss.length) return `<p class="rk-state">${t3("ranks.hallEmpty")}</p>`;
+        return `<div class="rk-hall">${ss.map((s) => `<section class="rk-season"><h4>${esc2(seasonLabel(s.season, ctx2.lang()))}</h4>${s.rows.length ? `<ol class="rk-list">${s.rows.map((r) => row(r)).join("")}</ol>` : `<p class="dim">${t3("ranks.hallNobody")}</p>`}</section>`).join("")}</div>`;
+      }
+      const b = S.data.board;
+      const top = b.rows.length ? `<ol class="rk-list">${b.rows.map((r) => row(r)).join("")}</ol>` : `<p class="rk-state">${t3("ranks.empty")}</p>`;
+      const more = b.total > b.rows.length ? `<p class="dim rk-more">${t3("ranks.topOf", { n: b.rows.length, total: ctx2.fmt(b.total) })}</p>` : "";
+      return ctx2.user() ? `${meBox(b)}${top}${more}` : `${top}${more}${meBox(b)}`;
+    }
+    function nickBox() {
+      const u = ctx2.user();
+      if (!u) return "";
+      const p = S.profile;
+      const guest = t3("ranks.guest", { n: p?.guestNo ?? "??????" });
+      const shown = p ? p.nickname || guest : "\u2026";
+      if (p && !p.nickname && !p.hasEntry) {
+        return `<div class="rk-nick"><div><b>${t3("ranks.nick.title")}</b><span class="rk-nick-now">${esc2(shown)}</span></div><small class="dim">${t3("ranks.nick.needEntry")}</small></div>`;
+      }
+      if (!S.nickOpen) {
+        return `<div class="rk-nick"><div><b>${t3("ranks.nick.title")}</b><span class="rk-nick-now">${esc2(shown)}</span>${S.nickDone ? `<small class="ok" role="status">${t3("ranks.nick.saved")}</small>` : ""}</div><button class="btn ghost mini" data-act="rkNick" ${p ? "" : "disabled"}>${t3("ranks.nick.change")}</button></div>`;
+      }
+      const err = S.nickErr ? `<small class="bad" role="alert">${t3(`ranks.nick.err.${S.nickErr}`)}</small>` : "";
+      const fromDiscord = u.discord && nickFromName(u.name) ? `<button class="btn ghost mini" data-act="rkNickDiscord">${t3("ranks.nick.useDiscord")}</button>` : "";
+      return `<div class="rk-nick open"><label class="field"><span>${t3("ranks.nick.label")}</span><input id="rkNickIn" maxlength="${NICK_MAX}" value="${esc2(p?.nickname ?? "")}" autocomplete="off" spellcheck="false"></label>
+      <small class="dim">${t3("ranks.nick.help", { n: p?.guestNo ?? "??????" })}</small>${err}
+      <div class="row"><button class="btn mini" data-act="rkNickSave" ${S.nickBusy ? "disabled" : ""}>${t3("ranks.nick.save")}</button>${fromDiscord}<button class="btn ghost mini" data-act="rkNickCancel">${t3("ranks.nick.cancel")}</button></div></div>`;
+    }
+    function body() {
+      if (ctx2.user()?.id && S.profileTried !== ctx2.user().id) setTimeout(loadProfile, 0);
+      const refresh = S.data && !S.loading ? `<button class="btn ghost mini rk-refresh" data-act="rkRetry">${t3("ranks.refresh")}</button>` : "";
+      return `<div class="ranks ${S.loading && S.data ? "busy" : ""}">${filters()}${note()}${S.scope === "hall" ? "" : nickBox()}${list()}${refresh}</div>`;
+    }
+    const set = (k, v) => {
+      if (S[k] === v) return;
+      S[k] = v;
+      S.nickDone = false;
+      load();
+    };
+    const actions2 = {
+      rkBoard: (v) => BOARDS.includes(v) && set("board", v),
+      rkScope: (v) => SCOPES.includes(v) && set("scope", v),
+      rkMode: (v) => set("hardcore", v === "hc"),
+      rkClass: (v) => set("classId", CLASSES.includes(v) ? v : null),
+      rkRetry: () => load(true),
+      rkNick: () => {
+        S.nickOpen = true;
+        S.nickErr = null;
+        S.nickDone = false;
+        ctx2.render();
+        setTimeout(() => document.getElementById("rkNickIn")?.focus(), 0);
+      },
+      rkNickCancel: () => {
+        S.nickOpen = false;
+        S.nickErr = null;
+        ctx2.render();
+      },
+      /** Fills the field with the Discord name (only the characters a nickname may have); it is checked like any other. */
+      rkNickDiscord: () => {
+        const input = document.getElementById("rkNickIn");
+        const v = nickFromName(ctx2.user()?.name);
+        if (!input || !v) return;
+        input.value = v;
+        S.nickErr = null;
+        input.focus();
+      },
+      rkNote: () => {
+        S.noteOpen = !S.noteOpen;
+      },
+      async rkNickSave() {
+        const cloud = ctx2.cloud();
+        const input = document.getElementById("rkNickIn");
+        const chk = checkNickname(input?.value ?? "");
+        if (!chk.ok) {
+          S.nickErr = chk.error;
+          ctx2.render();
+          return;
+        }
+        if (!cloud) {
+          S.nickErr = "offline";
+          ctx2.render();
+          return;
+        }
+        S.nickBusy = true;
+        ctx2.render();
+        try {
+          const res = await cloud.setNickname(chk.value);
+          if (res?.ok) {
+            S.profile = null;
+            S.profileTried = null;
+            S.nickOpen = false;
+            S.nickErr = null;
+            S.nickDone = true;
+            loadProfile();
+            load(true);
+          } else S.nickErr = ["length", "chars", "bad_word", "reserved", "taken", "too_often", "no_entry"].includes(res?.error) ? res.error : "failed";
+        } catch (e) {
+          S.nickErr = e?.kind === "offline" ? "offline" : "failed";
+        }
+        S.nickBusy = false;
+        ctx2.render();
+      }
+    };
+    return {
+      body,
+      /** The page opens: the hero's own kind of board (hardcore or not) first, then the data. */
+      open() {
+        const h = ctx2.hero();
+        if (h && S.dataKey === null) S.hardcore = !!h.hardcore;
+        S.nickOpen = false;
+        S.nickDone = false;
+        load();
+      },
+      onUser(user) {
+        const id = user?.id ?? null;
+        if (id === S.uid) return;
+        S.uid = id;
+        S.profile = null;
+        S.profileTried = null;
+        S.nickOpen = false;
+        S.dataKey = null;
+        S.at = 0;
+      },
+      actions: actions2,
+      state: S
+    };
+  }
+
   // src/client/fit.js
-  var FIT = ".logo, .class-pick b, .win-head h3, .m-camp .hbtn, .controls .hbtn, .ds .item.none span, .diff-tab b, .sktabs button, .tile b, .gobtn b, .class-card h2, .unit > b";
-  var GROUP = ".class-row, .hudrow, .doll, .diffs, .sktabs, .tiles, .arena";
+  var FIT = ".logo, .class-pick b, .win-head h3, .m-camp .hbtn, .controls .hbtn, .ds .item.none span, .diff-tab b, .sktabs button, .tile b, .gobtn b, .class-card h2, .unit > b, .rk-tab b";
+  var GROUP = ".class-row, .hudrow, .doll, .diffs, .sktabs, .tiles, .arena, .rk-boards, .rk-scopes";
   function textWidth(el, scale) {
     let lo = Infinity;
     let hi = -Infinity;
@@ -34396,9 +35303,10 @@ ${suffix}`;
   <div class="screen title-screen">
     <div class="backdrop zone" style="--scene:url(${asset(SCENE)})"></div>
     <h1 class="logo">${t2("title")}</h1>
-    <div class="panel roster"><h3 class="center">${t2("ux.heroes")}</h3><p class="dim center">${t2("ux.heroesInfo")}</p><div class="slots">${cards}</div></div>
+    <div class="panel roster"><h3 class="center">${t2("ux.heroes")}</h3><p class="dim center">${t2("ux.heroesInfo")}</p><div class="slots">${cards}</div>
+      <div class="row center-row roster-more"><button class="btn ghost ranks-open" data-act="ranksOpen">${trophy()}${t2("ranks.open")}</button></div></div>
     <div class="row center-row">${accountChip()}${soundSwitch()}${langSwitch()}</div>${accountPop()}
-  </div>`;
+  </div>${view.ranksOpen ? ranksWindow() : ""}`;
   }
   function renderTitle() {
     const L = locales[lang];
@@ -34427,6 +35335,18 @@ ${suffix}`;
     <div class="row center-row">${accountChip()}${soundSwitch()}${langSwitch()}</div>${accountPop()}
   </div>`;
   }
+  var trophy = () => '<svg class="trophy" viewBox="0 0 24 24" aria-hidden="true"><path d="M7 3h10v2h3v3a4 4 0 0 1-4 4h-.3A5 5 0 0 1 13 14.9V17h3v2H8v-2h3v-2.1A5 5 0 0 1 8.3 12H8a4 4 0 0 1-4-4V5h3V3Zm0 4H6v1a2 2 0 0 0 1 1.7V7Zm10 0v2.7A2 2 0 0 0 18 8V7h-1ZM6 20h12v2H6v-2Z" fill="currentColor"/></svg>';
+  function ranksWindow() {
+    const opening = view.opening === "ranks";
+    view.opening = null;
+    const close = 'data-act="ranksClose"';
+    return `<div class="shade" ${close}></div>
+  <section class="win w-ranks free ${opening ? "opening" : ""}" role="dialog" aria-label="${esc(t2("tab.ranks"))}">
+    <header class="win-head"><div><h3>${t2("tab.ranks")}</h3><p class="say">${t2("camp.say.ranks")}</p></div><button class="x" ${close} aria-label="${t2("close")}" title="${t2("close")}">\xD7</button></header>
+    <div class="win-body" id="winbody" data-keep="ranks">${ranks.body()}</div>
+    <footer class="win-foot backbar"><button class="btn ghost" ${close}>\u2039 ${t2("back")}</button></footer>
+  </section>`;
+  }
   function soundSwitch() {
     return `<button class="chip snd ${soundOn() ? "on" : ""}" data-act="sound" title="${t2(soundOn() ? "soundOn" : "soundOff")}" aria-label="${t2("sound")}" aria-pressed="${soundOn()}">\u266A</button>`;
   }
@@ -34445,7 +35365,7 @@ ${suffix}`;
     <div class="who">${art("hero", hero().classId, cls, "face")}<div><b>${esc(api.state.name || t2("defaultName"))}</b><small>${esc(cls)} \xB7 ${t2("levelN", { n: h.level })}${diffMark()}</small></div></div>
     ${hintKey ? `<button class="guide" data-act="tab" data-v="${hintTab}"><span class="guide-mark">!</span><span>${t2(`hint.${hintKey}`)}</span></button>` : '<span class="top-gap"></span>'}
     <div class="gold" title="${t2("gold")}"><span class="coin"></span>${fmt(h.gold)}</div>
-    ${inCamp ? `<button class="chip menu-btn" data-act="tab" data-v="menu" title="${t2("ux.menu")}" aria-label="${t2("ux.menu")}">\u2699</button>` : soundSwitch()}
+    ${inCamp ? `<button class="chip ranks-btn ${view.tab === "ranks" ? "on" : ""}" data-act="tab" data-v="ranks" title="${t2("tab.ranks")}" aria-label="${t2("tab.ranks")}">${trophy()}</button><button class="chip menu-btn" data-act="tab" data-v="menu" title="${t2("ux.menu")}" aria-label="${t2("ux.menu")}">\u2699</button>` : soundSwitch()}
   </header>`;
   }
   function diffMark() {
@@ -34584,7 +35504,7 @@ ${suffix}`;
     const x = Math.max(0, Math.min(100 - w, s.x + s.w / 2 - w / 2));
     return `background-size:${(1e4 / w).toFixed(0)}% auto;background-position:${(x / (100 - w) * 100).toFixed(1)}% ${Math.min(100, s.y + s.h * 0.72).toFixed(1)}%`;
   }
-  var PAGES = { stash: () => tabStash(), waystone: () => tabWaystone(), gear: () => tabGear(), char: () => tabGear(), skills: () => tabSkills(), order: () => tabOrder(), forge: () => tabForge(), merchant: () => tabMerchant(), merc: () => tabMerc(), menu: () => tabMenu() };
+  var PAGES = { ranks: () => ranks.body(), stash: () => tabStash(), waystone: () => tabWaystone(), gear: () => tabGear(), char: () => tabGear(), skills: () => tabSkills(), order: () => tabOrder(), forge: () => tabForge(), merchant: () => tabMerchant(), merc: () => tabMerc(), menu: () => tabMenu() };
   var PAGE_TITLE = (k) => k === "menu" ? t2("ux.menu") : k === "stash" ? t2("ux.stash") : t2(`tab.${k}`);
   var PAGE_SAY = (k) => k === "menu" ? "" : k === "stash" ? t2(hero()?.hardcore ? "ux.sayStashHc" : "ux.sayStash") : t2(`camp.say.${k}`);
   function windowOf(kind, title, say, body, closeAct = 'data-act="tab" data-v="camp"') {
@@ -35146,6 +36066,7 @@ ${suffix}`;
     <div class="mrow"><b>${t2("ux.sound")}</b><button class="btn ${soundOn() ? "" : "ghost"}" data-act="sound">${soundOn() ? t2("ux.on") : t2("ux.off")}</button></div>
     <div class="mrow"><b>${t2("ux.language")}</b>${langSwitch()}</div>
     ${document.fullscreenEnabled ? `<div class="mrow"><b>${t2("ux.fullscreen")}</b><button class="btn ghost" data-act="fullscreen">\u26F6</button></div>` : ""}
+    <div class="mrow"><b>${t2("tab.ranks")}</b><button class="btn ghost" data-act="tab" data-v="ranks">${trophy()}${t2("ranks.open")}</button></div>
     <div class="mrow col"><b>${t2("ux.heroes")}</b><p class="dim">${t2("ux.heroesInfo")}</p><button class="btn ghost" data-act="toRoster">${t2("ux.toRoster")}</button></div>
     <div class="mrow col acct-rows"><b>${t2("cloud.account")}</b>${accountRows()}</div>
     <div class="mrow col bk-rows"><b>${t2("cloud.backups.title")}</b>${backupRows()}</div>
@@ -36341,6 +37262,8 @@ ${suffix}`;
   fit();
   function render() {
     admin.onUser(acct.state === "on" ? acct.user : null);
+    ranks.onUser(acct.state === "on" ? acct.user : null);
+    if (hero()) view.ranksOpen = false;
     const opened = !!view.opening && !!hero() && !(run() && !run().over);
     let html;
     if (acct.state === "signin" && !view.fight && !view.modal) html = renderSignIn();
@@ -36543,6 +37466,7 @@ ${suffix}`;
       view.sel = null;
       view.skTab = null;
       view.confirm = null;
+      if (v === "ranks") ranks.open();
       render();
     },
     pickDiff(v) {
@@ -37030,6 +37954,7 @@ ${suffix}`;
   root.addEventListener("change", (e) => {
     const el = e.target.closest("[data-chg]");
     if (!el) return;
+    if (el.dataset.chg === "rkClass") return ranks.actions.rkClass(el.value);
     const h = hero();
     const i = Number(el.dataset.i);
     const list = h.tactics.map((x) => ({ skill: x.skill, cond: { ...x.cond } }));
@@ -37100,6 +38025,10 @@ ${suffix}`;
       render();
       return;
     }
+    if (view.ranksOpen && !hero()) {
+      actions.ranksClose();
+      return;
+    }
     if (view.confirm) actions.ask("");
     else if (hero() && !view.fight && !view.modal && run() && !run().over) {
       if (hero().scrolls > 0) actions.ask("retreat");
@@ -37146,6 +38075,7 @@ ${suffix}`;
   function overlayOpen() {
     return !!(acct.choice || acct.dialog);
   }
+  var ranks = initRanks({ t: t2, esc, fmt, lang: () => lang, loc: () => locales[lang], cloud: () => acct.cloud, user: () => acct.state === "on" ? acct.user : null, cloudState: () => acct.state, hero: () => hero(), render: () => render() });
   var admin = initAdmin({ api, t: t2, esc, fmt, fmtWhen, lang: () => lang, loc: () => locales[lang], R: () => R, cloud: () => acct.cloud, sync: () => sync, user: () => acct.state === "on" ? acct.user : null, render: () => render() });
   var statusKey = () => acct.state === "on" ? acct.status : acct.state === "local" ? "local" : acct.state === "none" ? "browser" : "off";
   function avatarOf(u, cls = "") {
@@ -37447,7 +38377,18 @@ ${suffix}`;
       render();
     }
   }
-  Object.assign(actions, {
+  Object.assign(actions, ranks.actions, {
+    ranksOpen() {
+      view.ranksOpen = true;
+      view.opening = "ranks";
+      view.account = false;
+      ranks.open();
+      render();
+    },
+    ranksClose() {
+      view.ranksOpen = false;
+      render();
+    },
     account() {
       view.account = !view.account;
       view.confirm = null;

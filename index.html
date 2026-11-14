@@ -2,7 +2,7 @@
 <html lang="en">
 <head>
 <meta charset="utf-8">
-<meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'sha256-BAuyZJFkPsRkJtNm1f/31XiwDUTyf8ohU/qX8DtdnXE=' 'sha256-CvICOIx/kYYkZv4tjtOomjtqskUVHwBbxCYhz5z6jWU='; style-src 'self' 'unsafe-inline'; img-src 'self' data: blob: https://cdn.discordapp.com; font-src 'self' data:; media-src 'self' data: blob:; connect-src 'self' https://zwhsmstbntuwgcgfqhzl.supabase.co wss://zwhsmstbntuwgcgfqhzl.supabase.co; object-src 'none'; base-uri 'none'; form-action 'none'">
+<meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'sha256-BAuyZJFkPsRkJtNm1f/31XiwDUTyf8ohU/qX8DtdnXE=' 'sha256-/UMshKnCO4cIX/FsP7LjZtCIbbZJKWyWjf9e6RJN2e8='; style-src 'self' 'unsafe-inline'; img-src 'self' data: blob: https://cdn.discordapp.com; font-src 'self' data:; media-src 'self' data: blob:; connect-src 'self' https://zwhsmstbntuwgcgfqhzl.supabase.co wss://zwhsmstbntuwgcgfqhzl.supabase.co; object-src 'none'; base-uri 'none'; form-action 'none'">
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
 <meta name="theme-color" content="#0a0706">
 <meta name="mobile-web-app-capable" content="yes">
@@ -1697,10 +1697,14 @@ html, body { text-size-adjust: 100%; }
 /* a phone on a raid or a descent: a belt of six or eight places and the reserve do not fit beside the companion's bar,
    so the belt shows as counts there (as it does in a fight) */
 .portrait .m-raid .beltwrap { display: none; } .portrait .m-raid .belt.compact { display: flex; align-items: center; flex: 1 1 40%; height: 32px; gap: 8px; }
-/* the shop's sell-all row: one chip per rarity in the bag */
-.sellrow { display: flex; flex-wrap: wrap; align-items: center; gap: 6px; margin: -2px 0 8px; } .sellrow small { flex-basis: 100%; }
-.chip.sellr.r-magic { color: var(--magic); } .chip.sellr.r-rare { color: var(--rare); } .chip.sellr.r-set { color: var(--set); } .chip.sellr.r-unique, .chip.sellr.r-runecarved { color: var(--unique); } .chip.sellr.r-socketed { color: #b8b8b8; }
-.chip.sellr.armed { background: #7a2a20; border-color: #c0503a; color: #fff; }
+/* the shop's "sell everything up to" row, and the lock that keeps an item */
+.sellrow { display: flex; flex-wrap: wrap; align-items: center; gap: 6px 10px; margin: -2px 0 10px; } .sellrow label { display: flex; flex-wrap: wrap; align-items: center; gap: 6px; }
+.sellrow select { font: inherit; font-size: 14px; } .sellrow small { flex-basis: 100%; }
+.sellrow .btn.armed { background: #7a2a20; border-color: #c0503a; color: #fff; }
+.item .keep { position: absolute; left: 3px; bottom: 3px; width: 14px; height: 14px; border-radius: 3px; background: #2a5a8a; box-shadow: 0 0 0 1px #000; }
+.item .keep::after { content: ''; position: absolute; left: 4px; top: 6px; width: 6px; height: 5px; background: #fff; border-radius: 1px; box-shadow: 0 -3px 0 -1px transparent; }
+.item .keep::before { content: ''; position: absolute; left: 4.5px; top: 2px; width: 3px; height: 4px; border: 1.5px solid #fff; border-bottom: 0; border-radius: 3px 3px 0 0; }
+.lockbtn.on { border-color: #4a8ac0; color: #cfe4ff; }
 
 </style>
 </head>
@@ -4010,6 +4014,7 @@ html, body { text-size-adjust: 100%; }
   function cleanItem(content3, item) {
     if (!item || typeof item !== "object" || !Object.hasOwn(content3.bases, item.base)) return null;
     if (!Array.isArray(item.affixes)) item.affixes = [];
+    if (item.locked !== true) delete item.locked;
     item.affixes = item.affixes.filter((a) => a && typeof a === "object" && Object.hasOwn(content3.affixes, a.id));
     for (const a of item.affixes) {
       const n = content3.affixes[a.id].tiers.length;
@@ -5218,6 +5223,7 @@ html, body { text-size-adjust: 100%; }
     if (hero2.inRun) return IN_RAID3;
     if (!validIndex(hero2.bag, index)) return { ok: false, error: "no_item" };
     const item = hero2.bag[index];
+    if (item.locked) return { ok: false, error: "locked" };
     const gold = content3.B.loot.sellValue(item, content3.bases[item.base]);
     hero2.bag.splice(index, 1);
     hero2.gold += gold;
@@ -5232,6 +5238,25 @@ html, body { text-size-adjust: 100%; }
     hero2.gold -= price;
     hero2.scrolls = (hero2.scrolls ?? 0) + 1;
     return { ok: true, price };
+  }
+  function toggleLock(hero2, index) {
+    if (!validIndex(hero2.bag, index)) return { ok: false, error: "no_item" };
+    const item = hero2.bag[index];
+    if (item.locked) delete item.locked;
+    else item.locked = true;
+    return { ok: true, locked: !!item.locked };
+  }
+  var SELL_TIERS = ["common", "socketed", "magic", "rare"];
+  function sellBelowPicks(hero2, upTo, keep = () => false) {
+    const max = SELL_TIERS.indexOf(upTo);
+    if (max < 0) return [];
+    const out = [];
+    hero2.bag.forEach((item, i) => {
+      const r = SELL_TIERS.indexOf(item.rarity);
+      if (r < 0 || r > max || item.locked || keep(i)) return;
+      out.push(i);
+    });
+    return out;
   }
   function identifyItem(hero2, index) {
     if (hero2.inRun) return IN_RAID3;
@@ -7444,6 +7469,16 @@ html, body { text-size-adjust: 100%; }
         }
       });
     }
+    function compareBag(index) {
+      const hero2 = state.hero;
+      const item = hero2?.bag[index];
+      if (!item || !item.identified || !canEquip(content, hero2, item).ok) return null;
+      const trial = structuredClone(hero2);
+      if (!equipFromBag(content, trial, index).ok) return null;
+      const c = powerScore(content, trial) / powerScore(content, hero2) - 1;
+      const pushed = content.EQUIP_SLOTS.some((s) => s !== targetSlot(content, hero2, item) && hero2.equipment[s] && !trial.equipment[s]);
+      return pushed ? Math.min(c, -0.04) : c;
+    }
     return {
       content,
       get state() {
@@ -7614,15 +7649,31 @@ html, body { text-size-adjust: 100%; }
       equip: campOnly((index) => equipFromBag(content, state.hero, index)),
       unequip: campOnly((slot) => unequip(content, state.hero, slot)),
       sell: campOnly((index) => sellItem(content, state.hero, index)),
-      sellCommon: campOnly((rarity = "common") => {
+      sellCommon: campOnly(() => {
         if (state.hero.inRun) return { ok: false, error: "in_raid" };
-        if (typeof rarity !== "string") return { ok: false, error: "bad_rarity" };
         let gold = 0;
         for (let i = state.hero.bag.length - 1; i >= 0; i--) {
-          if (state.hero.bag[i].rarity === rarity) gold += sellItem(content, state.hero, i).gold ?? 0;
+          const it = state.hero.bag[i];
+          if (it.rarity === "common" && !it.locked) gold += sellItem(content, state.hero, i).gold ?? 0;
         }
         return { ok: true, gold };
       }),
+      /** Bag places "sell everything up to this rarity" would take: never locked items or ones better than what is worn. */
+      sellBelowPicks: (upTo) => state.hero ? sellBelowPicks(state.hero, upTo, (i) => {
+        const c = compareBag(i);
+        return c != null && c > 0.03;
+      }) : [],
+      sellBelow: campOnly((upTo) => {
+        if (state.hero.inRun) return { ok: false, error: "in_raid" };
+        const picks = sellBelowPicks(state.hero, upTo, (i) => {
+          const c = compareBag(i);
+          return c != null && c > 0.03;
+        });
+        let gold = 0;
+        for (const i of picks.sort((a, b) => b - a)) gold += sellItem(content, state.hero, i).gold ?? 0;
+        return { ok: true, gold, n: picks.length };
+      }),
+      toggleLock: campOnly((index) => toggleLock(state.hero, index)),
       identify: campOnly((index) => identifyItem(state.hero, index)),
       identifyAll: campOnly(() => {
         if (state.hero.inRun) return { ok: false, error: "in_raid" };
@@ -7730,14 +7781,7 @@ html, body { text-size-adjust: 100%; }
       targetSlot: (index) => state.hero?.bag[index] ? targetSlot(content, state.hero, state.hero.bag[index]) : null,
       /** How a bag item compares with what is worn: > 0 better, < 0 worse, null if it cannot be worn. */
       compare(index) {
-        const hero2 = state.hero;
-        const item = hero2?.bag[index];
-        if (!item || !item.identified || !canEquip(content, hero2, item).ok) return null;
-        const trial = structuredClone(hero2);
-        if (!equipFromBag(content, trial, index).ok) return null;
-        const c = powerScore(content, trial) / powerScore(content, hero2) - 1;
-        const pushed = content.EQUIP_SLOTS.some((s) => s !== targetSlot(content, hero2, item) && hero2.equipment[s] && !trial.equipment[s]);
-        return pushed ? Math.min(c, -0.04) : c;
+        return compareBag(index);
       },
       // ---------------- difficulty (picked at the Waystone, only in camp) ----------------
       difficulty: () => state.hero ? difficultyOf(state.hero) : "normal",
@@ -9443,6 +9487,7 @@ html, body { text-size-adjust: 100%; }
       merc_cannot_use: "Your mercenary cannot use this.",
       generic: "That did not work.",
       reserve_full: "Your potion reserve is full.",
+      locked: "This item is locked: unlock it first.",
       no_item: "That item is gone.",
       cannot_buy: "Your belt is full, or you do not have the gold.",
       no_hero: "Pick a hero first.",
@@ -9514,10 +9559,15 @@ html, body { text-size-adjust: 100%; }
     fillBeltSwap: "Fill the belt from the reserve",
     fillBelt: "Fill the belt ({gold} gold)",
     beltFull: "Your belt is full.",
-    sellAllOf: "Sell everything of one kind:",
-    sellRarity: "{name} ({n})",
-    sellRarityConfirm: "Sure? {n} items, {gold} gold",
-    sellRarityTip: "Sell every item of this kind in your bag for {gold} gold.",
+    sellUpTo: "Sell everything that is",
+    sellUpToTail: "or worse",
+    sellBelow: "Sell ({n} items, {gold} gold)",
+    sellBelowConfirm: "Sure? {n} items, {gold} gold",
+    sellBelowNone: "Nothing to sell",
+    sellBelowNote: "Locked items and upgrades stay, and so do sets and uniques.",
+    lockItem: "\u{1F512} Keep",
+    unlockItem: "\u{1F513} Unlock",
+    lockedTip: "Locked: the merchant will not buy it until you unlock it.",
     sellJunk: "Sell common items ({n}) for {gold} gold",
     sellEmpty: "Your bag is empty: nothing to sell.",
     station: "Station {n} of {max}",
@@ -10468,6 +10518,7 @@ html, body { text-size-adjust: 100%; }
       merc_cannot_use: "Ezt a zsoldosod nem tudja haszn\xE1lni.",
       generic: "Ez most nem siker\xFClt.",
       reserve_full: "Nem f\xE9r t\xF6bb ital a tartal\xE9kodba.",
+      locked: "Ez a t\xE1rgy lakattal v\xE9dett: el\u0151bb vedd le r\xF3la a lakatot.",
       no_item: "Ez a t\xE1rgy m\xE1r nincs meg.",
       cannot_buy: "Nem f\xE9r t\xF6bb ital az \xF6vedbe, vagy nincs r\xE1 el\xE9g aranyad.",
       no_hero: "El\u0151bb v\xE1lassz egy h\u0151st.",
@@ -10539,10 +10590,15 @@ html, body { text-size-adjust: 100%; }
     fillBeltSwap: "Felt\xF6lt\xF6m az \xF6vet a tartal\xE9kb\xF3l",
     fillBelt: "Felt\xF6lt\xF6m az \xF6vet ({gold} arany)",
     beltFull: "Tele az ital\xF6ved.",
-    sellAllOf: "Egy kattint\xE1ssal eladom az \xF6sszes:",
-    sellRarity: "{name} ({n})",
-    sellRarityConfirm: "Biztos? {n} db, {gold} arany",
-    sellRarityTip: "Az \xF6sszes ilyen t\xE1rgy elad\xE1sa a zs\xE1kodb\xF3l: {gold} arany.",
+    sellUpTo: "Eladok mindent, ami",
+    sellUpToTail: "vagy gyeng\xE9bb",
+    sellBelow: "Eladom ({n} db, {gold} arany)",
+    sellBelowConfirm: "Biztos? {n} db, {gold} arany",
+    sellBelowNone: "Nincs mit eladni",
+    sellBelowNote: "A lakattal v\xE9dett \xE9s a jobb t\xE1rgyakat nem adja el, a szetteket \xE9s az egyedieket sem.",
+    lockItem: "\u{1F512} Megtartom",
+    unlockItem: "\u{1F513} Lakat le",
+    lockedTip: "Lakattal v\xE9dve: a kalm\xE1r nem veszi meg, am\xEDg le nem veszed a lakatot.",
     sellJunk: "Eladom a k\xF6z\xF6ns\xE9ges t\xE1rgyakat ({n} db, {gold} arany)",
     sellEmpty: "\xDCres a zs\xE1kod, nincs mit eladni.",
     station: "\xC1llom\xE1s: {n}/{max}",
@@ -33171,7 +33227,7 @@ ${suffix}`;
   }
 
   // src/client/admin.js
-  var BUILD_TIME = true ? "2026-11-14T20:52:14.554Z" : null;
+  var BUILD_TIME = true ? "2026-11-14T21:04:05.129Z" : null;
   var TABS = ["players", "log", "hero", "test", "balance", "system"];
   var KINDS = ["raid_start", "raid_end", "level_up", "death", "boss_kill", "unique_found", "set_found", "runeword_found", "difficulty_unlocked", "depth_start", "depth_floor", "depth_end", "hero_created", "hero_deleted", "sync_conflict", "sync_outdated", "sync_rejected", "admin_edit"];
   var POLL_MS = 15e3;
@@ -34674,11 +34730,28 @@ ${suffix}`;
       }).join("")}</div>`;
     }).join("");
   }
+  var SELL_TIERS2 = ["common", "socketed", "magic", "rare"];
+  var SELL_KEY = "cursewake.sellUpTo";
+  function sellUpTo() {
+    try {
+      const v = localStorage.getItem(SELL_KEY);
+      return SELL_TIERS2.includes(v) ? v : "magic";
+    } catch {
+      return "magic";
+    }
+  }
+  function setSellUpTo(v) {
+    if (!SELL_TIERS2.includes(v)) return;
+    try {
+      localStorage.setItem(SELL_KEY, v);
+    } catch {
+    }
+  }
   function itemTile(item, attrs, selected, forMerc = false) {
     const name = R.itemName(item);
     const cant = item.identified && !forMerc && !canEquip(content2, hero(), item).ok;
     return `<button class="item r-${item.rarity} ${item.identified ? "" : "unid"} ${cant ? "cant" : ""} ${selected ? "sel" : ""}" ${attrs} title="${esc(name)}">
-    <img src="${asset(`item_${content2.bases[item.base]?.icon ?? item.base}`)}" alt=""><span>${esc(locales[lang].base[item.base])}</span>${item.identified ? "" : '<i class="q">?</i>'}${cant ? '<i class="lock"></i>' : ""}</button>`;
+    <img src="${asset(`item_${content2.bases[item.base]?.icon ?? item.base}`)}" alt=""><span>${esc(locales[lang].base[item.base])}</span>${item.identified ? "" : '<i class="q">?</i>'}${cant ? '<i class="lock"></i>' : ""}${item.locked ? `<i class="keep" title="${esc(t2("lockedTip"))}"></i>` : ""}</button>`;
   }
   function withSk(sheet, h) {
     if (!sheet || !h) return sheet;
@@ -34806,7 +34879,8 @@ ${suffix}`;
       const wear = api.canWear(key);
       if (!item.identified) buttons += `<button class="btn" data-act="identify" data-v="${key}">${t2("identify")}</button>`;
       else buttons += `<button class="btn" data-act="equip" data-v="${key}" ${wear.ok ? "" : "disabled"}>${t2("equip")}</button>`;
-      if (where === "shop") buttons += `<button class="btn ghost" data-act="sell" data-v="${key}">${t2("sell", { gold: fmt(content2.B.loot.sellValue(item, base)) })}</button>`;
+      if (where === "shop") buttons += `<button class="btn ghost" data-act="sell" data-v="${key}" ${item.locked ? `disabled title="${esc(t2("lockedTip"))}"` : ""}>${t2("sell", { gold: fmt(content2.B.loot.sellValue(item, base)) })}</button>`;
+      buttons += `<button class="btn ghost lockbtn ${item.locked ? "on" : ""}" data-act="lock" data-v="${key}" aria-pressed="${!!item.locked}" title="${esc(t2("lockedTip"))}">${t2(item.locked ? "unlockItem" : "lockItem")}</button>`;
     } else if (where === "eq") buttons = `<button class="btn ghost" data-act="unequip" data-v="${key}">${t2("unequip")}</button>`;
     else if (where === "stash" || where === "sbag") buttons = `<button class="btn" data-act="${where === "stash" ? "stashTake" : "stashPut"}" data-v="${key}" data-move="1">${t2(where === "stash" ? "ux.fromStash" : "ux.toStash")}</button>`;
     if (out) out.buttons = buttons;
@@ -35391,16 +35465,14 @@ ${suffix}`;
   }
   function tabMerchant() {
     const h = hero();
-    const RAR = ["common", "socketed", "magic", "rare", "runecarved", "set", "unique"];
-    const ASK = /* @__PURE__ */ new Set(["rare", "runecarved", "set", "unique"]);
-    const sellBtns = RAR.map((r) => {
-      const list = h.bag.filter((i) => i.rarity === r);
-      if (!list.length) return "";
-      const gold = list.reduce((g, i) => g + content2.B.loot.sellValue(i, content2.bases[i.base]), 0);
-      const armed = view.sellArm === r;
-      const label = armed ? t2("sellRarityConfirm", { n: list.length, gold: fmt(gold) }) : t2("sellRarity", { name: locales[lang].rarity[r], n: list.length });
-      return `<button class="chip sellr r-${r} ${armed ? "armed" : ""}" data-act="sellRarity" data-v="${r}" data-ask="${ASK.has(r) && !armed ? 1 : 0}" title="${esc(t2("sellRarityTip", { gold: fmt(gold) }))}">${label}</button>`;
-    }).join("");
+    const upTo = sellUpTo();
+    const picks = api.sellBelowPicks(upTo);
+    const pickGold = picks.reduce((g, i) => g + content2.B.loot.sellValue(h.bag[i], content2.bases[h.bag[i].base]), 0);
+    const armed = view.sellArm === upTo && picks.length > 0;
+    const ask = upTo === "rare" && !armed;
+    const sellRow = h.bag.length ? `<div class="sellrow"><label>${t2("sellUpTo")} <select data-chg="sellUpTo">${SELL_TIERS2.map((r) => `<option value="${r}" ${r === upTo ? "selected" : ""}>${esc(locales[lang].rarity[r])}</option>`).join("")}</select> ${t2("sellUpToTail")}</label>
+    <button class="btn ${armed ? "armed" : ""}" data-act="sellBelow" data-ask="${ask ? 1 : 0}" ${picks.length ? "" : "disabled"}>${picks.length ? t2(armed ? "sellBelowConfirm" : "sellBelow", { n: picks.length, gold: fmt(pickGold) }) : t2("sellBelowNone")}</button>
+    <small class="dim">${t2("sellBelowNote")}</small></div>` : "";
     const gp = content2.B.gamble.price(h.level);
     const sel = view.sel?.w === "bag" && h.bag[view.sel.k] ? view.sel.k : null;
     const cells = h.bag.map((item, i) => `<div class="bagcell">${itemTile(item, `data-act="sel" data-w="bag" data-v="${i}"`, sel === i)}</div>`).join("");
@@ -35430,7 +35502,7 @@ ${suffix}`;
         ${gambled ? `<div class="gamble-got"><p class="gambled">${t2("ux.gambled")}</p>${itemDetail(h.bag[sel], "shop", sel)}</div>` : ""}
       </div>
       <h4>${t2("ux.sellTitle")}</h4>
-      ${sellBtns ? `<div class="sellrow"><small class="dim">${t2("sellAllOf")}</small>${sellBtns}</div>` : ""}
+      ${sellRow}
       ${h.bag.length ? `<p class="dim sellpick">${t2("ux.sellPick")}</p><div class="baggrid shopbag">${cells}</div>` : `<p class="dim">${t2("sellEmpty")}</p>`}
     </section>
     <section class="shop-detail detail-wrap ${sel != null ? "has-card" : ""}">${sel != null ? `<div class="pop-scroll">${gambled ? `<p class="gambled">${t2("ux.gambled")}</p>` : ""}${card}</div><div class="pop-actions row">${out.buttons}</div>` : `<p class="dim pick">${t2("pickItem")}</p>`}</section>
@@ -36393,7 +36465,7 @@ ${suffix}`;
     mercUnequip: "drop_common",
     sell: "coin",
     sellCommon: "coin",
-    sellRarity: "coin",
+    sellBelow: "coin",
     hireMerc: "coin",
     reviveMerc: "heal",
     buyPotion: "potion",
@@ -36558,17 +36630,21 @@ ${suffix}`;
     },
     sellCommon() {
       view.sel = null;
-      act(api.sellCommon("common"));
+      act(api.sellCommon());
     },
-    sellRarity(r, el) {
+    sellBelow(_v, el) {
+      const upTo = sellUpTo();
       if (el.dataset.ask === "1") {
-        view.sellArm = r;
+        view.sellArm = upTo;
         render();
         return;
       }
       view.sellArm = null;
       view.sel = null;
-      act(api.sellCommon(r));
+      act(api.sellBelow(upTo));
+    },
+    lock(v) {
+      act(api.toggleLock(Number(v)));
     },
     buyPotion(v) {
       const res = api.buyPotion(v === "mana" ? "mana" : "life");
@@ -36958,6 +37034,11 @@ ${suffix}`;
     const i = Number(el.dataset.i);
     const list = h.tactics.map((x) => ({ skill: x.skill, cond: { ...x.cond } }));
     switch (el.dataset.chg) {
+      case "sellUpTo":
+        setSellUpTo(el.value);
+        view.sellArm = null;
+        render();
+        return;
       case "tacSkill":
         list[i].skill = el.value;
         return act(api.setTactics(list));

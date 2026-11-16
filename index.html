@@ -2,7 +2,7 @@
 <html lang="en">
 <head>
 <meta charset="utf-8">
-<meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'sha256-BAuyZJFkPsRkJtNm1f/31XiwDUTyf8ohU/qX8DtdnXE=' 'sha256-bTTEgkADilVn33gJ2unL6YauECRY+MUgZkJxkBc+qVI='; style-src 'self' 'unsafe-inline'; img-src 'self' data: blob: https://cdn.discordapp.com; font-src 'self' data:; media-src 'self' data: blob:; connect-src 'self' https://zwhsmstbntuwgcgfqhzl.supabase.co wss://zwhsmstbntuwgcgfqhzl.supabase.co; object-src 'none'; base-uri 'none'; form-action 'none'">
+<meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'sha256-BAuyZJFkPsRkJtNm1f/31XiwDUTyf8ohU/qX8DtdnXE=' 'sha256-s7t1ps81VQNCC4NNTHT9zRkrV7qqp3JzwsGWyzEeMl4='; style-src 'self' 'unsafe-inline'; img-src 'self' data: blob: https://cdn.discordapp.com; font-src 'self' data:; media-src 'self' data: blob:; connect-src 'self' https://zwhsmstbntuwgcgfqhzl.supabase.co wss://zwhsmstbntuwgcgfqhzl.supabase.co; object-src 'none'; base-uri 'none'; form-action 'none'">
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
 <meta name="theme-color" content="#0a0706">
 <meta name="mobile-web-app-capable" content="yes">
@@ -466,7 +466,7 @@ h3.r-set, li.r-set { color: var(--set); } h3.r-unique, li.r-unique, h3.r-runecar
 
 .portrait .arena { grid-template-columns: minmax(0, 1fr); grid-template-rows: minmax(0, 1.7fr) minmax(0, 1fr); gap: 8px; padding: 4px 8px; bottom: calc(var(--hud) + 108px); }
 .portrait .side-enemies { order: -1; gap: 6px; } .portrait .side-allies { gap: 5px; flex-wrap: nowrap; }
-.portrait .unit { width: 112px; padding: 3px; } .portrait .unit .art { margin-bottom: 2px; } .portrait .unit b { font-size: 13px; min-height: 0; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; } .portrait .unit small { display: none; } .portrait .unit .bar { height: 8px; margin-top: 2px; }
+.portrait .unit { width: 112px; padding: 3px; } .portrait .unit .art { margin-bottom: 2px; } .portrait .unit b { font-size: 13px; min-height: 0; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; line-height: 1.4; padding-top: 1px; } .portrait .unit small { display: none; } .portrait .unit .bar { height: 8px; margin-top: 2px; }
 .portrait .unit.zoneBoss b, .portrait .unit.actBoss b { font-size: 14px; }
 .portrait .side-allies .unit, .portrait .side-allies .unit.hero, .portrait .side-allies .unit.merc, .portrait .side-allies .unit.summon { flex: 1 1 0; min-width: 0; width: auto; max-width: 76px; } .portrait .side-allies .unit.hero { max-width: 92px; flex-grow: 1.3; }
 .portrait .side-enemies.e1 .unit { width: 168px; } .portrait .side-enemies.e2 .unit { width: 140px; } .portrait .side-enemies.e3 .unit { width: 118px; }
@@ -1086,11 +1086,11 @@ span.chip.acct { cursor: default; opacity: .8; }
 .avatar.big { width: 44px; height: 44px; font-size: 22px; }
 .sync-dot { flex: none; width: 8px; height: 8px; border-radius: 50%; background: #7ee07a; box-shadow: 0 0 6px #7ee07a88; }
 .st-saving .sync-dot, .st-checking .sync-dot { background: var(--gold); box-shadow: 0 0 6px #c9a35a88; }
-.st-offline .sync-dot, .st-tooBig .sync-dot { background: #8a8070; box-shadow: none; }
+.st-offline .sync-dot, .st-tooBig .sync-dot, .st-serverUpdating .sync-dot { background: #8a8070; box-shadow: none; }
 .st-conflict .sync-dot { background: #ff7b6b; box-shadow: 0 0 6px #ff7b6b88; }
 small.sync { display: block; color: #7ee07a; font-size: 13px; }
 small.sync.st-saving, small.sync.st-checking { color: var(--gold); }
-small.sync.st-offline, small.sync.st-tooBig, small.sync.st-off, small.sync.st-local { color: var(--dim); }
+small.sync.st-offline, small.sync.st-serverUpdating, small.sync.st-tooBig, small.sync.st-off, small.sync.st-local { color: var(--dim); }
 small.sync.st-conflict { color: #ff7b6b; }
 .acct-who { display: flex; align-items: center; gap: 10px; text-align: left; }
 .acct-who .acct-n { font: 600 17px var(--serif); color: #ecd7a4; }
@@ -1747,6 +1747,7 @@ html, body { text-size-adjust: 100%; }
 .rk-state.err { display: grid; gap: 8px; justify-items: center; } .rk-state.err p { margin: 0; }
 .rk-more { margin: 0; font-size: 13px; text-align: center; }
 .rk-hall { display: grid; gap: 10px; } .rk-season h4 { margin: 0 0 6px; }
+.rk-hallmore { margin-top: 4px; } .rk-hallmore summary { cursor: pointer; color: var(--dim); font-size: 13px; padding: 4px 2px; } .rk-hallmore .rk-list { margin-top: 4px; }
 .rk-nick { display: flex; flex-wrap: wrap; gap: 6px 12px; align-items: center; justify-content: space-between; padding: 8px 10px; border-radius: 6px; background: #0005; box-shadow: inset 0 0 0 1px var(--line); }
 .rk-nick > div { display: flex; flex-wrap: wrap; gap: 4px 10px; align-items: baseline; min-width: 0; }
 .rk-nick b { font: 600 15px var(--serif); font-variant: small-caps; color: #ecd7a4; } .rk-nick-now { color: #f1dfb6; overflow-wrap: anywhere; }
@@ -1767,6 +1768,83 @@ html, body { text-size-adjust: 100%; }
 .item .keep::after { content: ''; position: absolute; left: 4px; top: 6px; width: 6px; height: 5px; background: #fff; border-radius: 1px; box-shadow: 0 -3px 0 -1px transparent; }
 .item .keep::before { content: ''; position: absolute; left: 4.5px; top: 2px; width: 3px; height: 4px; border: 1.5px solid #fff; border-bottom: 0; border-radius: 3px 3px 0 0; }
 .lockbtn.on { border-color: #4a8ac0; color: #cfe4ff; }
+
+/* ---------------------------------------------------------------- the Arena */
+.chip.ranks-btn svg { width: 20px; height: 20px; display: block; }
+.rk-boards { grid-template-columns: repeat(4, minmax(0, 1fr)); }
+.portrait .rk-boards { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+.arena-page { display: grid; gap: 12px; min-width: 0; }
+.arena-page.busy .ar-opps, .arena-page.busy .ar-hists { opacity: .6; transition: opacity .2s; }
+.ar-me { display: grid; grid-template-columns: auto minmax(0, 1fr) auto; align-items: center; gap: 4px 12px; padding: 10px 12px; border-radius: 8px;
+  background: linear-gradient(90deg, #3a2a16cc, #120d09cc); box-shadow: inset 0 0 0 1px #c9a35a88, 0 2px 10px #0008; }
+.ar-me .art.face, .ar-opp .art.face { width: 52px; border-radius: 50%; box-shadow: 0 0 0 2px var(--frame-hi, #8a6a3a), 0 0 0 3px #000; }
+.ar-me-who { min-width: 0; display: grid; gap: 2px; }
+.ar-me-who b { font: 600 18px var(--serif); color: #f1dfb6; }
+/* Names stay on one line and end in "…" if they do not fit; line-height leaves room for accents on capitals (Ő, É). */
+.ar-name { display: block; min-width: 0; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; line-height: 1.35; padding-top: 1px; }
+.ar-season { grid-column: 1 / -1; margin: 2px 0 0; display: flex; flex-wrap: wrap; gap: 2px 8px; align-items: baseline; font-size: 14px; }
+.ar-season b { color: #e9d6a8; font-weight: 600; } .ar-season small { color: var(--dim); font-size: 13px; }
+.ar-best { color: #cdbb96; }
+.ar-me-who small, .ar-me-rec small { color: var(--dim); font-size: 13px; }
+.ar-me-rec, .ar-rec { display: flex; flex-wrap: wrap; gap: 4px 8px; align-items: center; }
+.ar-me-rating { text-align: right; display: grid; justify-items: end; line-height: 1.05; }
+.ar-me-rating b { font: 700 30px var(--serif); color: #f0cf6a; text-shadow: 0 0 12px #c9a35a55; font-variant-numeric: tabular-nums; }
+.ar-me-rating small { font-size: 12px; color: var(--dim); }
+.ar-today { grid-column: 1 / -1; margin: 4px 0 0; font-size: 14px; color: #d6c8ad; }
+.ar-today.none { color: var(--bad); }
+.ar-tier { font: 700 11px/1 system-ui, sans-serif; font-style: normal; letter-spacing: .06em; text-transform: uppercase; padding: 3px 7px; border-radius: 3px; border: 1px solid; white-space: nowrap; }
+.ar-tier.t-iron { color: #c9c3ba; border-color: #6f6a63; background: #2a2724; }
+.ar-tier.t-bronze { color: #f0b98a; border-color: #a0623a; background: #3a2216; }
+.ar-tier.t-silver { color: #eef1f6; border-color: #9aa3b0; background: #30343b; }
+.ar-tier.t-gold { color: #1a1208; border-color: #ffd76a; background: linear-gradient(180deg, #ffe08a, #c9a35a); }
+.ar-tier.t-diamond { color: #0b1a24; border-color: #a8ecff; background: linear-gradient(180deg, #d8f6ff, #6fc3e6); box-shadow: 0 0 8px #8fe0ff88; }
+.ar-reason { padding: 10px 12px; border-radius: 6px; background: #2a160f99; box-shadow: inset 0 0 0 1px #7a3a2a; display: grid; gap: 4px; justify-items: start; }
+.ar-reason b { color: #f1c9a8; font: 600 16px var(--serif); } .ar-reason p { margin: 0; font-size: 14px; color: #d6c8ad; }
+.ar-sec { display: grid; gap: 6px; min-width: 0; } .ar-sec h4 { margin: 0; }
+.ar-sec-head { display: flex; flex-wrap: wrap; gap: 6px 10px; align-items: center; justify-content: space-between; }
+.ar-err { margin: 0; font-size: 14px; }
+.ar-opps, .ar-hists { list-style: none; margin: 0; padding: 0; display: grid; gap: 6px; }
+.ar-opp { display: grid; grid-template-columns: auto minmax(0, 1fr) auto; align-items: center; gap: 10px; padding: 8px 10px; border-radius: 6px; background: #0007; box-shadow: inset 0 0 0 1px #3b2e22aa; }
+.ar-opp .art.face { width: 46px; }
+.ar-who { min-width: 0; display: grid; gap: 2px; }
+.ar-who b { font: 600 16px var(--serif); color: #f1dfb6; }
+.ar-who > small { font-size: 13px; color: var(--dim); overflow-wrap: anywhere; }
+.ar-rec small { font-size: 12px; color: var(--dim); }
+.ar-side { display: grid; justify-items: end; gap: 4px; }
+.ar-pts { font: 700 20px var(--serif); color: #f0cf6a; font-variant-numeric: tabular-nums; }
+.ar-go { min-width: 84px; } .ar-go.busy { opacity: .7; }
+.ar-hist { display: grid; grid-template-columns: auto minmax(0, 1fr) auto; align-items: center; gap: 10px; padding: 7px 10px; border-radius: 6px; background: #0006; box-shadow: inset 3px 0 0 #6b5a44; }
+.ar-hist.won { box-shadow: inset 3px 0 0 var(--ok); } .ar-hist.lost { box-shadow: inset 3px 0 0 var(--bad); }
+.ar-hist.fresh { background: linear-gradient(90deg, #2c2414cc, #0006); }
+.ar-hmark { width: 22px; height: 22px; color: #cdbb96; } .ar-hmark svg { width: 22px; height: 22px; display: block; }
+.ar-hist.defense .ar-hmark { color: #9fc3e6; }
+.ar-htext { min-width: 0; display: grid; gap: 2px; }
+.ar-htext b { font-weight: 600; font-size: 14px; color: #ecdcbc; overflow-wrap: anywhere; }
+.ar-htext small { font-size: 12px; color: var(--dim); }
+.ar-hside { display: grid; justify-items: end; gap: 3px; }
+.ar-hside b { font: 700 16px var(--serif); font-variant-numeric: tabular-nums; color: #cdbb96; }
+.ar-hside b.up { color: var(--ok); } .ar-hside b.down { color: var(--bad); }
+.ar-fresh { margin: 0; padding: 6px 10px; border-radius: 5px; background: #2c2414; color: #f0dca8; font-size: 14px; box-shadow: inset 0 0 0 1px #c9a35a66; }
+.ar-empty { margin: 0; font-size: 14px; }
+.ar-rules ul { margin: 6px 0 0; padding-left: 18px; display: grid; gap: 4px; } .ar-rules li { font-size: 13px; }
+.ar-result { display: flex; flex-wrap: wrap; justify-content: center; align-items: baseline; gap: 4px 12px; margin: 6px 0 10px; padding: 10px; border-radius: 6px; background: #0006; }
+.ar-result span { color: var(--dim); font-size: 14px; flex-basis: 100%; }
+.ar-result b { font: 700 26px var(--serif); color: #f1dfb6; font-variant-numeric: tabular-nums; }
+.ar-result em { font: 700 22px var(--serif); font-style: normal; color: #cdbb96; }
+.ar-result.up em { color: var(--ok); } .ar-result.down em { color: var(--bad); }
+.ar-newtier { margin: 0 0 8px; font-weight: 600; } .ar-newtier.ok { color: var(--ok); }
+.rk-arena .rk-val small { white-space: nowrap; }
+.portrait .ar-me { padding: 8px 10px; gap: 4px 10px; } .portrait .ar-me .art.face { width: 44px; } .portrait .ar-me-rating b { font-size: 26px; }
+.portrait .ar-opp { gap: 8px; padding: 7px 8px; } .portrait .ar-opp .art.face { width: 40px; }
+.portrait .ar-go { min-width: 72px; min-height: 40px; }
+.portrait .ar-hist { gap: 8px; padding: 6px 8px; }
+/* On a phone a history line takes the whole width; the rating change and the replay button go under it. */
+.portrait .ar-hist { grid-template-columns: auto minmax(0, 1fr); row-gap: 4px; }
+.portrait .ar-hside { grid-column: 2; display: flex; align-items: center; justify-content: space-between; gap: 8px; }
+.portrait .ar-hside .btn { min-height: 36px; }
+/* A crowded top strip (the Arena button beside the leaderboard's): the hero's name gives way first, with "…". */
+.top .who > div { min-width: 0; overflow: hidden; }
+.top .who b, .top .who small { display: block; overflow: hidden; text-overflow: ellipsis; }
 
 </style>
 </head>
@@ -2058,6 +2136,63 @@ html, body { text-size-adjust: 100%; }
       // Its own resistances by level (not by difficulty): 0 up to level 42 (Normal's last monsters), then +0.8 a level, at most 40.
       // A hero above 42 still on Normal gets it too; that is intended (see mercSheet).
       resByLevel: (L) => Math.max(0, Math.min(40, Math.round((L - 42) * 0.8)))
+    },
+    // The Arena (async PvP, src/engine/pvp.js and server/pvp.sql). A fight against another player's saved hero:
+    // no gold, items or life are at stake, only the Arena rating. The server (server/pvp.sql, pvp_rules) holds the same
+    // numbers for the limits and the rating (a test keeps them equal). Bump rulesVersion whenever a number that changes
+    // a fight's course changes. A recorded fight keeps its own log (pvp_matches.log), so watching it again always shows
+    // what really happened; only fights recorded without a log are fought again, with the rules of today.
+    pvp: {
+      rulesVersion: 2,
+      // 2: classPower, maxTime 30, poison softened once
+      minLevel: 15,
+      // a hero this level or above may fight and be fought
+      dmgPct: 50,
+      // every blow (and poison, thorns) does this share of its damage: hero against hero lasts a while
+      healPct: 50,
+      // every heal (skills, potions, cheating death) heals this share
+      maxTime: 30,
+      // rounds; then the hero with the larger share of life left wins (a tie: the defender)
+      // Arena-only class strength in % at these hero levels (straight lines between, flat outside): its side (hero,
+      // companion, servants) deals p% and takes 100²/p % damage. Fitted on 430 raid-simulator heroes (3 seeds; Normal ~42,
+      // Nightmare ~67, Hell ~84) so that every class wins 45-55% against the others at its level.
+      classLevels: [42, 67, 84],
+      classPower: {
+        reaver: [97, 75, 75],
+        elementalist: [95, 119, 119],
+        gravecaller: [98, 113, 135],
+        ranger: [101, 95, 90],
+        templar: [109, 104, 92]
+      },
+      potions: { life: 2, mana: 1 },
+      // the same small belt for everyone; nothing is drunk from the hero's own belt
+      dailyLimit: 10,
+      // fights a player may start a day (Hungarian time), over all their heroes
+      levelWindow: 10,
+      // opponents at most this many levels away ...
+      levelWeight: 20,
+      // ... and in the offer a level apart weighs as much as this many rating points
+      perOpponentDay: 2,
+      // the same opponent hero at most this often a day
+      pairWeek: 4,
+      // fights of one account against another account in 7 days (either way round)
+      repeatKMult: 0.5,
+      // two accounts that met in the last 7 days already: K is halved for both
+      accountGainWeek: 40,
+      // rating points one account may win from another in 7 days (all their heroes together)
+      startRating: 1e3,
+      // every hero starts every season (calendar month, Hungarian time) here
+      minRating: 100,
+      // Elo K: the same for the attacker and the defender, so the ratings neither inflate nor sink over time
+      // (with a smaller K for the defender every attacker's win would add points to the Arena as a whole).
+      kAttack: 24,
+      kDefend: 24,
+      provisional: 10,
+      // a hero's first fights of a season move its rating faster ...
+      provisionalMult: 1.5,
+      // ... by this much
+      // Cosmetic ranks by rating (the name is in the locale files: arena.tier.<id>).
+      tiers: [[0, "iron"], [1100, "bronze"], [1250, "silver"], [1400, "gold"], [1600, "diamond"]]
     },
     loot: {
       itemChance: { normal: 0.15, champion: 1, zoneBoss: 1, actBoss: 1 },
@@ -4397,12 +4532,12 @@ html, body { text-size-adjust: 100%; }
     const C = content3.B.combat;
     const { mods: m, armorDef, weapon, shieldBlock, hasShield, beltSlots } = collectMods(content3, hero2);
     const g = (k) => m[k] ?? 0;
-    const str3 = hero2.attrs.str + g("str");
+    const str4 = hero2.attrs.str + g("str");
     const dex = hero2.attrs.dex + g("dex");
     const vit = hero2.attrs.vit + g("vit");
     const ene = hero2.attrs.ene + g("ene");
     const w = weapon ?? { min: H.unarmed.min, max: H.unarmed.max, speed: 0 };
-    const dmgMult = 1 + (str3 * H.strDmgPct + g("dmgPct")) / 100;
+    const dmgMult = 1 + (str4 * H.strDmgPct + g("dmgPct")) / 100;
     const dmgMin = Math.max(0, w.min * dmgMult + g("minDmg"));
     const dmgMax = Math.max(dmgMin, w.max * dmgMult + g("maxDmg"));
     const custom = !!difficulty && typeof difficulty === "object";
@@ -4418,7 +4553,7 @@ html, body { text-size-adjust: 100%; }
     }
     return {
       level: hero2.level,
-      str: str3,
+      str: str4,
       dex,
       vit,
       ene,
@@ -4781,20 +4916,31 @@ html, body { text-size-adjust: 100%; }
     }
     return out;
   }
-  function simulateCombat({ allies, enemies, rng, B: B2, record = true }) {
+  function simulateCombat({ allies, enemies, rng, B: B2, record = true, pvp = null }) {
     const C = B2.combat;
     const all = [...allies, ...enemies].map(prepare);
     const events = [];
     const lead = allies[0];
     const mate = allies.find((a) => a.kind === "merc") ?? null;
+    const foe = pvp ? enemies[0] : null;
+    const foeMate = pvp ? enemies.find((a) => a.kind === "merc") ?? null : null;
+    const dmgScale = pvp ? (pvp.dmgPct ?? 100) / 100 : 1;
+    const healScale = pvp ? (pvp.healPct ?? 100) / 100 : 1;
     const emit = record ? (e) => {
       e.h = [Math.max(0, Math.round(lead.life)), Math.max(0, Math.round(lead.mana))];
       if (mate) e.m = mate.life > 0 ? Math.max(1, Math.round(mate.life)) : 0;
+      if (foe) e.f = [foe.life > 0 ? Math.max(1, Math.round(foe.life)) : 0, Math.max(0, Math.round(foe.mana))];
+      if (foeMate) e.fm = foeMate.life > 0 ? Math.max(1, Math.round(foeMate.life)) : 0;
       events.push(e);
     } : () => {
     };
     for (const c of allies) c.gauge = C.heroStartGauge;
-    for (const c of enemies) c.gauge = rng.int(C.monsterStartGauge[0], C.monsterStartGauge[1]);
+    if (pvp) {
+      const first = rng.chance(0.5) ? allies : enemies;
+      for (const c of enemies) c.gauge = C.heroStartGauge;
+      for (const c of first) c.gauge += 1;
+    } else for (const c of enemies) c.gauge = rng.int(C.monsterStartGauge[0], C.monsterStartGauge[1]);
+    const heroLike = (c) => !!pvp || c.side === "allies";
     const foesOf = (c) => (c.side === "allies" ? enemies : allies).filter(alive);
     const resOf = (c, elem) => {
       const base = c.res[elem] ?? 0;
@@ -4818,7 +4964,7 @@ html, body { text-size-adjust: 100%; }
     function kill(victim, sourceUid) {
       if (victim.cheatDeathHealPct > 0 && !victim.cheatUsed) {
         victim.cheatUsed = true;
-        victim.life = Math.max(1, Math.round(victim.maxLife * victim.cheatDeathHealPct * (victim.healKeep ?? 1) / 100));
+        victim.life = Math.max(1, Math.round(victim.maxLife * victim.cheatDeathHealPct * (victim.healKeep ?? 1) * healScale / 100));
         emit({ t: "cheatDeath", u: victim.uid, life: victim.life });
         return false;
       }
@@ -4828,7 +4974,7 @@ html, body { text-size-adjust: 100%; }
     }
     function applyDamage(src, dst, parts, { steal = false } = {}) {
       let total = 0;
-      const taken = dst.buffs.length ? 1 + buffSum(dst, "takenPct") / 100 : 1;
+      const taken = (dst.buffs.length ? 1 + buffSum(dst, "takenPct") / 100 : 1) * dmgScale * (src.pvpDmg ?? 1) * (dst.pvpTaken ?? 1);
       for (const k of Object.keys(parts)) {
         parts[k] = Math.max(0, parts[k]) * taken;
         total += parts[k];
@@ -4859,12 +5005,12 @@ html, body { text-size-adjust: 100%; }
     }
     function mend(c, amount) {
       const before = c.life;
-      c.life = Math.min(c.maxLife, c.life + Math.max(0, amount));
+      c.life = Math.min(c.maxLife, c.life + Math.max(0, amount) * healScale);
       return Math.round(c.life - before);
     }
-    function poison(dst, total) {
+    function poison(dst, total, src = null) {
       if (!(total > 0) || !alive(dst)) return;
-      const perTurn = total / C.poisonTurns * (1 - resOf(dst, "poison") / 100);
+      const perTurn = total / C.poisonTurns * (1 - resOf(dst, "poison") / 100) * dmgScale * (src?.pvpDmg ?? 1) * (dst.pvpTaken ?? 1);
       if (perTurn <= 0) return;
       const fresh = dst.status.poison.turns === 0;
       dst.status.poison.perTurn = Math.max(dst.status.poison.perTurn, perTurn);
@@ -4897,8 +5043,9 @@ html, body { text-size-adjust: 100%; }
           speed: e.speed ?? 100,
           threat: e.threat ?? 100,
           spellElem: e.spellElem ?? null,
-          res: { poison: 100 }
+          res: { poison: 100 },
           // bones do not bleed
+          ...c.pvpDmg ? { pvpDmg: c.pvpDmg, pvpTaken: c.pvpTaken } : {}
         });
         unit.life = unit.maxLife;
         unit.gauge = C.summonStartGauge;
@@ -4946,7 +5093,7 @@ html, body { text-size-adjust: 100%; }
       if (elem !== "physical") ev.elem = elem;
       emit(ev);
       if (!spell && dst.thorns > 0 && alive(src)) {
-        const back = Math.max(1, Math.round(dst.thorns));
+        const back = Math.max(1, Math.round(dst.thorns * dmgScale * (dst.pvpDmg ?? 1) * (src.pvpTaken ?? 1)));
         src.life -= back;
         emit({ t: "thorns", u: src.uid, dmg: back, l: Math.max(0, Math.round(src.life)) });
         if (src.life <= 0) kill(src, dst.uid);
@@ -4958,9 +5105,10 @@ html, body { text-size-adjust: 100%; }
       if ((parts.cold ?? 0) > 0) dst.status.chill = C.chillTurns;
       let poisonTotal = 0;
       if (src.poisonDmg > 0) poisonTotal += src.poisonDmg;
-      if (src.poisonOnHitPct > 0) poisonTotal += total * src.poisonOnHitPct / 100;
-      if (poisonPct > 0) poisonTotal += total * poisonPct / 100;
-      poison(dst, poisonTotal);
+      const unsoft = total / (dmgScale * (src.pvpDmg ?? 1) * (dst.pvpTaken ?? 1));
+      if (src.poisonOnHitPct > 0) poisonTotal += unsoft * src.poisonOnHitPct / 100;
+      if (poisonPct > 0) poisonTotal += unsoft * poisonPct / 100;
+      poison(dst, poisonTotal, src);
       if (src.manaBurnPct > 0 && dst.mana > 0) {
         dst.mana = Math.max(0, dst.mana - dst.maxMana * src.manaBurnPct / 100);
         emit({ t: "manaBurn", u: dst.uid });
@@ -4976,7 +5124,7 @@ html, body { text-size-adjust: 100%; }
     function pickTarget(c) {
       const foes = foesOf(c);
       if (!foes.length) return null;
-      if (c.side !== "allies") return foes.length === 1 ? foes[0] : rng.weighted(foes, (f) => (f.threat ?? 100) * (f.kind === "summon" && (c.rank === "zoneBoss" || c.rank === "actBoss") ? C.bossSummonThreatFactor : 1));
+      if (!heroLike(c)) return foes.length === 1 ? foes[0] : rng.weighted(foes, (f) => (f.threat ?? 100) * (f.kind === "summon" && (c.rank === "zoneBoss" || c.rank === "actBoss") ? C.bossSummonThreatFactor : 1));
       if (c.targeting === "strongest") return foes.reduce((a, b) => b.maxLife > a.maxLife ? b : a);
       if (c.targeting === "first") return foes[0];
       return foes.reduce((a, b) => b.life < a.life ? b : a);
@@ -5038,7 +5186,7 @@ html, body { text-size-adjust: 100%; }
           if (d.life <= 0) kill(d, c.uid);
           else {
             if ((parts.cold ?? 0) > 0) d.status.chill = C.chillTurns;
-            poison(d, e.poison ?? 0);
+            poison(d, e.poison ?? 0, c);
             tryStun(d, e.stunChance ?? 0);
           }
         }
@@ -5162,7 +5310,7 @@ html, body { text-size-adjust: 100%; }
         emit({ t: "stunned", u: c.uid });
       } else {
         drinkPotions(c);
-        if (c.side === "allies") heroAct(c);
+        if (heroLike(c)) heroAct(c);
         else monsterAct(c);
       }
       c.turnsTaken++;
@@ -5174,14 +5322,16 @@ html, body { text-size-adjust: 100%; }
       }
       c.buffs = c.buffs.filter((b) => b.turns > 0);
     }
-    let time2 = 0;
+    let time3 = 0;
     let outcome = null;
+    const maxTime = pvp?.maxTime ?? C.maxTime;
+    let timedOut = false;
     for (let guard = 0; guard < 2e4; guard++) {
       if (!alive(lead)) {
         outcome = "loss";
         break;
       }
-      if (!enemies.some(alive)) {
+      if (foe ? !alive(foe) : !enemies.some(alive)) {
         outcome = "win";
         break;
       }
@@ -5196,8 +5346,8 @@ html, body { text-size-adjust: 100%; }
         }
       }
       for (const c of all) if (alive(c)) c.gauge += speedOf(c) * best;
-      time2 += best;
-      if (time2 > C.maxTime) {
+      time3 += best;
+      if (time3 > maxTime) {
         outcome = "timeout";
         break;
       }
@@ -5205,8 +5355,12 @@ html, body { text-size-adjust: 100%; }
       takeTurn(actor);
     }
     if (!outcome) outcome = "timeout";
-    emit({ t: "end", outcome });
-    return { outcome, time: time2, events };
+    if (foe && outcome === "timeout") {
+      timedOut = true;
+      outcome = lead.life / lead.maxLife > foe.life / foe.maxLife ? "win" : "loss";
+    }
+    emit(timedOut ? { t: "end", outcome, timeout: true } : { t: "end", outcome });
+    return { outcome, time: time3, events, ...timedOut ? { timeout: true } : {} };
   }
 
   // src/engine/monsters.js
@@ -7092,6 +7246,13 @@ html, body { text-size-adjust: 100%; }
         return failed(e, me, () => sync2.flush());
       }
       if (uid !== me) return void 0;
+      if (res.tooNew) {
+        setStatus("serverUpdating");
+        later(() => {
+          if (uid === me && !halted()) sync2.flush();
+        });
+        return void 0;
+      }
       backoffReset();
       if (res.ok) {
         remember(res.rev, hashOf(data));
@@ -7823,9 +7984,9 @@ html, body { text-size-adjust: 100%; }
       /** The mercenary's sheet as it would be with this bag item on (nothing changes for real). */
       mercTrialSheet: (index) => {
         if (!state.hero) return null;
-        const copy = structuredClone(state.hero);
-        copy.inRun = false;
-        return mercEquip(content, copy, index).ok ? mercSheet(content, copy) : null;
+        const copy2 = structuredClone(state.hero);
+        copy2.inRun = false;
+        return mercEquip(content, copy2, index).ok ? mercSheet(content, copy2) : null;
       },
       mercSlotOf: (index) => state.hero?.bag[index] && state.hero.merc ? mercSlotFor(content, content.mercs[state.hero.merc.type], state.hero.bag[index]) : null,
       mercEquipment: () => state.hero ? wornBy(content, state.hero) : {},
@@ -8405,7 +8566,26 @@ html, body { text-size-adjust: 100%; }
       fenstalker: { name: "Fenstalker", desc: "Shoots from behind, fast and true, and hits two enemies at once when there are several. Cannot take many blows." },
       ashbinder: { name: "Ashbinder", desc: "Fights with fire: the bolts never miss and armor does not stop them. Fragile, and of little use against creatures of fire." }
     },
+    enemyAdj: "enemy",
+    // the Arena: the other player's companion and servants ("the enemy Shieldbearer")
     log: {
+      rivalHit: "You hit {N} for {dmg}.",
+      rivalCrit: "Critical hit! You strike {N} for {dmg}.",
+      rivalMiss: "{N} avoids your attack.",
+      allyHitRival: "{A} hits {N} for {dmg}.",
+      allyCritRival: "Critical hit! {A} strikes {N} for {dmg}.",
+      allyMissRival: "{N} avoids {a}'s attack.",
+      rivalSkill: "{N}: {skill}!",
+      rivalHeal: "{N} recovers {amount} life.",
+      rivalPotionLife: "{N} drinks a healing potion (+{amount} life).",
+      rivalPotionMana: "{N} drinks a mana potion (+{amount} mana).",
+      rivalDeath: "{N} falls.",
+      rivalCheatDeath: "{N} takes a killing blow \u2013 but refuses to fall!",
+      rivalSummon: "{A} rises to serve {N}.",
+      rivalWeakened: "A curse weakens {N}.",
+      rivalManaBurn: "{N} loses mana.",
+      timeUpWin: "Time is up: you have more life left. Victory!",
+      timeUpLoss: "Time is up: your opponent has more life left.",
       allyHit: "{A} hits {d} for {dmg}.",
       allyCrit: "Critical hit! {A} strikes {d} for {dmg}.",
       allyMiss: "{A} misses {d}.",
@@ -8955,7 +9135,26 @@ html, body { text-size-adjust: 100%; }
       fenstalker: { name: "L\xE1pi \xEDj\xE1sz", acc: "l\xE1pi \xEDj\xE1szt", desc: "H\xE1tulr\xF3l l\u0151, gyorsan \xE9s pontosan, \xE9s ha t\xF6bb az ellenf\xE9l, egyszerre kett\u0151t is eltal\xE1l. Kev\xE9s \xFCt\xE9st b\xEDr ki." },
       ashbinder: { name: "Par\xE1zsid\xE9z\u0151", acc: "par\xE1zsid\xE9z\u0151t", desc: "T\u0171zzel harcol: a l\xF6ved\xE9ke sosem t\xE9veszt c\xE9lt, \xE9s a p\xE1nc\xE9l sem fogja fel. T\xF6r\xE9keny, \xE9s a t\u0171zb\u0151l lett l\xE9nyekkel nem sokra megy." }
     },
+    enemyAdj: "ellens\xE9ges",
+    // az arénában a másik játékos zsoldosa és szolgái: "az ellenséges pajzshordozó"
     log: {
+      rivalHit: "Betal\xE1lsz: {N} {dmg} sebz\xE9st kap.",
+      rivalCrit: "Kritikus tal\xE1lat! {N} {dmg} sebz\xE9st kap.",
+      rivalMiss: "{N} meg\xFAssza a t\xE1mad\xE1sodat.",
+      allyHitRival: "{A} betal\xE1l: {N} {dmg} sebz\xE9st kap.",
+      allyCritRival: "{A} kritikus tal\xE1latot visz be: {N} {dmg} sebz\xE9st kap.",
+      allyMissRival: "{N} meg\xFAssza {a} t\xE1mad\xE1s\xE1t.",
+      rivalSkill: "{N}: {skill}!",
+      rivalHeal: "{N} visszanyer {amount} \xE9leter\u0151t.",
+      rivalPotionLife: "{N} megiszik egy gy\xF3gyitalt (+{amount} \xE9leter\u0151).",
+      rivalPotionMana: "{N} megiszik egy manaitalt (+{amount} mana).",
+      rivalDeath: "{N} elesik.",
+      rivalCheatDeath: "{N} hal\xE1los csap\xE1st kap, de talpon marad!",
+      rivalSummon: "{A} {N} szolg\xE1lat\xE1ba \xE1ll.",
+      rivalWeakened: "\xC1tok s\xFAjtja: {N} kisebbet sebez.",
+      rivalManaBurn: "{N} man\xE1t vesz\xEDt.",
+      timeUpWin: "Letelt az id\u0151: neked maradt t\xF6bb \xE9leter\u0151d. Gy\u0151zelem!",
+      timeUpLoss: "Letelt az id\u0151: az ellenfelednek maradt t\xF6bb \xE9letereje.",
       allyHit: "{A} eltal\xE1lja {d}: {dmg} sebz\xE9s.",
       allyCrit: "{A} kritikus tal\xE1latot visz be: {dmg} sebz\xE9s \xE9ri {d}.",
       allyMiss: "{A} elv\xE9ti {d}.",
@@ -9043,6 +9242,9 @@ html, body { text-size-adjust: 100%; }
   function makeRenderer(loc) {
     function unitName(unit, form = "s") {
       if (unit.kind === "hero") return loc.class[unit.key].name;
+      if (unit.kind === "rival") return unit.name || loc.class[unit.key]?.name || unit.key;
+      if (unit.kind === "rivalMerc") return loc.merc[unit.key] ? loc.unitName(loc.merc[unit.key], loc.enemyAdj, form) : unit.key;
+      if (unit.kind === "rivalSummon") return loc.summon[unit.key] ? loc.unitName(loc.summon[unit.key], loc.enemyAdj, form) : unit.key;
       if (unit.kind === "merc") return loc.merc[unit.key] ? loc.unitName(loc.merc[unit.key], null, form) : unit.key;
       if (unit.kind === "summon") return loc.summon[unit.key] ? loc.unitName(loc.summon[unit.key], null, form) : unit.key;
       const entry = loc.boss[unit.key] ?? loc.monster[unit.key];
@@ -9051,8 +9253,9 @@ html, body { text-size-adjust: 100%; }
       return loc.unitName(entry, mod, form);
     }
     function unitTitle(unit) {
-      if (unit.kind === "merc") return loc.merc[unit.key]?.name ?? unit.key;
-      if (unit.kind === "summon") return loc.summon[unit.key]?.name ?? unit.key;
+      if (unit.kind === "rival") return unit.name || loc.class[unit.key]?.name || unit.key;
+      if (unit.kind === "merc" || unit.kind === "rivalMerc") return loc.merc[unit.key]?.name ?? unit.key;
+      if (unit.kind === "summon" || unit.kind === "rivalSummon") return loc.summon[unit.key]?.name ?? unit.key;
       const entry = loc.boss[unit.key ?? unit.id] ?? loc.monster[unit.key ?? unit.id];
       if (!entry) return unit.key ?? unit.id;
       const mod = !loc.boss[unit.key ?? unit.id] && unit.modifiers?.length ? loc.modifier[unit.modifiers[0]] : null;
@@ -9127,10 +9330,19 @@ html, body { text-size-adjust: 100%; }
       const isHero = (id) => units[id]?.kind === "hero";
       const isMerc = (id) => units[id]?.kind === "merc" || units[id]?.kind === "summon";
       const ally = (id) => ({ A: unitName(u(id), "S"), a: unitName(u(id), "s") });
+      const isRival = (id) => units[id]?.kind === "rival";
+      const isRivalAlly = (id) => units[id]?.kind === "rivalMerc" || units[id]?.kind === "rivalSummon";
+      const N = (id) => unitName(u(id));
       switch (ev.t) {
         case "attack": {
           const src = u(ev.s);
           const dst = u(ev.d);
+          if (isRival(ev.d) && (isHero(ev.s) || isMerc(ev.s) || !src)) {
+            const vars2 = { ...isMerc(ev.s) ? ally(ev.s) : {}, N: N(ev.d), dmg: ev.dmg };
+            if (ev.r === "block") return isHero(ev.s) ? fill(L.heroBlocked, { S: N(ev.d) }) : fill(L.allyBlocked, { ...vars2, S: N(ev.d) });
+            if (ev.r === "miss" || ev.r === "dodge") return fill(isHero(ev.s) ? L.rivalMiss : L.allyMissRival, vars2);
+            return fill(isHero(ev.s) ? ev.crit ? L.rivalCrit : L.rivalHit : ev.crit ? L.allyCritRival : L.allyHitRival, vars2);
+          }
           if (isMerc(ev.s)) {
             const vars2 = { ...ally(ev.s), d: unitName(dst, "acc"), S: unitName(dst, "S"), dmg: ev.dmg };
             if (ev.r === "block") return fill(L.allyBlocked, vars2);
@@ -9157,14 +9369,16 @@ html, body { text-size-adjust: 100%; }
         }
         case "skill": {
           const skill = loc.skill[ev.skill]?.name ?? ev.skill;
-          return isMerc(ev.u) ? fill(L.allySkill, { ...ally(ev.u), skill }) : fill(L.skill, { skill });
+          if (isRival(ev.u)) return fill(L.rivalSkill, { N: N(ev.u), skill });
+          return isMerc(ev.u) || isRivalAlly(ev.u) ? fill(L.allySkill, { ...ally(ev.u), skill }) : fill(L.skill, { skill });
         }
         case "special":
           return fill(loc.special[ev.id] ?? "{S}!", { S: unitName(u(ev.u), "S") });
         case "death":
-          return isHero(ev.u) ? L.heroDeath : isMerc(ev.u) ? fill(L.allyDeath, ally(ev.u)) : fill(L.monDeath, { S: unitName(u(ev.u), "S") });
+          if (isRival(ev.u)) return fill(L.rivalDeath, { N: N(ev.u) });
+          return isHero(ev.u) ? L.heroDeath : isMerc(ev.u) || isRivalAlly(ev.u) ? fill(L.allyDeath, ally(ev.u)) : fill(L.monDeath, { S: unitName(u(ev.u), "S") });
         case "cheatDeath":
-          return L.cheatDeath;
+          return isRival(ev.u) ? fill(L.rivalCheatDeath, { N: N(ev.u) }) : L.cheatDeath;
         case "stun":
           return isHero(ev.u) ? L.heroStun : fill(L.monStun, { S: unitName(u(ev.u), "S") });
         case "stunned":
@@ -9174,18 +9388,24 @@ html, body { text-size-adjust: 100%; }
         case "poisonTick":
           return isHero(ev.u) ? fill(L.heroPoisonTick, { dmg: ev.dmg }) : fill(L.monPoisonTick, { S: unitName(u(ev.u), "S"), s: unitName(u(ev.u), "s"), dmg: ev.dmg });
         case "manaBurn":
-          return L.manaBurn;
+          return isRival(ev.u) ? fill(L.rivalManaBurn, { N: N(ev.u) }) : isHero(ev.u) ? L.manaBurn : null;
         case "weakened":
-          return isMerc(ev.u) ? fill(L.allyWeakened, { d: unitName(u(ev.u), "acc") }) : L.weakened;
+          if (isRival(ev.u)) return fill(L.rivalWeakened, { N: N(ev.u) });
+          return isMerc(ev.u) || isRivalAlly(ev.u) ? fill(L.allyWeakened, { d: unitName(u(ev.u), "acc") }) : L.weakened;
         case "potion":
+          if (isRival(ev.u)) return fill(ev.kind === "life" ? L.rivalPotionLife : L.rivalPotionMana, { N: N(ev.u), amount: ev.amount });
           return fill(ev.kind === "life" ? L.potionLife : L.potionMana, { amount: ev.amount });
         case "heal":
-          return isMerc(ev.u) ? fill(L.allyHeal, { ...ally(ev.u), amount: ev.amount }) : fill(L.heal, { amount: ev.amount });
-        case "summon":
+          if (isRival(ev.u)) return fill(L.rivalHeal, { N: N(ev.u), amount: ev.amount });
+          return isMerc(ev.u) || isRivalAlly(ev.u) ? fill(L.allyHeal, { ...ally(ev.u), amount: ev.amount }) : fill(L.heal, { amount: ev.amount });
+        case "summon": {
+          if (units[ev.u]?.kind === "rivalSummon") return fill(L.rivalSummon, { ...ally(ev.u), N: units[ev.by] ? N(ev.by) : "" });
           return fill(L.summon, ally(ev.u));
+        }
         case "thorns":
           return isHero(ev.u) || isMerc(ev.u) ? null : fill(L.thorns, { S: unitName(u(ev.u), "S"), dmg: ev.dmg });
         case "end":
+          if (ev.timeout) return ev.outcome === "win" ? L.timeUpWin : L.timeUpLoss;
           return ev.outcome === "loss" ? null : L[ev.outcome] ?? null;
         // the hero's own fall already said it
         default:
@@ -9220,6 +9440,7 @@ html, body { text-size-adjust: 100%; }
       short: { stash: "Chest", gear: "Character", merchant: "Merchant", forge: "Crucible", merc: "Captain", waystone: "Waystone" },
       spot: { stash: "Chest", gear: "Character", merchant: "Merchant", forge: "Crucible", merc: "Mercenary captain", waystone: "Waystone" },
       say: {
+        arena: "Measure your hero against other players' heroes. You cannot die here and you lose nothing \u2013 only your rating changes.",
         ranks: "Who went deepest, who is strongest, and who beat Hell first?",
         waystone: '"The stone is cold, but it remembers every road."',
         gear: "What you wear, what you are worth, and what is in your bag.",
@@ -9436,7 +9657,7 @@ html, body { text-size-adjust: 100%; }
     gold: "Gold",
     life: "Life",
     mana: "Mana",
-    tab: { waystone: "Waystone", gear: "Character", skills: "Skills", order: "Battle order", forge: "Crucible", merchant: "Merchant", merc: "Mercenary captain", ranks: "Leaderboard" },
+    tab: { waystone: "Waystone", gear: "Character", skills: "Skills", order: "Battle order", forge: "Crucible", merchant: "Merchant", merc: "Mercenary captain", ranks: "Leaderboard", arena: "Arena" },
     stats: {
       dodge: "Dodge",
       spell: "Spell damage",
@@ -9703,7 +9924,7 @@ html, body { text-size-adjust: 100%; }
       localNote: "No sign-in: the save stays in this browser only. You can change your mind in Settings any time.",
       guestName: "Guest",
       account: "Account",
-      st: { saved: "Saved to the cloud \u2713", saving: "Saving\u2026", checking: "Checking\u2026", offline: "No connection \u2013 saved on this computer", conflict: "Pick a save!", tooBig: "Too big \u2013 saved on this computer", idle: "Not signed in", local: "Only on this computer", off: "No connection \u2013 saved on this computer", outdated: "A new version is out \u2013 reload the page", rejected: "The cloud did not accept the save \u2013 it is kept on this computer", blocked: "Also open in another tab", browser: "Saved in this browser" },
+      st: { saved: "Saved to the cloud \u2713", saving: "Saving\u2026", checking: "Checking\u2026", offline: "No connection \u2013 saved on this computer", conflict: "Pick a save!", tooBig: "Too big \u2013 saved on this computer", idle: "Not signed in", local: "Only on this computer", off: "No connection \u2013 saved on this computer", outdated: "A new version is out \u2013 reload the page", rejected: "The cloud did not accept the save \u2013 it is kept on this computer", blocked: "Also open in another tab", browser: "Saved in this browser", serverUpdating: "The server is being updated \u2013 your save is safe on this computer, I'll try again shortly." },
       link: "Link Discord",
       linkNote: "Your guest save stays, and you can sign in with it on any computer.",
       signIn: "Sign in",
@@ -9947,13 +10168,17 @@ html, body { text-size-adjust: 100%; }
     },
     ranks: {
       open: "Leaderboard",
-      board: { depth: "Depths", level: "Level", hell: "First Hell clear" },
+      board: { depth: "Depths", level: "Level", hell: "First Hell clear", arena: "Arena" },
       scope: { season: "Season", all: "All time", hall: "Hall of Fame" },
       softcore: "Softcore",
       hardcore: "Hardcore",
       allClasses: "All",
       classFilter: "Class",
       note: {
+        arena_season: "This month's best in the Arena by rating (heroes that have fought this month). Every hero starts the month at 1000; on equal ratings more wins come first.",
+        arena_all: "Every hero's best Arena rating ever, with all its wins and losses.",
+        arena_hall: "The best of every finished Arena season, month by month: the top ten, the podium in front.",
+        seasonHallArena: "At the end of the month (Hungarian time) the top ten enter the Hall of Fame, and next month everyone starts again from 1000.",
         depth_season: "New Depths records set this month. Only heroes who went deeper this month than ever before are listed, with the floor they reached this month.",
         depth_all: "The deepest floors ever reached in the Depths.",
         level_season: "Heroes who levelled up this month, with the level they reached. On a tie, whoever got there first.",
@@ -9969,6 +10194,9 @@ html, body { text-size-adjust: 100%; }
       guest: "Wanderer #{n}",
       levelSub: "level {n}",
       adminTag: "Admin \u2013 not competing",
+      pointWord: "points",
+      winLoss: "{w}\u2013{l}",
+      toArena: "Go to the Arena",
       floorWord: "floor",
       levelWord: "level",
       fallen: "Fallen",
@@ -9977,10 +10205,12 @@ html, body { text-size-adjust: 100%; }
       yourPlace: "Your place",
       signInForMe: "Sign in to see where you stand.",
       signIn: "Sign in",
+      notListedArena: "Your heroes have not fought in the Arena yet.",
       notListed: "Your heroes aren't on this board yet. Heroes saved to the cloud show up after the next save.",
       loading: "Loading the leaderboard\u2026",
       empty: "Nobody here yet. You could be the first!",
       hallEmpty: "No season has finished yet. The best of each month will show up here.",
+      hallMore: "The other places ({n})",
       hallNobody: "Nobody made it this month.",
       topOf: "Showing the top {n} of {total} heroes.",
       refresh: "Refresh",
@@ -10013,11 +10243,148 @@ html, body { text-size-adjust: 100%; }
         }
       }
     },
+    arena: {
+      points: "Arena rating",
+      record: "{w} wins, {l} losses",
+      left: "{n} fights left today ({max} a day).",
+      season: "Season: {season}",
+      seasonLeft: "{n} days left",
+      seasonLastDay: "last day today",
+      best: "Best so far: {n}",
+      nameless: "a nameless {cls}",
+      namelessTitle: "Nameless {cls}",
+      noneLeft: "No fights left today. More at {t}.",
+      today: "today {t}",
+      tomorrow: "tomorrow {t}",
+      tier: { iron: "Iron", bronze: "Bronze", silver: "Silver", gold: "Gold", diamond: "Diamond" },
+      opponents: "Opponents",
+      refresh: "New opponents",
+      refreshIn: "New opponents: {t}",
+      fight: "Fight!",
+      fighting: "Fighting\u2026",
+      watch: "Watch",
+      noOpponents: "No opponent fits you right now. Have a look a little later!",
+      history: "Recent fights",
+      noHistory: "You have not fought in the Arena yet, and nobody has attacked you.",
+      hist: {
+        attackWon: "You fought {name} and won.",
+        attackLost: "You fought {name} and lost.",
+        defenseWon: "{name} attacked you and you won.",
+        defenseLost: "{name} attacked you and you lost."
+      },
+      attackedMeanwhile: "While you were away, you were attacked {n}\xD7.",
+      new: "new",
+      timeUp: "time ran out",
+      check: "Check again",
+      reason: {
+        banned: "You are banned from the Arena.",
+        admin: "As an admin you do not compete in the Arena.",
+        not_listed: "This hero is not in the cloud yet.",
+        under_review: "This hero is under review.",
+        fallen: "This hero has fallen.",
+        low_level: "This hero is not strong enough for the Arena yet.",
+        no_save: "This hero has no cloud save."
+      },
+      reasonInfo: {
+        banned: "If you think this is a mistake, write to the admin.",
+        admin: "Admins' heroes do not fight in the Arena and cannot be attacked \u2013 just as they are not on the leaderboard \u2013 so testing never skews other players' ratings.",
+        not_listed: "Heroes saved to the cloud fight in the Arena (from the first three hero slots). Saving takes a few seconds; check again afterwards.",
+        under_review: "It is hidden on the leaderboard until an admin has looked at it. Until then it cannot fight in the Arena either.",
+        fallen: "A fallen hardcore hero can no longer enter the Arena.",
+        low_level: "The Arena opens at level {n}.",
+        no_save: "Without a cloud save there is nothing to fight with. Save the game again and check once more."
+      },
+      nocloud: "The Arena is only available in the online game, not when it is opened from a file.",
+      signInFirst: "The Arena needs you signed in (a guest is fine): your hero fights from the cloud.",
+      loading: "Loading the Arena\u2026",
+      err: {
+        banned: "You are banned from the Arena.",
+        admin: "As an admin you do not compete in the Arena.",
+        not_listed: "This hero is not in the cloud yet.",
+        under_review: "This hero is under review.",
+        fallen: "This hero has fallen.",
+        low_level: "This hero is not strong enough for the Arena yet.",
+        no_save: "This hero has no cloud save.",
+        no_offer: "The list of opponents ran out. Here is a new one.",
+        not_offered: "That opponent is no longer on the list. Here is a new one.",
+        daily_limit: "No fights left today. Come back tomorrow.",
+        too_fast: "Slow down! Wait a few seconds before the next fight.",
+        pair_limit: "You have fought this hero twice today, or its player four times this week already. Pick someone else!",
+        opponent_gone: "That opponent is not available now. Here is a new list.",
+        engine_outdated: "A new version is out \u2013 reload the page and try again.",
+        implausible: "Your hero has more points than its level gives, so it cannot enter the Arena. The attempt counts toward today's fights.",
+        bad_hero: "Your hero's save is damaged, so it cannot fight now.",
+        offline: "Cannot reach the server. Check your connection and try again.",
+        auth: "Your sign-in has run out. Please sign in again.",
+        failed: "Something went wrong. Try again a little later."
+      },
+      rulesHead: "How does the Arena work?",
+      rules: {
+        fair: "You fight other players' heroes as they last saved them to the cloud \u2013 hero and mercenary against hero and mercenary. The fight plays itself, each side by its own battle order.",
+        noLoss: "You cannot die here and you lose nothing: no items, no gold. Hardcore heroes can fight without worry.",
+        limit: "You have {n} fights a day (it starts again at midnight, Hungarian time). You can fight the same opponent at most twice a day, and another player's heroes at most {pair} times a week. Opponents are at most {win} levels away. The Arena opens at level {lvl}.",
+        rating: "A win raises your rating, a loss lowers it \u2013 beating a stronger opponent is worth more. It moves as much when you defend as when you attack. Meeting the same player again within a week is worth half, and you can win at most {cap} points from one player a week.",
+        season: "A season is a calendar month (Hungarian time). Every hero starts the month at 1000. At the end the top ten enter the Hall of Fame, and your best rating stays on the All-time list.",
+        cloud: "In the Arena blows and healing are weaker, and everyone has the same small belt: 2 healing potions and 1 mana potion."
+      },
+      belt: "The Arena belt: the same for everyone.",
+      won: "Victory!",
+      lost: "Defeat",
+      vs: "against {name}",
+      back: "Back to the Arena",
+      tierUp: "New rank: {tier}!",
+      tierDown: "Your rank is now {tier}.",
+      nothingLost: "Only a trial of strength: your hero did not die and lost nothing.",
+      replayHead: "Replay",
+      replayWon: "You won this fight against {name}.",
+      replayLost: "You lost this fight against {name}.",
+      replayDiffers: "The rules have changed since, so it may go a little differently than it did then."
+    },
     admin: {
       title: "Admin",
       open: "Open the admin menu",
       foot: "Only you can see this. Other players' data is read only; every change goes to your own save alone and is written to the log. Key: Ctrl+Shift+A (or Alt+Shift+A), close: Esc.",
-      tab: { players: "Players", log: "Log", hero: "My hero", test: "Test", balance: "Balance", system: "System", ranks: "Leaderboard" },
+      tab: { players: "Players", log: "Log", hero: "My hero", test: "Test", balance: "Balance", system: "System", ranks: "Leaderboard", arena: "Arena" },
+      pvp: {
+        note: 'The latest Arena fights. "Verify" fights the fight again with this version of the game, with the recorded seed and heroes, and compares the result.',
+        col: { when: "When", attacker: "Attacker", defender: "Defender", result: "Result", act: "" },
+        attWon: "Attacker won",
+        defWon: "Defender won",
+        void: "Void",
+        pending: "Pending",
+        engine: "engine {e}, rules {r} \xB7 {n} rounds",
+        verify: "Verify",
+        check: { same: "matches", differs: "DIFFERS", otherEngine: "other engine version", cannot: "cannot be fought again" },
+        bannedTag: "banned",
+        fault: { attacker: "the attacker's save is at fault", defender: "the defender's save is at fault (not offered for a day)" },
+        voidReason: {
+          engine_outdated: "the save is newer than the server's engine",
+          implausible: "more points than the level gives",
+          bad_snapshot: "broken hero save",
+          engine_error: "error during the fight",
+          finish_error: "error while saving the result",
+          stale: "unfinished (the server never finished it)"
+        },
+        flag: { gear_empty: "the defender wore almost no gear", gear_drop: "the defender took off most of its gear", repeat: "repeat pairing: half points", capped: "weekly point cap" },
+        resetAtt: "Reset rating",
+        banAtt: "Ban from the Arena",
+        unban: "Lift the ban",
+        resetAsk: "{hero}'s Arena rating goes back to 1000, wins and losses to zero. Go ahead?",
+        banAsk: "{name} may not fight in the Arena, nor be attacked. Write down why:",
+        unbanAsk: "{name} may fight in the Arena again. Go ahead?",
+        none: "No Arena fights yet.",
+        faults: {
+          title: "Heroes kept out of the hall of fame",
+          note: "These heroes cannot get into this season's hall of fame because their player made them unattackable: they vanished from their own save, or their save stopped a fight. If it was a mistake, clear the fault.",
+          none: "No heroes kept out right now.",
+          when: "Since",
+          status: "Status",
+          gone: "vanished from its own save",
+          benched: "not offered as an opponent until {when}",
+          clear: "Clear fault",
+          clearAsk: "{hero} ({name}) may get into the hall of fame again and is offered as an opponent again from now on. Go ahead?"
+        }
+      },
       lb: {
         filter: { all: "All", flagged: "Flagged", hidden: "Hidden", banned: "Banned" },
         col: { player: "Player", uid: "ID", hero: "Hero", level: "Level", deepest: "Depths", hell: "Hell", status: "Status", flag: "Last flag", act: "" },
@@ -10061,7 +10428,9 @@ html, body { text-size-adjust: 100%; }
           level_rate: "Levelled too fast overall",
           hell_wait: "Hell too soon after Nightmare (doesn't count yet)",
           hero_cap: "Reached 30 heroes for the account",
-          save_gone: "Deleted the cloud save"
+          save_gone: "Deleted the cloud save",
+          pvp_gone: "Arena: vanished from its own save while on the board",
+          admin_pvp_clear_fault: "Admin cleared its Arena fault"
         }
       },
       loading: "Loading\u2026",
@@ -10366,6 +10735,7 @@ html, body { text-size-adjust: 100%; }
       short: { stash: "L\xE1da", gear: "Karakter", merchant: "Kalm\xE1r", forge: "Olvaszt\xF3\xFCst", merc: "Zsoldoskapit\xE1ny", waystone: "\xDAtk\u0151" },
       spot: { stash: "L\xE1da", gear: "Karakter", merchant: "Kalm\xE1r", forge: "Olvaszt\xF3\xFCst", merc: "Zsoldoskapit\xE1ny", waystone: "\xDAtk\u0151" },
       say: {
+        arena: "M\xE9rd \xF6ssze a h\u0151s\xF6det m\xE1s j\xE1t\xE9kosok h\u0151seivel. Itt nem halhatsz meg, \xE9s nem vesz\xEDthetsz semmit \u2013 csak a pontod v\xE1ltozik.",
         ranks: "Ki jutott a legm\xE9lyebbre, ki a leger\u0151sebb, \xE9s ki gy\u0151zte le els\u0151k\xE9nt a Poklot?",
         waystone: "\u201EA k\u0151 hideg, de minden \xFAtra eml\xE9kszik.\u201D",
         gear: "Mi van rajtad, mennyit \xE9rsz, \xE9s mi lapul a zs\xE1kodban?",
@@ -10582,7 +10952,7 @@ html, body { text-size-adjust: 100%; }
     gold: "Arany",
     life: "\xC9leter\u0151",
     mana: "Mana",
-    tab: { waystone: "\xDAtk\u0151", gear: "Karakter", skills: "K\xE9pess\xE9gek", order: "Harcrend", forge: "Olvaszt\xF3\xFCst", merchant: "Kalm\xE1r", merc: "Zsoldoskapit\xE1ny", ranks: "Ranglista" },
+    tab: { waystone: "\xDAtk\u0151", gear: "Karakter", skills: "K\xE9pess\xE9gek", order: "Harcrend", forge: "Olvaszt\xF3\xFCst", merchant: "Kalm\xE1r", merc: "Zsoldoskapit\xE1ny", ranks: "Ranglista", arena: "Ar\xE9na" },
     stats: {
       dodge: "Kit\xE9r\xE9s",
       spell: "Var\xE1zssebz\xE9s",
@@ -10849,7 +11219,7 @@ html, body { text-size-adjust: 100%; }
       localNote: "Nem l\xE9psz be: a ment\xE9s csak ebben a b\xF6ng\xE9sz\u0151ben lesz. A Be\xE1ll\xEDt\xE1sokban b\xE1rmikor meggondolhatod.",
       guestName: "Vend\xE9g",
       account: "Fi\xF3k",
-      st: { saved: "Mentve a felh\u0151be \u2713", saving: "Ment\xE9s\u2026", checking: "Ellen\u0151rz\xE9s\u2026", offline: "Nincs kapcsolat \u2013 ezen a g\xE9pen mentve", conflict: "V\xE1lassz ment\xE9st!", tooBig: "T\xFAl nagy \u2013 ezen a g\xE9pen mentve", idle: "Nem vagy bel\xE9pve", local: "Csak ezen a g\xE9pen", off: "Nincs kapcsolat \u2013 ezen a g\xE9pen mentve", outdated: "\xDAj v\xE1ltozat jelent meg \u2013 friss\xEDtsd az oldalt", rejected: "A felh\u0151 nem fogadta el a ment\xE9st \u2013 ezen a g\xE9pen megmaradt", blocked: "Egy m\xE1sik lapon is nyitva van", browser: "Ment\xE9s ebben a b\xF6ng\xE9sz\u0151ben" },
+      st: { saved: "Mentve a felh\u0151be \u2713", saving: "Ment\xE9s\u2026", checking: "Ellen\u0151rz\xE9s\u2026", offline: "Nincs kapcsolat \u2013 ezen a g\xE9pen mentve", conflict: "V\xE1lassz ment\xE9st!", tooBig: "T\xFAl nagy \u2013 ezen a g\xE9pen mentve", idle: "Nem vagy bel\xE9pve", local: "Csak ezen a g\xE9pen", off: "Nincs kapcsolat \u2013 ezen a g\xE9pen mentve", outdated: "\xDAj v\xE1ltozat jelent meg \u2013 friss\xEDtsd az oldalt", rejected: "A felh\u0151 nem fogadta el a ment\xE9st \u2013 ezen a g\xE9pen megmaradt", blocked: "Egy m\xE1sik lapon is nyitva van", browser: "Ment\xE9s ebben a b\xF6ng\xE9sz\u0151ben", serverUpdating: "A szerver \xE9ppen friss\xFCl \u2013 a ment\xE9sed ezen a g\xE9pen megvan, hamarosan \xFAjra pr\xF3b\xE1lom." },
       link: "Discord hozz\xE1k\xF6t\xE9se",
       linkNote: "A vend\xE9gment\xE9sed \xEDgy megmarad, \xE9s b\xE1rmelyik g\xE9pen bel\xE9phetsz vele.",
       signIn: "Bel\xE9p\xE9s",
@@ -11093,13 +11463,17 @@ html, body { text-size-adjust: 100%; }
     },
     ranks: {
       open: "Ranglista",
-      board: { depth: "M\xE9lys\xE9g", level: "Szint", hell: "Els\u0151 Pokol" },
+      board: { depth: "M\xE9lys\xE9g", level: "Szint", hell: "Els\u0151 Pokol", arena: "Ar\xE9na" },
       scope: { season: "Szezon", all: "Mindenkori", hall: "H\xEDress\xE9gek csarnoka" },
       softcore: "Sima",
       hardcore: "Hardcore",
       allClasses: "Mind",
       classFilter: "Kaszt",
       note: {
+        arena_season: "Az ar\xE9na e havi legjobbjai pontsz\xE1m szerint (akik ebben a h\xF3napban m\xE1r harcoltak). Minden h\u0151s 1000 ponttal kezdi a h\xF3napot; egyenl\u0151 pontn\xE1l a t\xF6bb gy\u0151zelem d\xF6nt.",
+        arena_all: "Minden h\u0151s valaha el\xE9rt legjobb ar\xE9na-pontja, az \xF6sszes gy\u0151zelm\xE9vel \xE9s veres\xE9g\xE9vel egy\xFCtt.",
+        arena_hall: "A lez\xE1rt ar\xE9na-szezonok legjobbjai, h\xF3napr\xF3l h\xF3napra: az els\u0151 t\xEDz, a dobog\xF3sok kiemelve.",
+        seasonHallArena: "A h\xF3nap v\xE9g\xE9n (magyar id\u0151 szerint) az els\u0151 t\xEDz beker\xFCl a H\xEDress\xE9gek csarnok\xE1ba, a k\xF6vetkez\u0151 h\xF3napban pedig mindenki \xFAjra 1000 pontr\xF3l indul.",
         depth_season: "Ebben a h\xF3napban fel\xE1ll\xEDtott \xFAj m\xE9lys\xE9gi rekordok. Csak az ker\xFCl fel, aki ebben a h\xF3napban m\xE9lyebbre jutott, mint kor\xE1bban b\xE1rmikor, \xE9s azzal a szinttel, amit ebben a h\xF3napban \xE9rt el.",
         depth_all: "A valaha el\xE9rt legm\xE9lyebb szintek a M\xE9lys\xE9gben.",
         level_season: "Akik ebben a h\xF3napban szintet l\xE9ptek, a most el\xE9rt szintj\xFCkkel. Egyenl\u0151 szintn\xE9l az \xE1ll el\xF6l, aki el\u0151bb \xE9rte el.",
@@ -11113,8 +11487,11 @@ html, body { text-size-adjust: 100%; }
       },
       you: "Te",
       guest: "V\xE1ndor #{n}",
-      levelSub: "{n}. szint\u0171",
+      levelSub: "{n}. szint",
       adminTag: "Admin \u2013 nem versenyez",
+      pointWord: "pont",
+      winLoss: "{w}\u2013{l}",
+      toArena: "Ir\xE1ny az ar\xE9na",
       floorWord: "szint",
       levelWord: "szint",
       fallen: "Elesett",
@@ -11123,11 +11500,13 @@ html, body { text-size-adjust: 100%; }
       yourPlace: "A te helyed",
       signInForMe: "A saj\xE1t helyez\xE9sedhez bejelentkez\xE9s kell.",
       signIn: "Bejelentkez\xE9s",
+      notListedArena: "A h\u0151seid m\xE9g nem harcoltak az ar\xE9n\xE1ban.",
       notListed: "A h\u0151seid m\xE9g nincsenek ezen a list\xE1n. A felh\u0151be mentett h\u0151s\xF6k ker\xFClnek fel, a k\xF6vetkez\u0151 ment\xE9s ut\xE1n.",
       loading: "T\xF6lt\xF6m a ranglist\xE1t\u2026",
       empty: "Ezen a list\xE1n m\xE9g nincs senki. Lehetsz te az els\u0151!",
       hallEmpty: "M\xE9g nincs lez\xE1rt szezon. Az els\u0151 h\xF3nap v\xE9g\xE9n itt jelennek meg a legjobbak.",
       hallNobody: "Ebben a h\xF3napban senki sem ker\xFClt fel.",
+      hallMore: "A tov\xE1bbi helyezettek ({n})",
       topOf: "Az els\u0151 {n} h\u0151s l\xE1tszik, \xF6sszesen {total} van a list\xE1n.",
       refresh: "Friss\xEDt\xE9s",
       retry: "\xDAjra",
@@ -11159,11 +11538,148 @@ html, body { text-size-adjust: 100%; }
         }
       }
     },
+    arena: {
+      points: "Ar\xE9na-pont",
+      record: "{w} gy\u0151zelem, {l} veres\xE9g",
+      left: "M\xE1ra m\xE9g {n} harcod maradt (naponta {max} j\xE1r).",
+      noneLeft: "M\xE1ra elfogyott a harcod. \xDAjra: {t}.",
+      season: "Szezon: {season}",
+      seasonLeft: "m\xE9g {n} nap van h\xE1tra",
+      seasonLastDay: "ma az utols\xF3 nap",
+      best: "Eddigi legjobb: {n}",
+      nameless: "egy n\xE9vtelen {cls}",
+      namelessTitle: "N\xE9vtelen {cls}",
+      today: "ma {t}",
+      tomorrow: "holnap {t}",
+      tier: { iron: "Vas", bronze: "Bronz", silver: "Ez\xFCst", gold: "Arany", diamond: "Gy\xE9m\xE1nt" },
+      opponents: "Ellenfelek",
+      refresh: "\xDAj ellenfelek",
+      refreshIn: "\xDAj ellenfelek: {t}",
+      fight: "Harc!",
+      fighting: "Harc\u2026",
+      watch: "Visszan\xE9z\xE9s",
+      noOpponents: "Most nincs hozz\xE1d ill\u0151 ellenf\xE9l. N\xE9zz vissza kicsit k\xE9s\u0151bb!",
+      history: "Legut\xF3bbi harcok",
+      noHistory: "M\xE9g nem harcolt\xE1l az ar\xE9n\xE1ban, \xE9s t\xE9ged sem t\xE1madott meg senki.",
+      hist: {
+        attackWon: "{name} ellen harcolt\xE1l, \xE9s nyert\xE9l.",
+        attackLost: "{name} ellen harcolt\xE1l, \xE9s vesztett\xE9l.",
+        defenseWon: "{name} megt\xE1madott, \xE9s nyert\xE9l.",
+        defenseLost: "{name} megt\xE1madott, \xE9s vesztett\xE9l."
+      },
+      attackedMeanwhile: "Am\xEDg nem volt\xE1l itt, {n}\xD7 megt\xE1madtak.",
+      new: "\xFAj",
+      timeUp: "letelt az id\u0151",
+      check: "\xDAjra megn\xE9zem",
+      reason: {
+        banned: "Ki vagy tiltva az ar\xE9n\xE1b\xF3l.",
+        admin: "Admink\xE9nt nem versenyzel az ar\xE9n\xE1ban.",
+        not_listed: "Ez a h\u0151s m\xE9g nincs fent a felh\u0151ben.",
+        under_review: "Ez a h\u0151s ellen\u0151rz\xE9s alatt \xE1ll.",
+        fallen: "Ez a h\u0151s elesett.",
+        low_level: "Ez a h\u0151s m\xE9g t\xFAl gyenge az ar\xE9n\xE1hoz.",
+        no_save: "Ennek a h\u0151snek nincs felh\u0151ment\xE9se."
+      },
+      reasonInfo: {
+        banned: "Ha szerinted ez t\xE9ved\xE9s, \xEDrj az adminnak.",
+        admin: "Az adminok h\u0151sei nem harcolnak az ar\xE9n\xE1ban, \xE9s \u0151ket sem lehet megt\xE1madni \u2013 ahogy a ranglist\xE1n sem szerepelnek. \xCDgy a pr\xF3b\xE1lgat\xE1suk nem torz\xEDtja m\xE1sok pontjait.",
+        not_listed: "Az ar\xE9n\xE1ban a felh\u0151be mentett h\u0151s\xF6k harcolnak (az els\u0151 h\xE1rom h\u0151shelyr\u0151l). A ment\xE9s p\xE1r m\xE1sodperc, ut\xE1na n\xE9zd meg \xFAjra.",
+        under_review: "A ranglist\xE1n rejtve van, am\xEDg egy admin meg nem n\xE9zi. Addig az ar\xE9n\xE1ban sem harcolhat.",
+        fallen: "Az elesett hardcore h\u0151s m\xE1r nem l\xE9phet az ar\xE9n\xE1ba.",
+        low_level: "Az ar\xE9n\xE1ba a {n}. szintt\u0151l lehet bel\xE9pni.",
+        no_save: "A felh\u0151ment\xE9s n\xE9lk\xFCl nincs mivel harcolni. Mentsd el \xFAjra a j\xE1t\xE9kot, \xE9s n\xE9zd meg megint."
+      },
+      nocloud: "Az ar\xE9na csak az online j\xE1t\xE9kban \xE9rhet\u0151 el, f\xE1jlb\xF3l ind\xEDtva nem.",
+      signInFirst: "Az ar\xE9n\xE1hoz be kell jelentkezned (vend\xE9gk\xE9nt is lehet), mert a h\u0151s\xF6d a felh\u0151b\u0151l harcol.",
+      loading: "Bet\xF6lt\xF6m az ar\xE9n\xE1t\u2026",
+      err: {
+        banned: "Ki vagy tiltva az ar\xE9n\xE1b\xF3l.",
+        admin: "Admink\xE9nt nem versenyzel az ar\xE9n\xE1ban.",
+        not_listed: "Ez a h\u0151s m\xE9g nincs fent a felh\u0151ben.",
+        under_review: "Ez a h\u0151s ellen\u0151rz\xE9s alatt \xE1ll.",
+        fallen: "Ez a h\u0151s elesett.",
+        low_level: "Ez a h\u0151s m\xE9g t\xFAl gyenge az ar\xE9n\xE1hoz.",
+        no_save: "Ennek a h\u0151snek nincs felh\u0151ment\xE9se.",
+        no_offer: "Lej\xE1rt az ellenfelek list\xE1ja. Itt egy \xFAj.",
+        not_offered: "Ez az ellenf\xE9l m\xE1r nincs a list\xE1n. Itt egy \xFAj.",
+        daily_limit: "M\xE1ra elfogyott a harcod. Holnap folytathatod.",
+        too_fast: "Lassabban! V\xE1rj p\xE1r m\xE1sodpercet a k\xF6vetkez\u0151 harc el\u0151tt.",
+        pair_limit: "Vele ma m\xE1r k\xE9tszer harcolt\xE1l, vagy a j\xE1t\xE9kos\xE1val ezen a h\xE9ten m\xE1r n\xE9gyszer. V\xE1lassz m\xE1st!",
+        opponent_gone: "Ez az ellenf\xE9l most nem el\xE9rhet\u0151. Itt egy \xFAj lista.",
+        engine_outdated: "\xDAj v\xE1ltozat jelent meg \u2013 friss\xEDtsd az oldalt, \xE9s pr\xF3b\xE1ld \xFAjra.",
+        implausible: "A h\u0151s\xF6dnek t\xF6bb pontja van, mint amennyit a szintje ad, ez\xE9rt nem l\xE9phet az ar\xE9n\xE1ba. A pr\xF3b\xE1lkoz\xE1s belesz\xE1m\xEDt a mai harcaidba.",
+        bad_hero: "A h\u0151s\xF6d ment\xE9se hib\xE1s, ez\xE9rt most nem harcolhat.",
+        offline: "Nem \xE9rem el a szervert. N\xE9zd meg, van-e net, \xE9s pr\xF3b\xE1ld \xFAjra.",
+        auth: "Lej\xE1rt a bejelentkez\xE9sed. L\xE9pj be \xFAjra.",
+        failed: "Valami nem siker\xFClt. Pr\xF3b\xE1ld \xFAjra kicsit k\xE9s\u0151bb."
+      },
+      rulesHead: "Hogy m\u0171k\xF6dik az ar\xE9na?",
+      rules: {
+        fair: "M\xE1s j\xE1t\xE9kosok h\u0151sei ellen harcolsz, ahogy legut\xF3bb a felh\u0151be mentett\xE9k \u0151ket \u2013 a h\u0151s \xE9s a zsoldosa a h\u0151s \xE9s a zsoldosa ellen. A harc mag\xE1t\xF3l zajlik, mindk\xE9t oldal a saj\xE1t harcrendje szerint.",
+        noLoss: "Itt nem halhatsz meg, \xE9s nem vesz\xEDthetsz semmit: se t\xE1rgyat, se aranyat. A hardcore h\u0151s is nyugodtan harcolhat.",
+        limit: "Naponta {n} harcod van (magyar id\u0151 szerint \xE9jf\xE9lkor indul \xFAjra). Ugyanazzal az ellenf\xE9llel naponta legfeljebb k\xE9tszer harcolhatsz, egy m\xE1sik j\xE1t\xE9kos h\u0151seivel hetente legfeljebb {pair}-szer. Legfeljebb {win} szint k\xFCl\xF6nbs\xE9g\u0171 ellenfelet kapsz. A {lvl}. szintt\u0151l lehet bel\xE9pni.",
+        rating: "Ha nyersz, n\u0151 a pontod, ha vesz\xEDtesz, cs\xF6kken \u2013 er\u0151sebb ellenf\xE9l legy\u0151z\xE9se t\xF6bbet \xE9r. T\xE1mad\xF3k\xE9nt \xE9s v\xE9d\u0151k\xE9nt ugyanannyit mozdul. Ha ugyanazzal a j\xE1t\xE9kossal egy h\xE9ten bel\xFCl \xFAjra \xF6sszecsapsz, fele annyi pont j\xE1r, \xE9s egy j\xE1t\xE9kost\xF3l hetente legfeljebb {cap} pontot nyerhetsz.",
+        season: "Egy szezon egy napt\xE1ri h\xF3nap (magyar id\u0151 szerint). Minden h\u0151s 1000 ponttal kezdi a h\xF3napot. A v\xE9g\xE9n az els\u0151 t\xEDz beker\xFCl a H\xEDress\xE9gek csarnok\xE1ba, a legjobb pontod pedig megmarad a Mindenkori list\xE1n.",
+        cloud: "Az ar\xE9n\xE1ban a sebz\xE9s \xE9s a gy\xF3gyul\xE1s is kisebb, \xE9s mindenkin\xE9l ugyanaz a kis ital\xF6v van: 2 gy\xF3gyital \xE9s 1 manaital."
+      },
+      belt: "Az ar\xE9na ital\xF6ve: mindenkinek ugyanannyi j\xE1r.",
+      won: "Gy\u0151zelem!",
+      lost: "Veres\xE9g",
+      vs: "{name} ellen",
+      back: "Vissza az ar\xE9n\xE1ba",
+      tierUp: "\xDAj rang: {tier}!",
+      tierDown: "A rangod most: {tier}.",
+      nothingLost: "Ez csak er\u0151pr\xF3ba volt: a h\u0151s\xF6d nem halt meg, \xE9s semmit sem vesz\xEDtett.",
+      replayHead: "Visszan\xE9z\xE9s",
+      replayWon: "{name} ellen ezt a harcot megnyerted.",
+      replayLost: "{name} ellen ezt a harcot elvesztetted.",
+      replayDiffers: "A j\xE1t\xE9k szab\xE1lyai az\xF3ta v\xE1ltoztak, ez\xE9rt most kicsit m\xE1sk\xE9pp alakulhat, mint akkor."
+    },
     admin: {
       title: "Admin",
       open: "Admin men\xFC megnyit\xE1sa",
       foot: "Csak te l\xE1tod. M\xE1s j\xE1t\xE9kosok adatait csak olvasni tudod; minden v\xE1ltoztat\xE1s kiz\xE1r\xF3lag a saj\xE1t ment\xE9sedbe ker\xFCl, \xE9s beker\xFCl a napl\xF3ba. Billenty\u0171: Ctrl+Shift+A (vagy Alt+Shift+A), bez\xE1r\xE1s: Esc.",
-      tab: { players: "J\xE1t\xE9kosok", log: "Napl\xF3", hero: "H\u0151s\xF6m", test: "Teszt", balance: "Egyens\xFAly", system: "Rendszer", ranks: "Ranglista" },
+      tab: { players: "J\xE1t\xE9kosok", log: "Napl\xF3", hero: "H\u0151s\xF6m", test: "Teszt", balance: "Egyens\xFAly", system: "Rendszer", ranks: "Ranglista", arena: "Ar\xE9na" },
+      pvp: {
+        note: "Az ar\xE9na legut\xF3bbi harcai. Az \u201EEllen\u0151rz\xE9s\u201D a harcot ezzel a j\xE1t\xE9kverzi\xF3val \xFAjra megv\xEDvja a r\xF6gz\xEDtett maggal \xE9s h\u0151s\xF6kkel, \xE9s \xF6sszeveti az eredm\xE9nyt.",
+        col: { when: "Mikor", attacker: "T\xE1mad\xF3", defender: "V\xE9d\u0151", result: "Eredm\xE9ny", act: "" },
+        attWon: "A t\xE1mad\xF3 nyert",
+        defWon: "A v\xE9d\u0151 nyert",
+        void: "\xC9rv\xE9nytelen",
+        pending: "Folyamatban",
+        engine: "motor {e}, szab\xE1lyok {r} \xB7 {n} k\xF6r",
+        verify: "Ellen\u0151rz\xE9s",
+        check: { same: "egyezik", differs: "ELT\xC9R", otherEngine: "m\xE1s motorverzi\xF3", cannot: "nem v\xEDvhat\xF3 \xFAjra" },
+        resetAtt: "Pont null\xE1z\xE1sa",
+        banAtt: "Kitilt\xE1s az ar\xE9n\xE1b\xF3l",
+        unban: "Tilt\xE1s felold\xE1sa",
+        bannedTag: "kitiltva",
+        fault: { attacker: "a t\xE1mad\xF3 ment\xE9se a hib\xE1s", defender: "a v\xE9d\u0151 ment\xE9se a hib\xE1s (egy napig nem k\xEDn\xE1ljuk ellenf\xE9lnek)" },
+        voidReason: {
+          engine_outdated: "a ment\xE9s \xFAjabb, mint a szerver motorja",
+          implausible: "t\xF6bb pont, mint amennyit a szint ad",
+          bad_snapshot: "hib\xE1s h\u0151sment\xE9s",
+          engine_error: "hiba a harc k\xF6zben",
+          finish_error: "hiba az eredm\xE9ny ment\xE9sekor",
+          stale: "f\xE9lbemaradt (a szerver nem fejezte be)"
+        },
+        flag: { gear_empty: "a v\xE9d\u0151n alig volt felszerel\xE9s", gear_drop: "a v\xE9d\u0151 levette a felszerel\xE9se nagy r\xE9sz\xE9t", repeat: "ism\xE9telt p\xE1ros\xEDt\xE1s: f\xE9l pont", capped: "heti pontplafon" },
+        resetAsk: "{hero} ar\xE9na-pontja vissza\xE1ll 1000-re, a gy\u0151zelmei \xE9s veres\xE9gei null\xE1z\xF3dnak. Mehet?",
+        banAsk: "{name} nem harcolhat az ar\xE9n\xE1ban, \xE9s \u0151t sem t\xE1madhatj\xE1k. \xCDrd be, mi\xE9rt:",
+        unbanAsk: "{name} \xFAjra harcolhat az ar\xE9n\xE1ban. Mehet?",
+        none: "M\xE9g nem volt harc az ar\xE9n\xE1ban.",
+        faults: {
+          title: "Csarnokb\xF3l kiz\xE1rt h\u0151s\xF6k",
+          note: "Ezek a h\u0151s\xF6k ebben a szezonban nem ker\xFClhetnek be a H\xEDress\xE9gek csarnok\xE1ba, mert a j\xE1t\xE9kosuk megt\xE1madhatatlann\xE1 tette \u0151ket: elt\u0171ntek a saj\xE1t ment\xE9s\xFCkb\u0151l, vagy a ment\xE9s\xFCk miatt maradt el egy harc. Ha t\xE9ved\xE9s volt, t\xF6r\xF6ld a hib\xE1t.",
+          none: "Most nincs kiz\xE1rt h\u0151s.",
+          when: "Mi\xF3ta",
+          status: "\xC1llapot",
+          gone: "elt\u0171nt a saj\xE1t ment\xE9s\xE9b\u0151l",
+          benched: "eddig nem k\xEDn\xE1ljuk ellenf\xE9lnek: {when}",
+          clear: "Hiba t\xF6rl\xE9se",
+          clearAsk: "{hero} ({name}) \xFAjra beker\xFClhet a H\xEDress\xE9gek csarnok\xE1ba, \xE9s mostant\xF3l \xFAjra ellenf\xE9lnek k\xEDn\xE1ljuk. Mehet?"
+        }
+      },
       lb: {
         filter: { all: "Mind", flagged: "Megjel\xF6lt", hidden: "Rejtett", banned: "Kitiltott" },
         col: { player: "J\xE1t\xE9kos", uid: "Azonos\xEDt\xF3", hero: "H\u0151s", level: "Szint", deepest: "M\xE9lys\xE9g", hell: "Pokol", status: "\xC1llapot", flag: "Utols\xF3 jelz\xE9s", act: "" },
@@ -11207,7 +11723,9 @@ html, body { text-size-adjust: 100%; }
           level_rate: "\xD6sszess\xE9g\xE9ben t\xFAl gyorsan l\xE9pett szintet",
           hell_wait: "Pokol t\xFAl hamar a R\xE9m\xE1lom ut\xE1n (m\xE9g nem sz\xE1m\xEDt)",
           hero_cap: "El\xE9rte a fi\xF3konk\xE9nti 30 h\u0151st",
-          save_gone: "A felh\u0151ment\xE9s\xE9t t\xF6r\xF6lte"
+          save_gone: "A felh\u0151ment\xE9s\xE9t t\xF6r\xF6lte",
+          pvp_gone: "Ar\xE9na: elt\u0171nt a saj\xE1t ment\xE9s\xE9b\u0151l, mik\xF6zben a list\xE1n volt",
+          admin_pvp_clear_fault: "Admin t\xF6r\xF6lte az ar\xE9na-hib\xE1j\xE1t"
         }
       },
       loading: "Bet\xF6lt\xE9s\u2026",
@@ -23955,7 +24473,7 @@ Suggested solution: ${env.workaround}`;
       throw new Error(`Invalid Base64-URL character "${String.fromCharCode(charCode)}"`);
     }
   }
-  function stringFromBase64URL(str3) {
+  function stringFromBase64URL(str4) {
     const conv = [];
     const utf8Emit = (codepoint) => {
       conv.push(String.fromCodePoint(codepoint));
@@ -23968,8 +24486,8 @@ Suggested solution: ${env.workaround}`;
     const byteEmit = (byte) => {
       stringFromUTF8(byte, utf8State, utf8Emit);
     };
-    for (let i = 0; i < str3.length; i += 1) {
-      byteFromBase64URL(str3.charCodeAt(i), b64State, byteEmit);
+    for (let i = 0; i < str4.length; i += 1) {
+      byteFromBase64URL(str4.charCodeAt(i), b64State, byteEmit);
     }
     return conv.join("");
   }
@@ -23995,12 +24513,12 @@ Suggested solution: ${env.workaround}`;
     }
     throw new Error(`Unrecognized Unicode codepoint: ${codepoint.toString(16)}`);
   }
-  function stringToUTF8(str3, emit) {
-    for (let i = 0; i < str3.length; i += 1) {
-      let codepoint = str3.charCodeAt(i);
+  function stringToUTF8(str4, emit) {
+    for (let i = 0; i < str4.length; i += 1) {
+      let codepoint = str4.charCodeAt(i);
       if (codepoint > 55295 && codepoint <= 56319) {
         const highSurrogate = (codepoint - 55296) * 1024 & 65535;
-        const lowSurrogate = str3.charCodeAt(i + 1) - 56320 & 65535;
+        const lowSurrogate = str4.charCodeAt(i + 1) - 56320 & 65535;
         codepoint = (lowSurrogate | highSurrogate) + 65536;
         i += 1;
       }
@@ -24040,20 +24558,20 @@ Suggested solution: ${env.workaround}`;
       }
     }
   }
-  function base64UrlToUint8Array(str3) {
+  function base64UrlToUint8Array(str4) {
     const result = [];
     const state = { queue: 0, queuedBits: 0 };
     const onByte = (byte) => {
       result.push(byte);
     };
-    for (let i = 0; i < str3.length; i += 1) {
-      byteFromBase64URL(str3.charCodeAt(i), state, onByte);
+    for (let i = 0; i < str4.length; i += 1) {
+      byteFromBase64URL(str4.charCodeAt(i), state, onByte);
     }
     return new Uint8Array(result);
   }
-  function stringToUint8Array(str3) {
+  function stringToUint8Array(str4) {
     const result = [];
-    stringToUTF8(str3, (byte) => result.push(byte));
+    stringToUTF8(str4, (byte) => result.push(byte));
     return new Uint8Array(result);
   }
   function bytesToBase64URL(bytes) {
@@ -24182,9 +24700,9 @@ Suggested solution: ${env.workaround}`;
     };
     return data;
   }
-  async function sleep2(time2) {
+  async function sleep2(time3) {
     return await new Promise((accept) => {
-      setTimeout(() => accept(null), time2);
+      setTimeout(() => accept(null), time3);
     });
   }
   function retryable(fn, isRetryable) {
@@ -24383,8 +24901,8 @@ Suggested solution: ${env.workaround}`;
     }
   }
   var UUID_REGEX = /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i;
-  function validateUUID(str3) {
-    if (!UUID_REGEX.test(str3)) {
+  function validateUUID(str4) {
+    if (!UUID_REGEX.test(str4)) {
       throw new Error("@supabase/auth-js: Expected parameter to be UUID but is not");
     }
   }
@@ -32862,13 +33380,14 @@ ${suffix}`;
       },
       /**
        * Saves when nobody else saved since `baseRev`: { ok, rev }, { ok: false, conflict: true, rev },
-       * or { ok: false, outdated: true } (the cloud holds a save from a newer version of the game).
+       * { ok: false, outdated: true } (the cloud holds a save from a newer version of the game), or
+       * { ok: false, tooNew: true } (the save is from a newer version than the server knows yet: it is being updated).
        */
       async pushSave(data, baseRev, expectUid) {
         sameUser(expectUid);
         const { data: res, error, status } = await sb.rpc("save_game", { p_data: data, p_base_rev: baseRev ?? null });
         if (error) failData(error, status);
-        return { ok: !!res?.ok, conflict: !!res?.conflict, outdated: !!res?.outdated, rev: res?.rev == null ? null : Number(res.rev) };
+        return { ok: !!res?.ok, conflict: !!res?.conflict, outdated: !!res?.outdated, tooNew: !!res?.tooNew, rev: res?.rev == null ? null : Number(res.rev) };
       },
       // ---- the light event log, and what an admin may read (the database decides who that is: server/admin.sql)
       /** Is the signed-in account an admin? true or false; null when the server could not be asked. */
@@ -32920,7 +33439,7 @@ ${suffix}`;
       // ---- the leaderboard (server/leaderboard.sql): reading it needs no account, a signed-in player also gets their own rows
       /** One board: what lb_board answers ({ season, total, rows, me }). `req`: requestFor() of ranks-core.js. */
       async leaderboard(req) {
-        if (!req || !["lb_board", "lb_hall"].includes(req.fn)) throw Object.assign(new Error("bad request"), { kind: "rejected" });
+        if (!req || !["lb_board", "lb_hall", "pvp_board", "pvp_hall"].includes(req.fn)) throw Object.assign(new Error("bad request"), { kind: "rejected" });
         const { data, error, status } = await sb.rpc(req.fn, req.args);
         if (error) failData(error, status);
         return data;
@@ -32960,6 +33479,78 @@ ${suffix}`;
       /** Admin only: keep a player off the boards, or let them back. */
       async adminLbBan(userId, banned, reason = "") {
         const { data, error, status } = await sb.rpc("admin_lb_ban", { p_user: userId, p_banned: !!banned, p_reason: reason });
+        if (error) failData(error, status);
+        return data ?? { ok: false };
+      },
+      // ---- the Arena (server/pvp.sql, server/functions/pvp-fight)
+      /** The Arena page of one of the player's heroes: rating, today's fights, offered opponents, the last fights. */
+      async pvpHome(heroId, refresh = false) {
+        sameUser();
+        const { data, error, status } = await sb.rpc("pvp_home", { p_hero: heroId, p_refresh: !!refresh });
+        if (error) failData(error, status);
+        return data;
+      },
+      /**
+       * Fights an offered opponent: the edge function runs the fight on the server and answers with its log
+       * ({ ok: true, outcome, events, units, me, foe }) or a refusal ({ ok: false, error }).
+       */
+      async pvpFight(heroId, opponentPid) {
+        sameUser();
+        const { data, error } = await sb.functions.invoke("pvp-fight", { body: { hero: heroId, opponent: opponentPid } });
+        if (error) {
+          const status = Number(error.context?.status) || 0;
+          let body = null;
+          try {
+            body = await error.context?.json?.();
+          } catch {
+          }
+          if (body && body.ok === false && typeof body.error === "string" && status !== 401 && status < 500) return body;
+          const e = new Error(error.message ?? "pvp-fight failed");
+          Object.assign(e, { kind: error.name === "FunctionsFetchError" || error.name === "FunctionsRelayError" ? "offline" : dataErrorKind(error, status), status });
+          throw e;
+        }
+        return data;
+      },
+      /** One of the player's own fights, to watch it again: seed and the two heroes (pvp_match). */
+      async pvpMatch(id) {
+        sameUser();
+        const { data, error, status } = await sb.rpc("pvp_match", { p_id: id });
+        if (error) failData(error, status);
+        return data;
+      },
+      /** Admin only: the latest Arena fights. */
+      async adminPvpMatches() {
+        const { data, error, status } = await sb.rpc("admin_pvp_matches", { p_limit: 200 });
+        if (error) failData(error, status);
+        return data ?? [];
+      },
+      /** Admin only: one fight with its seed and both heroes (to fight it again and compare). */
+      async adminPvpMatch(id) {
+        const { data, error, status } = await sb.rpc("admin_pvp_match", { p_id: id });
+        if (error) failData(error, status);
+        return data;
+      },
+      /** Admin only: a hero's Arena rating back to the start. */
+      async adminPvpReset(userId, heroId) {
+        const { data, error, status } = await sb.rpc("admin_pvp_reset", { p_user: userId, p_hero: heroId });
+        if (error) failData(error, status);
+        return data ?? { ok: false };
+      },
+      /** Admin only: the heroes kept out of the hall of fame (pvp_season_ratings.fault_at), seasons not frozen yet. */
+      async adminPvpFaults() {
+        const { data, error, status } = await sb.rpc("admin_pvp_faults", { p_limit: 100 });
+        if (error) failData(error, status);
+        return Array.isArray(data) ? data : [];
+      },
+      /** Admin only: clear a hero's Arena fault (it may get into the hall of fame again, and is offered again). */
+      async adminPvpClearFault(userId, heroId) {
+        const { data, error, status } = await sb.rpc("admin_pvp_clear_fault", { p_user: userId, p_hero: heroId });
+        if (error) failData(error, status);
+        return data ?? { ok: false };
+      },
+      /** Admin only: keep a player out of the Arena, or let them back. */
+      async adminPvpBan(userId, banned, reason = "") {
+        const { data, error, status } = await sb.rpc("admin_pvp_ban", { p_user: userId, p_banned: !!banned, p_reason: reason });
         if (error) failData(error, status);
         return data ?? { ok: false };
       },
@@ -33519,7 +34110,7 @@ ${suffix}`;
     let timeouts = 0;
     let lost = 0;
     let turns = 0;
-    let time2 = 0;
+    let time3 = 0;
     let potions = 0;
     for (let i = 0; i < runs; i++) {
       const r = sandboxFight(content3, hero2, opts, rng.int(1, 2 ** 31 - 1), false);
@@ -33529,20 +34120,20 @@ ${suffix}`;
       else timeouts++;
       lost += r.lifeLost / r.maxLife;
       turns += r.turns;
-      time2 += r.time;
+      time3 += r.time;
       potions += r.potions;
     }
-    return { n: runs, wins, losses, timeouts, winRate: wins / runs, lifeLostPct: lost / runs * 100, turns: turns / runs, time: time2 / runs, potions: potions / runs };
+    return { n: runs, wins, losses, timeouts, winRate: wins / runs, lifeLostPct: lost / runs * 100, turns: turns / runs, time: time3 / runs, potions: potions / runs };
   }
   function saveSummary(content3, save) {
-    const isObj3 = (v) => !!v && typeof v === "object" && !Array.isArray(v);
-    if (!isObj3(save)) return null;
+    const isObj5 = (v) => !!v && typeof v === "object" && !Array.isArray(v);
+    if (!isObj5(save)) return null;
     const slots = Array.isArray(save.slots) ? save.slots : [];
     const heroes = slots.map((sl, i) => {
-      if (!isObj3(sl) || !isObj3(sl.hero)) return null;
+      if (!isObj5(sl) || !isObj5(sl.hero)) return null;
       const h = sl.hero;
       const cleared = (d) => Object.keys(clearedIn(h, d) ?? {}).filter((z) => Object.hasOwn(content3.zones, z)).length;
-      const gear = isObj3(h.equipment) ? Object.entries(h.equipment).filter(([, it]) => isObj3(it)).map(([slot, it]) => ({ slot, item: it })) : [];
+      const gear = isObj5(h.equipment) ? Object.entries(h.equipment).filter(([, it]) => isObj5(it)).map(([slot, it]) => ({ slot, item: it })) : [];
       return {
         slot: i,
         name: String(sl.name ?? ""),
@@ -33553,17 +34144,17 @@ ${suffix}`;
         hardcore: !!h.hardcore,
         dead: !!h.dead,
         gold: Number(h.gold) || 0,
-        inRaid: !!(isObj3(sl.run) && !sl.run.over),
-        raidZone: isObj3(sl.run) && !sl.run.over ? sl.run.zoneId ?? null : null,
+        inRaid: !!(isObj5(sl.run) && !sl.run.over),
+        raidZone: isObj5(sl.run) && !sl.run.over ? sl.run.zoneId ?? null : null,
         cleared: Object.fromEntries(DIFFICULTIES.map((d) => [d, cleared(d)])),
         bag: Array.isArray(h.bag) ? h.bag.length : 0,
         gear,
-        mats: isObj3(h.mats) ? Object.values(h.mats).reduce((a, n) => a + (Number(n) || 0), 0) : 0,
-        merc: isObj3(h.merc) ? { type: h.merc.type, dead: !!h.merc.dead } : null,
+        mats: isObj5(h.mats) ? Object.values(h.mats).reduce((a, n) => a + (Number(n) || 0), 0) : 0,
+        merc: isObj5(h.merc) ? { type: h.merc.type, dead: !!h.merc.dead } : null,
         unspentAttr: Number(h.unspentAttr) || 0,
         unspentSkill: Number(h.unspentSkill) || 0,
         deepest: depthOf(h).deepest,
-        inDepth: !!(isObj3(sl.run) && !sl.run.over && sl.run.mode === "depth")
+        inDepth: !!(isObj5(sl.run) && !sl.run.over && sl.run.mode === "depth")
       };
     }).filter(Boolean);
     return {
@@ -33576,13 +34167,271 @@ ${suffix}`;
     };
   }
 
+  // src/engine/pvp.js
+  var isObj2 = (x) => !!x && typeof x === "object" && !Array.isArray(x);
+  var isInt2 = (v) => Number.isInteger(v);
+  var clamp5 = (v, lo, hi) => Math.max(lo, Math.min(hi, v));
+  var COND_TYPES2 = ["always", "start", "enemiesAtLeast", "lifeBelow", "targetElite"];
+  var TARGETING2 = ["weakest", "strongest", "first"];
+  var AFFIX_SLOT2 = (slot) => slot === "ring1" || slot === "ring2" ? "ring" : slot;
+  var SOCKET_GROUP = (base) => base.slot === "weapon" ? "weapon" : base.slot === "offhand" ? "shield" : "armor";
+  var ELEM_PAIRS = ["fire", "cold", "light"];
+  var copy = (x) => JSON.parse(JSON.stringify(x));
+  function plausibleItem(content3, item) {
+    const it = cleanItem(content3, isObj2(item) ? item : null);
+    if (!it) return null;
+    const base = content3.bases[it.base];
+    const seen = /* @__PURE__ */ new Set();
+    it.affixes = it.affixes.filter((a) => {
+      const def = content3.affixes[a.id];
+      if (seen.has(a.id) || !def.slots.includes(AFFIX_SLOT2(base.slot))) return false;
+      seen.add(a.id);
+      const tier = def.tiers[a.tier];
+      const rolls = {};
+      for (const [stat, [min, max]] of Object.entries(tier.mods)) {
+        const v = Number(a.rolls?.[stat]);
+        rolls[stat] = Number.isFinite(v) ? clamp5(Math.round(v), min, max) : min;
+      }
+      for (const el of ELEM_PAIRS) if (rolls[`${el}Min`] > rolls[`${el}Max`]) rolls[`${el}Max`] = rolls[`${el}Min`];
+      a.rolls = rolls;
+      return true;
+    }).slice(0, 6);
+    const R2 = it.rarity;
+    if (!["common", "socketed", "magic", "rare", "unique", "set", "runecarved"].includes(R2)) return null;
+    if (base.jewelry && (R2 === "common" || R2 === "socketed" || R2 === "runecarved")) return null;
+    const isPre = (a) => content3.affixes[a.id].type === "prefix";
+    const pre = it.affixes.filter(isPre).length;
+    const suf = it.affixes.length - pre;
+    const capAff = { magic: [1, 1], rare: [3, 3] }[R2] ?? [0, 0];
+    if (pre > capAff[0] || suf > capAff[1] || it.affixes.length > (R2 === "rare" ? content3.B.item.rareAffixes[1] : 2)) return null;
+    const special2 = R2 === "unique" && Object.hasOwn(content3.uniques, it.unique) ? content3.uniques[it.unique] : R2 === "set" && Object.hasOwn(content3.setPieces, it.setPiece) ? content3.setPieces[it.setPiece] : null;
+    if ((R2 === "unique" || R2 === "set") && (!special2 || ![special2.base, `${special2.base}__x`, `${special2.base}__e`].includes(it.base))) return null;
+    if (!special2) {
+      delete it.unique;
+      delete it.setPiece;
+    }
+    if (special2) {
+      const fixed = {};
+      for (const [stat, [min, max]] of Object.entries(special2.mods)) {
+        const v = Number(it.fixed?.[stat]);
+        fixed[stat] = Number.isFinite(v) ? clamp5(Math.round(v), min, max) : min;
+      }
+      for (const el of ELEM_PAIRS) if (fixed[`${el}Min`] > fixed[`${el}Max`]) fixed[`${el}Max`] = fixed[`${el}Min`];
+      it.fixed = fixed;
+    } else delete it.fixed;
+    const maxSockets = R2 === "socketed" || R2 === "runecarved" ? Math.max(0, base.maxSockets ?? 0) : 0;
+    it.sockets = isInt2(it.sockets) ? clamp5(it.sockets, 0, maxSockets) : 0;
+    const group = SOCKET_GROUP(base);
+    it.socketed = (Array.isArray(it.socketed) ? it.socketed : []).filter((id) => {
+      const m = parseMat(content3, id);
+      return !!m && (m.kind === "gem" ? !!content3.gemTypes[m.type]?.[group] : true);
+    }).slice(0, it.sockets);
+    delete it.runeword;
+    if (R2 === "runecarved" || R2 === "socketed") {
+      const word = matchRuneword(content3, { ...it, rarity: "socketed" });
+      if (!word && R2 === "runecarved") return null;
+      if (word) {
+        it.rarity = "runecarved";
+        it.runeword = word.id;
+        it.fixed = { ...word.mods };
+      }
+    }
+    if (it.tree != null && !Object.values(content3.classes).some((c) => c.trees.includes(it.tree))) delete it.tree;
+    return it;
+  }
+  var BOSS_LEVEL_SLACK = 10;
+  function bossPointsAt(content3, level) {
+    let n = 0;
+    for (const d of ["normal", "nightmare", "hell"]) {
+      for (const act2 of content3.acts) {
+        const last = content3.zoneOrder.filter((z) => content3.zones[z].act === act2).at(-1);
+        const boss = last && content3.zones[last].boss;
+        if (boss && bossLevel(content3, boss, d) <= level + BOSS_LEVEL_SLACK) n++;
+      }
+    }
+    return n * content3.B.hero.skillPointsPerChapter;
+  }
+  function cleanSnapshot(content3, snap, engineVersion) {
+    if (!isObj2(snap)) return { ok: false, error: "bad_snapshot" };
+    const ver = Number.isFinite(snap.contentVersion) ? snap.contentVersion : 0;
+    if (Number.isFinite(engineVersion) && ver > engineVersion) return { ok: false, error: "engine_outdated" };
+    const s = copy(snap);
+    if (typeof s.classId !== "string" || !Object.hasOwn(content3.classes, s.classId)) return { ok: false, error: "bad_snapshot" };
+    if (!isInt2(s.level) || s.level < 1 || s.level > content3.B.hero.maxLevel) return { ok: false, error: "bad_snapshot" };
+    const cls = content3.classes[s.classId];
+    const H = content3.B.hero;
+    const attrs = {};
+    let spentAttr = 0;
+    for (const k of ["str", "dex", "vit", "ene"]) {
+      const v = s.attrs?.[k];
+      if (!isInt2(v) || v < cls.attrs[k]) return { ok: false, error: "bad_snapshot" };
+      attrs[k] = v;
+      spentAttr += v - cls.attrs[k];
+    }
+    if (spentAttr > (s.level - 1) * H.attrPerLevel) return { ok: false, error: "implausible" };
+    const skills = {};
+    let spentSkill = 0;
+    const starter = cls.starterSkills ?? {};
+    for (const [id, lvl] of Object.entries(isObj2(s.skills) ? s.skills : {})) {
+      const def = cls.skills.find((d) => d.id === id);
+      if (!def || !isInt2(lvl) || lvl < 0) continue;
+      if (lvl === 0) continue;
+      if (lvl > H.maxSkill || def.reqLevel > s.level) return { ok: false, error: "implausible" };
+      skills[id] = lvl;
+      spentSkill += Math.max(0, lvl - (starter[id] ?? 0));
+    }
+    if (spentSkill > (s.level - 1) * H.skillPerLevel + bossPointsAt(content3, s.level)) return { ok: false, error: "implausible" };
+    const hero2 = {
+      id: typeof s.id === "string" ? s.id.slice(0, 40) : "",
+      classId: s.classId,
+      level: s.level,
+      xp: 0,
+      attrs,
+      skills,
+      equipment: {},
+      tactics: [],
+      targeting: TARGETING2.includes(s.targeting) ? s.targeting : "weakest",
+      potionThreshold: typeof s.potionThreshold === "number" && s.potionThreshold >= 0.1 && s.potionThreshold <= 0.9 ? s.potionThreshold : content3.B.potion.defaultThreshold,
+      belt: { life: 0, mana: 0 },
+      merc: null,
+      hardcore: s.hardcore === true,
+      dead: s.dead === true,
+      inRun: false,
+      cleared: {},
+      progress: { nightmare: {}, hell: {} },
+      difficulty: "normal"
+    };
+    for (const t3 of Array.isArray(s.tactics) ? s.tactics.slice(0, 4) : []) {
+      const def = getSkillDef(content3, hero2, t3?.skill);
+      if (!def || def.type !== "active" || !(skills[def.id] > 0)) continue;
+      const type = t3.cond?.type ?? "always";
+      if (!COND_TYPES2.includes(type)) continue;
+      const cond = { type };
+      if (type === "enemiesAtLeast" || type === "lifeBelow") {
+        const v = t3.cond.value;
+        if (!isInt2(v) || v < 1 || v > (type === "enemiesAtLeast" ? 6 : 100)) continue;
+        cond.value = v;
+      }
+      hero2.tactics.push({ skill: def.id, cond });
+    }
+    let dropped = 0;
+    const eq = isObj2(s.equipment) ? s.equipment : {};
+    for (const slot of content3.EQUIP_SLOTS) {
+      if (!Object.hasOwn(eq, slot) || eq[slot] == null) continue;
+      const it = plausibleItem(content3, eq[slot]);
+      if (!it) {
+        dropped++;
+        continue;
+      }
+      it.identified = true;
+      const fits = targetSlot(content3, hero2, it, slot) === slot || AFFIX_SLOT2(slot) === "ring" && content3.bases[it.base].slot === "ring";
+      if (!fits || !canEquip(content3, hero2, it).ok) {
+        dropped++;
+        continue;
+      }
+      hero2.equipment[slot] = it;
+    }
+    const w = hero2.equipment.weapon && content3.bases[hero2.equipment.weapon.base];
+    if (w?.twoHanded && hero2.equipment.offhand) {
+      delete hero2.equipment.offhand;
+      dropped++;
+    }
+    if (isObj2(s.merc) && typeof s.merc.type === "string" && Object.hasOwn(content3.mercs, s.merc.type)) {
+      const type = content3.mercs[s.merc.type];
+      const out = {};
+      const meq = isObj2(s.merc.equipment) ? s.merc.equipment : {};
+      for (const slot of content3.MERC_SLOTS) {
+        if (!Object.hasOwn(meq, slot) || meq[slot] == null) continue;
+        const it = plausibleItem(content3, meq[slot]);
+        if (!it || mercSlotFor(content3, type, it) !== slot || itemReqLevel(content3, it) > hero2.level) {
+          dropped++;
+          continue;
+        }
+        it.identified = true;
+        out[slot] = it;
+      }
+      hero2.merc = { type: type.id, dead: false, equipment: out };
+    }
+    return { ok: true, hero: hero2, dropped };
+  }
+  function pvpSide(content3, hero2, side) {
+    const P = content3.B.pvp;
+    const h = heroCombatant(content3, hero2, { difficulty: "normal", belt: { life: P.potions.life, mana: P.potions.mana } });
+    const m = hero2.merc ? mercCombatant(content3, hero2, null, [], "normal") : null;
+    const foe = side === "enemies";
+    const pts = P.classLevels ?? [];
+    const pw = P.classPower?.[hero2.classId];
+    let pct2 = 100;
+    if (Array.isArray(pw) && pw.length === pts.length && pts.length) {
+      const L = hero2.level;
+      if (L <= pts[0]) pct2 = pw[0];
+      else if (L >= pts.at(-1)) pct2 = pw.at(-1);
+      else for (let i = 1; i < pts.length; i++) if (L <= pts[i]) {
+        pct2 = pw[i - 1] + (pw[i] - pw[i - 1]) * (L - pts[i - 1]) / (pts[i] - pts[i - 1]);
+        break;
+      }
+    }
+    const tune = pct2 === 100 ? {} : { pvpDmg: pct2 / 100, pvpTaken: 100 / pct2 };
+    const units = [{ ...h, ...tune, uid: foe ? "foe" : "hero", side }];
+    if (m) units.push({ ...m, ...tune, uid: foe ? "foemerc" : "merc", side });
+    return units;
+  }
+  function cleanSeed(seed) {
+    const n = typeof seed === "string" && /^\d{1,10}$/.test(seed) ? Number(seed) : seed;
+    return Number.isInteger(n) && n >= 0 && n <= 4294967295 ? n : null;
+  }
+  function runPvpFight(content3, attacker, defender, seed, { record = true } = {}) {
+    const s = cleanSeed(seed);
+    if (s == null) throw new Error("bad seed");
+    const allies = pvpSide(content3, attacker, "allies");
+    const enemies = pvpSide(content3, defender, "enemies");
+    const units = [...allies, ...enemies].map((u) => ({
+      uid: u.uid,
+      side: u.side,
+      kind: u.kind,
+      key: u.key,
+      rank: u.rank,
+      level: u.level,
+      modifiers: [],
+      maxLife: u.maxLife,
+      life: Math.round(u.life),
+      maxMana: u.maxMana,
+      mana: Math.round(u.mana),
+      ...u.weaponKind ? { weaponKind: u.weaponKind } : {}
+    }));
+    const fight = simulateCombat({ allies, enemies, rng: createRng(s), B: content3.B, record, pvp: content3.B.pvp });
+    return {
+      outcome: fight.outcome === "win" ? "win" : "loss",
+      timeout: !!fight.timeout,
+      rounds: Math.round(fight.time * 100) / 100,
+      events: fight.events,
+      units,
+      hash: record ? eventsHash(fight.events) : null
+    };
+  }
+  function eventsHash(events) {
+    const text = JSON.stringify(events);
+    let h = 2166136261;
+    for (let i = 0; i < text.length; i++) {
+      h ^= text.charCodeAt(i);
+      h = Math.imul(h, 16777619) >>> 0;
+    }
+    return `${text.length.toString(36)}-${h.toString(16).padStart(8, "0")}`;
+  }
+  function tierOf(P, rating) {
+    let out = P.tiers[0][1];
+    for (const [min, id] of P.tiers) if (Number.isFinite(rating) && rating >= min) out = id;
+    return out;
+  }
+
   // src/client/admin.js
-  var BUILD_TIME = true ? "2026-11-14T22:00:29.651Z" : null;
-  var TABS = ["players", "log", "ranks", "hero", "test", "balance", "system"];
+  var BUILD_TIME = true ? "2026-11-16T00:26:33.868Z" : null;
+  var TABS = ["players", "log", "ranks", "arena", "hero", "test", "balance", "system"];
+  var PVP_VOID_REASONS = ["engine_outdated", "implausible", "bad_snapshot", "engine_error", "finish_error", "stale"];
   var LB_FILTERS = ["flagged", "hidden", "banned", "all"];
   var KINDS = ["raid_start", "raid_end", "level_up", "death", "boss_kill", "unique_found", "set_found", "runeword_found", "difficulty_unlocked", "depth_start", "depth_floor", "depth_end", "hero_created", "hero_deleted", "sync_conflict", "sync_outdated", "sync_rejected", "admin_edit"];
   var POLL_MS = 15e3;
-  var isObj2 = (v) => !!v && typeof v === "object" && !Array.isArray(v);
+  var isObj3 = (v) => !!v && typeof v === "object" && !Array.isArray(v);
   var str = (v, n = 40) => typeof v === "string" ? v.slice(0, n) : typeof v === "number" && Number.isFinite(v) ? String(v) : "";
   var own = (o, k) => o && typeof o === "object" && typeof k === "string" && Object.prototype.hasOwnProperty.call(o, k) ? o[k] : void 0;
   var int = (v) => Number.isFinite(Number(v)) ? Math.round(Number(v)) : null;
@@ -33598,7 +34447,7 @@ ${suffix}`;
     }
   }
   function describeUnsafe(ev, { t: t3, loc, R: R2, name }) {
-    const d = isObj2(ev?.data) ? ev.data : {};
+    const d = isObj3(ev?.data) ? ev.data : {};
     const cls = own(loc.class, d.cls)?.name ?? (str(d.cls, 20) || "?");
     const lvl = int(d.lvl) ?? "?";
     const who = d.cls != null ? t3("admin.ev.who", { name, cls, lvl, hc: d.hc === true ? t3("admin.ev.hc") : "" }) : name;
@@ -33623,7 +34472,7 @@ ${suffix}`;
       case "level_up":
         return t3("admin.ev.level_up", { who, from: int(d.from) ?? "?", lvl });
       case "death": {
-        const k = isObj2(d.killer) ? unit(d.killer.key, d.killer.mods) : null;
+        const k = isObj3(d.killer) ? unit(d.killer.key, d.killer.mods) : null;
         return t3(k ? "admin.ev.death" : "admin.ev.deathNoKiller", { who, zone, killer: k ?? "" }) + (d.dead === true ? t3("admin.ev.forGood") : "");
       }
       case "boss_kill":
@@ -33709,7 +34558,8 @@ ${suffix}`;
       probe: null,
       ov: readOverrides(storage),
       busy: false,
-      lb: { filter: "flagged", entries: null, flags: null, err: null, loading: false }
+      lb: { filter: "flagged", entries: null, flags: null, err: null, loading: false },
+      pvp: { matches: null, err: null, loading: false, checks: {}, faults: null }
     };
     let el = null;
     let poll = null;
@@ -33891,6 +34741,7 @@ ${suffix}`;
       if (tab === "log") loadFeed();
       if (tab === "players" && !A2.players) loadPlayers();
       if (tab === "ranks" && !A2.lb.entries) loadLb();
+      if (tab === "arena" && !A2.pvp.matches) loadPvp();
       setPoll();
       paint();
     }
@@ -33913,15 +34764,15 @@ ${suffix}`;
       const day = all.filter((p) => Date.now() - new Date(p.save_updated_at ?? p.last_sign_in_at ?? 0).getTime() < 864e5).length;
       const q = A2.filter.trim().toLowerCase();
       const maxLvl = (p) => Math.max(0, ...(Array.isArray(p.heroes) ? p.heroes : []).map((h) => Number(h?.level) || 0));
-      const time2 = (v) => v ? new Date(v).getTime() || 0 : 0;
-      const key = { name: (p) => playerName(p).toLowerCase(), kind: (p) => p.is_guest ? 1 : 0, created: (p) => time2(p.created_at), signin: (p) => time2(p.last_sign_in_at), save: (p) => time2(p.save_updated_at), size: (p) => Number(p.save_bytes) || 0, level: maxLvl }[A2.sort] ?? ((p) => time2(p.save_updated_at));
+      const time3 = (v) => v ? new Date(v).getTime() || 0 : 0;
+      const key = { name: (p) => playerName(p).toLowerCase(), kind: (p) => p.is_guest ? 1 : 0, created: (p) => time3(p.created_at), signin: (p) => time3(p.last_sign_in_at), save: (p) => time3(p.save_updated_at), size: (p) => Number(p.save_bytes) || 0, level: maxLvl }[A2.sort] ?? ((p) => time3(p.save_updated_at));
       const list = all.filter((p) => (A2.kindFilter === "all" || A2.kindFilter === "guest" === !!p.is_guest) && (!q || playerName(p).toLowerCase().includes(q) || String(p.user_id).startsWith(q) || Array.isArray(p.heroes) && p.heroes.some((h) => clsName(h?.class).toLowerCase().includes(q) || String(h?.name ?? "").toLowerCase().includes(q)))).sort((a, b) => {
         const x = key(a);
         const y = key(b);
         return (x < y ? -1 : x > y ? 1 : 0) * (A2.desc ? -1 : 1);
       });
       const th = (k) => `<th><button class="adm-sort ${A2.sort === k ? "on" : ""}" data-a="sort" data-v="${k}">${t3(`admin.col.${k}`)}${A2.sort === k ? A2.desc ? " \u25BE" : " \u25B4" : ""}</button></th>`;
-      const heroChips = (p) => Array.isArray(p.heroes) && p.heroes.length ? p.heroes.filter(isObj2).map((h) => `<span class="adm-hero ${h.dead ? "dead" : ""}">${esc2(clsName(h.class))} <b>${int(h.level) ?? "?"}</b>${h.difficulty && h.difficulty !== "normal" ? ` <i class="d-${esc2(str(h.difficulty, 12))}">${esc2(diffName(h.difficulty))}</i>` : ""}${h.hardcore ? ' <i class="hc">HC</i>' : ""}${h.dead ? " \u271D" : ""}</span>`).join("") : `<span class="dim">${t3("admin.noHeroes")}</span>`;
+      const heroChips = (p) => Array.isArray(p.heroes) && p.heroes.length ? p.heroes.filter(isObj3).map((h) => `<span class="adm-hero ${h.dead ? "dead" : ""}">${esc2(clsName(h.class))} <b>${int(h.level) ?? "?"}</b>${h.difficulty && h.difficulty !== "normal" ? ` <i class="d-${esc2(str(h.difficulty, 12))}">${esc2(diffName(h.difficulty))}</i>` : ""}${h.hardcore ? ' <i class="hc">HC</i>' : ""}${h.dead ? " \u271D" : ""}</span>`).join("") : `<span class="dim">${t3("admin.noHeroes")}</span>`;
       const rows = list.map((p) => `<tr class="${A2.pick === p.user_id ? "on" : ""}" data-a="pick" data-v="${esc2(p.user_id)}" tabindex="0">
       <td><b>${esc2(playerName(p))}</b>${p.user_id === A2.uid ? ` <span class="adm-you">${t3("admin.you")}</span>` : ""}</td>
       <td>${p.is_guest ? t3("admin.guestShort") : "Discord"}</td><td class="nw" title="${esc2(when(p.created_at))}">${esc2(short(p.created_at))}</td><td class="nw" title="${esc2(when(p.last_sign_in_at))}">${esc2(short(p.last_sign_in_at))}</td>
@@ -33996,7 +34847,7 @@ ${suffix}`;
         e.hardcore ? `<span class="tag">${t3("admin.lb.st.hc")}</span>` : "",
         e.is_admin ? `<span class="tag">${t3("admin.lb.st.admin")}</span>` : ""
       ].join(" ");
-      const rows = lb.entries.filter(isObj2).map((e) => {
+      const rows = lb.entries.filter(isObj3).map((e) => {
         const ids = `data-u="${esc2(str(e.user_id, 40))}" data-h="${esc2(str(e.hero_id, 40))}"`;
         return `<tr><td><b>${esc2(lbName(e))}</b><br><small class="dim" title="${t3("admin.lb.col.uid")}">${esc2(str(e.user_id, 8))}\u2026</small></td><td>${esc2(str(e.hero_name, 16) || clsName(e.class_id))}<br><small class="dim">${esc2(clsName(e.class_id))}</small></td>
         <td class="num">${int(e.level) ?? "?"}</td><td class="num">${int(e.deepest) ?? 0}</td><td class="nw">${e.hell_clear_at ? esc2(short(e.hell_clear_at)) : "\u2013"}</td>
@@ -34006,9 +34857,86 @@ ${suffix}`;
           <button class="btn mini ghost" data-a="lbBan" data-v="${e.banned ? "unban" : "ban"}" ${ids}>${t3(e.banned ? "admin.lb.unban" : "admin.lb.ban")}</button></td></tr>`;
       }).join("");
       const cols = ["player", "hero", "level", "deepest", "hell", "status", "flag", "act"].map((k) => `<th><span class="adm-sort">${t3(`admin.lb.col.${k}`)}</span></th>`).join("");
-      const flags = (lb.flags ?? []).filter(isObj2).slice(0, 100).map((f) => `<li><time title="${esc2(when(f.at))}">${esc2(ago(f.at))}</time><span><b>${esc2(lbReason(f.reason))}</b> \u2013 ${esc2(lbName(f))}${f.hero_name ? ` \xB7 ${esc2(str(f.hero_name, 16))}` : ""}${isObj2(f.detail) && int(f.detail.level) != null ? ` <small class="dim">(${t3("admin.lb.col.level")} ${int(f.detail.level)}, ${t3("admin.lb.col.deepest")} ${int(f.detail.deepest) ?? 0})</small>` : ""}</span></li>`).join("");
+      const flags = (lb.flags ?? []).filter(isObj3).slice(0, 100).map((f) => `<li><time title="${esc2(when(f.at))}">${esc2(ago(f.at))}</time><span><b>${esc2(lbReason(f.reason))}</b> \u2013 ${esc2(lbName(f))}${f.hero_name ? ` \xB7 ${esc2(str(f.hero_name, 16))}` : ""}${isObj3(f.detail) && int(f.detail.level) != null ? ` <small class="dim">(${t3("admin.lb.col.level")} ${int(f.detail.level)}, ${t3("admin.lb.col.deepest")} ${int(f.detail.deepest) ?? 0})</small>` : ""}</span></li>`).join("");
       return `${head2}<div class="adm-tablewrap adm-lbwrap" id="admLB" data-keep="1"><table class="adm-table"><thead><tr>${cols}</tr></thead><tbody>${rows || `<tr><td colspan="8" class="dim">${t3("admin.lb.none")}</td></tr>`}</tbody></table></div>
       <h4>${t3("admin.lb.flagsTitle")}</h4>${flags ? `<ul class="adm-feed small">${flags}</ul>` : `<p class="dim">${t3("admin.lb.noFlags")}</p>`}`;
+    }
+    async function loadPvp() {
+      const c = ctx2.cloud();
+      if (!c || A2.pvp.loading) return;
+      A2.pvp.loading = true;
+      paint();
+      try {
+        const m = await c.adminPvpMatches();
+        A2.pvp.matches = Array.isArray(m) ? m : [];
+        A2.pvp.err = null;
+      } catch (e) {
+        A2.pvp.err = errText(e);
+      }
+      try {
+        const f = c.adminPvpFaults ? await c.adminPvpFaults() : null;
+        A2.pvp.faults = Array.isArray(f) ? f : null;
+      } catch {
+        A2.pvp.faults = null;
+      }
+      A2.pvp.loading = false;
+      paint();
+    }
+    const pvpName = (m, side) => m?.[`${side}_player`] ? str(m[`${side}_player`], 40) : t3("ranks.guest", { n: int(m?.[`${side}_guest`]) ?? "?" });
+    function tabArena() {
+      const P = A2.pvp;
+      const head2 = `<p class="adm-note">${t3("admin.pvp.note")}</p><div class="adm-filters"><button class="btn ghost mini" data-a="pvpReload" ${P.loading ? "disabled" : ""}>${P.loading ? t3("admin.loading") : t3("admin.refresh")}</button></div>`;
+      if (P.err && !P.matches) return `${head2}<p class="adm-err">${esc2(P.err)}</p>`;
+      if (!P.matches) return `${head2}<p class="dim">${t3("admin.loading")}</p>`;
+      const who = (m, side) => `<b>${esc2(str(m[`${side}_name`], 16) || clsName(m[`${side}_class`]))}</b> <small class="dim">${esc2(clsName(m[`${side}_class`]))} ${int(m[`${side}_level`]) ?? ""}</small><br><small class="dim">${esc2(pvpName(m, side))} \xB7 ${esc2(str(m[`${side}_user`], 8))}\u2026</small>`;
+      const rat = (b, a) => int(b) != null && int(a) != null ? `${int(b)} \u2192 ${int(a)}` : "\u2013";
+      const rows = P.matches.filter(isObj3).map((m) => {
+        const ck = P.checks[m.id];
+        const check2 = ck ? `<span class="tag ${ck === "same" ? "okt" : "bad"}">${t3(`admin.pvp.check.${ck}`)}</span>` : m.status === "done" ? `<button class="btn mini ghost" data-a="pvpCheck" data-v="${esc2(str(m.id, 40))}">${t3("admin.pvp.verify")}</button>` : "";
+        const vr = str(m.void_reason, 30);
+        const why = vr ? PVP_VOID_REASONS.includes(vr) ? t3(`admin.pvp.voidReason.${vr}`) : vr : "";
+        const fault = m.void_fault === "attacker" || m.void_fault === "defender" ? `<br><small class="dim">${t3(`admin.pvp.fault.${m.void_fault}`)}</small>` : "";
+        const st = m.status === "done" ? t3(m.outcome === "win" ? "admin.pvp.attWon" : "admin.pvp.defWon") + (m.timeout ? ` (${t3("arena.timeUp")})` : "") : m.status === "void" ? `${t3("admin.pvp.void")}${why ? `: ${esc2(why)}` : ""}${fault}` : t3("admin.pvp.pending");
+        const notes = [...Array.isArray(m.flags) ? m.flags.filter((f) => f === "gear_empty" || f === "gear_drop") : [], m.repeat_pair ? "repeat" : null, m.capped ? "capped" : null].filter(Boolean).map((f) => `<span class="tag ${f.startsWith("gear") ? "bad" : ""}">${t3(`admin.pvp.flag.${f}`)}</span>`).join(" ");
+        const ids = (side) => `data-u="${esc2(str(m[`${side}_user`], 40))}" data-h="${esc2(str(m[`${side}_hero`], 40))}"`;
+        const banBtn = m.attacker_banned === true ? `<button class="btn mini ghost" data-a="pvpBan" data-v="unban" ${ids("attacker")}>${t3("admin.pvp.unban")}</button>` : `<button class="btn mini ghost" data-a="pvpBan" data-v="ban" ${ids("attacker")}>${t3("admin.pvp.banAtt")}</button>`;
+        const banned = (side) => m[`${side}_banned`] === true ? ` <span class="tag bad">${t3("admin.pvp.bannedTag")}</span>` : "";
+        return `<tr><td class="nw"><time title="${esc2(when(m.created_at))}">${esc2(ago(m.created_at))}</time>${m.hardcore ? ' <span class="tag">HC</span>' : ""}</td>
+        <td>${who(m, "attacker")}${banned("attacker")}<br><small>${rat(m.att_before, m.att_after)}</small></td><td>${who(m, "defender")}${banned("defender")}<br><small>${rat(m.def_before, m.def_after)}</small></td>
+        <td>${st}<br><small class="dim">${t3("admin.pvp.engine", { e: int(m.engine_version) ?? "?", r: int(m.rules_version) ?? "?", n: Number.isFinite(Number(m.rounds)) ? Number(m.rounds).toFixed(1) : "?" })}</small>${notes ? `<br>${notes}` : ""}</td>
+        <td class="nw">${check2}<br><button class="btn mini ghost" data-a="pvpReset" ${ids("attacker")}>${t3("admin.pvp.resetAtt")}</button>
+          ${banBtn}</td></tr>`;
+      }).join("");
+      const cols = ["when", "attacker", "defender", "result", "act"].map((k) => `<th><span class="adm-sort">${t3(`admin.pvp.col.${k}`)}</span></th>`).join("");
+      return `${head2}${pvpFaults()}<div class="adm-tablewrap adm-lbwrap adm-pvpwrap" id="admPvp" data-keep="1"><table class="adm-table"><thead><tr>${cols}</tr></thead><tbody>${rows || `<tr><td colspan="5" class="dim">${t3("admin.pvp.none")}</td></tr>`}</tbody></table></div>`;
+    }
+    function pvpFaults() {
+      const F = A2.pvp.faults;
+      if (!Array.isArray(F)) return "";
+      const name = (f) => f.player ? str(f.player, 40) : t3("ranks.guest", { n: int(f.guest_no) ?? "?" });
+      const why = (r) => r === "gone" ? t3("admin.pvp.faults.gone") : PVP_VOID_REASONS.includes(r) ? t3(`admin.pvp.voidReason.${r}`) : str(r, 30);
+      const rows = F.filter(isObj3).map((f) => `<tr><td class="nw"><time title="${esc2(when(f.fault_at))}">${esc2(ago(f.fault_at))}</time>${f.hardcore ? ' <span class="tag">HC</span>' : ""}</td>
+      <td><b>${esc2(str(f.hero_name, 16) || clsName(f.class_id))}</b> <small class="dim">${esc2(clsName(f.class_id))} ${int(f.level) ?? ""}</small><br><small class="dim">${esc2(name(f))} \xB7 ${esc2(str(f.user_id, 8))}\u2026</small></td>
+      <td>${f.benched_until ? `${esc2(why(str(f.bench_reason, 30)))}<br><small class="dim">${t3("admin.pvp.faults.benched", { when: esc2(when(f.benched_until)) })}</small>` : '<span class="dim">\u2013</span>'}</td>
+      <td class="nw"><button class="btn mini ghost" data-a="pvpClearFault" data-u="${esc2(str(f.user_id, 40))}" data-h="${esc2(str(f.hero_id, 40))}">${t3("admin.pvp.faults.clear")}</button></td></tr>`).join("");
+      const cols = [t3("admin.pvp.faults.when"), t3("admin.pvp.col.defender"), t3("admin.pvp.faults.status"), ""].map((c) => `<th>${c}</th>`).join("");
+      return `<h4>${t3("admin.pvp.faults.title")}</h4><p class="adm-note">${t3("admin.pvp.faults.note")}</p>${rows ? `<div class="adm-tablewrap"><table class="adm-table"><thead><tr>${cols}</tr></thead><tbody>${rows}</tbody></table></div>` : `<p class="dim">${t3("admin.pvp.faults.none")}</p>`}`;
+    }
+    async function pvpCheck(id) {
+      try {
+        const m = await ctx2.cloud().adminPvpMatch(id);
+        if (!m?.ok) throw Object.assign(new Error("not found"), { kind: "rejected" });
+        const A1 = cleanSnapshot(content3, m.attacker, CONTENT_VERSION);
+        const D1 = cleanSnapshot(content3, m.defender, CONTENT_VERSION);
+        if (!A1.ok || !D1.ok) A2.pvp.checks[id] = "cannot";
+        else {
+          const f = runPvpFight(content3, A1.hero, D1.hero, m.seed, { record: true });
+          A2.pvp.checks[id] = f.hash === m.hash && f.outcome === m.outcome ? "same" : m.engineVersion !== CONTENT_VERSION || m.rulesVersion !== content3.B.pvp.rulesVersion ? "otherEngine" : "differs";
+        }
+      } catch (e) {
+        flash(errText(e), true);
+      }
+      paint();
     }
     async function lbChange(run2) {
       try {
@@ -34249,7 +35177,7 @@ ${suffix}`;
       if (!A2.open || !A2.admin) return badge;
       let body;
       try {
-        body = { players: tabPlayers, log: tabLog, ranks: tabRanks, hero: tabHero, test: tabTest, balance: tabBalance, system: tabSystem }[A2.tab]();
+        body = { players: tabPlayers, log: tabLog, ranks: tabRanks, arena: tabArena, hero: tabHero, test: tabTest, balance: tabBalance, system: tabSystem }[A2.tab]();
       } catch (e) {
         console.error(e);
         body = `<p class="adm-err">${t3("admin.err.failed")}</p>`;
@@ -34370,6 +35298,66 @@ ${suffix}`;
           t3(ban ? "admin.lb.banAsk" : "admin.lb.unbanAsk", { name: lbName(e) }),
           t3(ban ? "admin.lb.ban" : "admin.lb.unban"),
           (why) => lbChange(() => ctx2.cloud().adminLbBan(e.user_id, ban, ban ? why : "")),
+          ban ? { input: t3("admin.lb.banReason"), need: t3("admin.lb.banNeedsReason") } : {}
+        );
+      },
+      // Aréna
+      pvpReload: () => loadPvp(),
+      pvpCheck: (v) => pvpCheck(v),
+      pvpReset: (v, b) => {
+        const m = A2.pvp.matches?.find((x) => x.attacker_user === b.dataset.u && x.attacker_hero === b.dataset.h);
+        if (!m) return;
+        ask(
+          t3("admin.pvp.resetAsk", { hero: str(m.attacker_name, 16) || clsName(m.attacker_class) }),
+          t3("admin.pvp.resetAtt"),
+          async () => {
+            try {
+              const r = await ctx2.cloud().adminPvpReset(b.dataset.u, b.dataset.h);
+              if (r?.ok === false) throw Object.assign(new Error("refused"), { kind: "rejected" });
+              flash(t3("admin.lb.done"));
+            } catch (e) {
+              flash(errText(e), true);
+            }
+            loadPvp();
+          }
+        );
+      },
+      pvpClearFault: (v, b) => {
+        const f = A2.pvp.faults?.find((x) => x.user_id === b.dataset.u && x.hero_id === b.dataset.h);
+        if (!f) return;
+        const name = f.player ? str(f.player, 40) : t3("ranks.guest", { n: int(f.guest_no) ?? "?" });
+        ask(
+          t3("admin.pvp.faults.clearAsk", { hero: str(f.hero_name, 16) || clsName(f.class_id), name }),
+          t3("admin.pvp.faults.clear"),
+          async () => {
+            try {
+              const r = await ctx2.cloud().adminPvpClearFault(b.dataset.u, b.dataset.h);
+              if (r?.ok === false) throw Object.assign(new Error("refused"), { kind: "rejected" });
+              flash(t3("admin.lb.done"));
+            } catch (e) {
+              flash(errText(e), true);
+            }
+            loadPvp();
+          }
+        );
+      },
+      pvpBan: (v, b) => {
+        const m = A2.pvp.matches?.find((x) => x.attacker_user === b.dataset.u);
+        if (!m) return;
+        const ban = v === "ban";
+        ask(
+          t3(ban ? "admin.pvp.banAsk" : "admin.pvp.unbanAsk", { name: pvpName(m, "attacker") }),
+          t3(ban ? "admin.pvp.banAtt" : "admin.pvp.unban"),
+          async (why) => {
+            try {
+              const r = await ctx2.cloud().adminPvpBan(b.dataset.u, ban, ban ? why : "");
+              if (r?.ok === false) throw Object.assign(new Error("refused"), { kind: "rejected" });
+              flash(t3("admin.lb.done"));
+            } catch (e) {
+              flash(errText(e), true);
+            }
+            loadPvp();
+          },
           ban ? { input: t3("admin.lb.banReason"), need: t3("admin.lb.banNeedsReason") } : {}
         );
       },
@@ -34648,7 +35636,7 @@ ${suffix}`;
 .adm-sort { font: 600 13px system-ui, sans-serif; color: #ecd7a4; background: none; border: 0; padding: 7px 8px; cursor: pointer; width: 100%; text-align: left; white-space: nowrap; } .adm-sort.on { color: var(--gold); }
 .adm-table tbody tr[data-a] { cursor: pointer; } .adm-table tbody tr[data-a]:hover { background: #ffffff0a; } .adm-table tbody tr.on { background: #c9a35a22; outline: 1px solid #c9a35a66; }
 .adm-table td.num, .adm-table td.nw { text-align: right; white-space: nowrap; } .adm-table td.nw { text-align: left; }
-.adm-lbwrap { flex: none; max-height: 52vh; } #cw-admin .tag.okt { color: #0c1a10; background: var(--ok); border-color: var(--ok); } .adm-lbwrap .btn.mini { margin: 1px 0; }
+.adm-lbwrap { flex: none; max-height: 52vh; } .adm-pvpwrap { max-height: max(52vh, calc(100dvh - 270px)); } #cw-admin .tag.okt { color: #0c1a10; background: var(--ok); border-color: var(--ok); } .adm-lbwrap .btn.mini { margin: 1px 0; }
 .adm-you { font: 600 11px system-ui, sans-serif; padding: 1px 7px; border-radius: 3px; color: #0c1a10; background: var(--ok); vertical-align: middle; }
 .adm-zsel { flex: 1 1 110px; min-width: 0; max-width: 100%; }
 .adm-heroes { display: flex; flex-wrap: wrap; gap: 4px; }
@@ -34698,7 +35686,7 @@ ${suffix}`;
 `;
 
   // src/client/ranks-core.js
-  var BOARDS = ["depth", "level", "hell"];
+  var BOARDS = ["depth", "level", "hell", "arena"];
   var SCOPES = ["season", "all", "hall"];
   var CLASSES = ["reaver", "elementalist", "gravecaller", "ranger", "templar"];
   var PAGE_SIZE = 100;
@@ -34727,7 +35715,7 @@ ${suffix}`;
     finalZone: "world_heart"
   });
   var isNum2 = (v) => typeof v === "number" && Number.isFinite(v);
-  var isInt2 = (v) => isNum2(v) && Math.floor(v) === v;
+  var isInt3 = (v) => isNum2(v) && Math.floor(v) === v;
   var BAD_WORDS = [
     "fasz",
     "geci",
@@ -34791,7 +35779,7 @@ ${suffix}`;
   var int2 = (v) => isNum2(v) ? Math.round(v) : null;
   var time = (v) => typeof v === "string" && Number.isFinite(Date.parse(v)) ? v : null;
   var KINDS2 = ["nick", "guest"];
-  var guestNo = (v) => isInt2(v) && v >= 1 && v <= 999999 ? v : null;
+  var guestNo = (v) => isInt3(v) && v >= 1 && v <= 999999 ? v : null;
   function cleanRow(r) {
     if (!r || typeof r !== "object") return null;
     return {
@@ -34807,6 +35795,8 @@ ${suffix}`;
       banned: r.banned === true,
       admin: r.admin === true,
       mine: r.mine === true,
+      // The Arena board: wins and losses beside the rating (only there).
+      ...r.wins != null || r.losses != null ? { wins: int2(r.wins), losses: int2(r.losses) } : {},
       player: r.kind === "nick" ? str2(r.player, NICK_MAX) : "",
       kind: KINDS2.includes(r.kind) ? r.kind : "guest",
       guestNo: guestNo(r.guestNo)
@@ -34832,14 +35822,18 @@ ${suffix}`;
       me: Array.isArray(j.me) ? j.me.map(cleanRow).filter(Boolean).slice(0, 50) : null
     };
   }
+  var HALL_ROWS = { arena: 10 };
   function cleanHall(json) {
     const j = json && typeof json === "object" ? json : {};
-    const seasons = (Array.isArray(j.seasons) ? j.seasons : []).filter((s) => s && typeof s.season === "string" && /^\d{4}-\d{2}$/.test(s.season)).map((s) => ({ season: s.season, rows: (Array.isArray(s.rows) ? s.rows : []).map(cleanRow).filter(Boolean).slice(0, 3) })).sort((a, b) => a.season < b.season ? 1 : -1).slice(0, 24);
-    return { season: typeof j.season === "string" && /^\d{4}-\d{2}$/.test(j.season) ? j.season : null, seasons };
+    const board = BOARDS.includes(j.board) ? j.board : "depth";
+    const seasons = (Array.isArray(j.seasons) ? j.seasons : []).filter((s) => s && typeof s.season === "string" && /^\d{4}-\d{2}$/.test(s.season)).map((s) => ({ season: s.season, rows: (Array.isArray(s.rows) ? s.rows : []).map(cleanRow).filter(Boolean).slice(0, HALL_ROWS[board] ?? 3) })).sort((a, b) => a.season < b.season ? 1 : -1).slice(0, 24);
+    return { season: typeof j.season === "string" && /^\d{4}-\d{2}$/.test(j.season) ? j.season : null, board, seasons };
   }
   function requestFor({ board = "depth", scope = "season", hardcore = false, classId = null } = {}) {
     const b = BOARDS.includes(board) ? board : "depth";
     const cls = CLASSES.includes(classId) ? classId : null;
+    if (b === "arena" && scope === "hall") return { fn: "pvp_hall", args: { p_hardcore: !!hardcore, p_class: cls } };
+    if (b === "arena") return { fn: "pvp_board", args: { p_hardcore: !!hardcore, p_class: cls, p_offset: 0, p_limit: PAGE_SIZE, p_scope: scope === "all" ? "all" : "season" } };
     if (scope === "hall") return { fn: "lb_hall", args: { p_board: b, p_hardcore: !!hardcore, p_class: cls } };
     return { fn: "lb_board", args: { p_board: b, p_scope: scope === "all" ? "all" : "season", p_hardcore: !!hardcore, p_class: cls, p_offset: 0, p_limit: PAGE_SIZE } };
   }
@@ -34956,7 +35950,7 @@ ${suffix}`;
         const req = requestFor(view2());
         const raw = await cloud.leaderboard(req);
         if (my !== S.req) return;
-        S.data = req.fn === "lb_hall" ? { hall: cleanHall(raw) } : { board: cleanBoard(raw) };
+        S.data = req.fn === "lb_hall" || req.fn === "pvp_hall" ? { hall: cleanHall(raw) } : { board: cleanBoard(raw) };
         S.dataKey = key;
         S.at = Date.now();
       } catch (e) {
@@ -34994,11 +35988,11 @@ ${suffix}`;
       let text;
       if (S.scope === "hall") {
         head2 = t3("ranks.note.what");
-        text = t3("ranks.note.hall");
+        text = t3(S.board === "arena" ? "ranks.note.arena_hall" : "ranks.note.hall");
       } else {
         const season = S.data?.board?.season ?? seasonOf();
         head2 = S.scope === "season" ? t3("ranks.note.seasonLeft", { n: daysLeft(season) }) : t3("ranks.note.what");
-        text = `${t3(`ranks.note.${S.board}_${S.scope}`)}${S.scope === "season" ? ` ${t3("ranks.note.seasonHall")}` : ""}`;
+        text = `${t3(`ranks.note.${S.board}_${S.scope}`)}${S.scope === "season" ? ` ${t3(S.board === "arena" ? "ranks.note.seasonHallArena" : "ranks.note.seasonHall")}` : ""}`;
       }
       return `<details class="rk-note" ${S.noteOpen ? "open" : ""}><summary data-act="rkNote">${esc2(head2)}</summary><p>${text}</p></details>`;
     }
@@ -35007,7 +36001,8 @@ ${suffix}`;
       const who = me ? t3("ranks.you") : playerLabel(r, t3);
       const sub = [who, cls, S.board === "level" ? null : r.level != null ? t3("ranks.levelSub", { n: r.level }) : null].filter(Boolean).map(esc2).join(" \xB7 ");
       let val2;
-      if (S.board === "hell") val2 = `<b class="rk-date">${esc2(shortDate(r.at, ctx2.lang()))}</b>`;
+      if (S.board === "arena") val2 = r.value != null ? `<b>${ctx2.fmt(r.value)}</b><small>${t3("ranks.winLoss", { w: ctx2.fmt(r.wins ?? 0), l: ctx2.fmt(r.losses ?? 0) })}</small>` : "<b>\u2013</b>";
+      else if (S.board === "hell") val2 = `<b class="rk-date">${esc2(shortDate(r.at, ctx2.lang()))}</b>`;
       else val2 = r.value != null ? `<b>${ctx2.fmt(r.value)}${ctx2.lang() === "hu" ? "." : ""}</b><small>${t3(S.board === "depth" ? "ranks.floorWord" : "ranks.levelWord")}</small>` : "<b>\u2013</b>";
       const tags = [r.fallen ? `<em class="tag bad">${t3("ranks.fallen")}</em>` : "", me && r.hidden ? `<em class="tag warn">${t3("ranks.underReview")}</em>` : "", me && r.banned ? `<em class="tag bad">${t3("ranks.banned")}</em>` : "", me && r.admin ? `<em class="tag">${t3("ranks.adminTag")}</em>` : ""].join("");
       const pos = r.rank != null ? `${ctx2.fmt(r.rank)}.` : "\u2013";
@@ -35021,6 +36016,9 @@ ${suffix}`;
       if (!u) {
         return `<div class="rk-me none"><p>${t3("ranks.signInForMe")}</p>${ctx2.cloudState() === "local" ? `<button class="btn ghost mini" data-act="cloudSignIn">${t3("ranks.signIn")}</button>` : ""}</div>`;
       }
+      if ((!b.me || !b.me.length) && S.board === "arena") {
+        return `<div class="rk-me none"><p>${t3("ranks.notListedArena")}</p>${ctx2.hero() ? `<button class="btn ghost mini" data-act="tab" data-v="arena">${t3("ranks.toArena")}</button>` : ""}</div>`;
+      }
       if (!b.me || !b.me.length) return `<div class="rk-me none"><p>${t3("ranks.notListed")}</p></div>`;
       return `<div class="rk-me"><h4>${t3("ranks.yourPlace")}</h4><ol class="rk-list">${b.me.map((r) => row(r, { me: true })).join("")}</ol></div>`;
     }
@@ -35032,10 +36030,15 @@ ${suffix}`;
       if (S.data.hall) {
         const ss = S.data.hall.seasons;
         if (!ss.length) return `<p class="rk-state">${t3("ranks.hallEmpty")}</p>`;
-        return `<div class="rk-hall">${ss.map((s) => `<section class="rk-season"><h4>${esc2(seasonLabel(s.season, ctx2.lang()))}</h4>${s.rows.length ? `<ol class="rk-list">${s.rows.map((r) => row(r)).join("")}</ol>` : `<p class="dim">${t3("ranks.hallNobody")}</p>`}</section>`).join("")}</div>`;
+        const rows = (list2) => {
+          if (!list2.length) return `<p class="dim">${t3("ranks.hallNobody")}</p>`;
+          const rest = list2.slice(3);
+          return `<ol class="rk-list">${list2.slice(0, 3).map((r) => row(r)).join("")}</ol>${rest.length ? `<details class="rk-hallmore"><summary>${t3("ranks.hallMore", { n: rest.length })}</summary><ol class="rk-list rk-rest">${rest.map((r) => row(r)).join("")}</ol></details>` : ""}`;
+        };
+        return `<div class="rk-hall">${ss.map((s) => `<section class="rk-season"><h4>${esc2(seasonLabel(s.season, ctx2.lang()))}</h4>${rows(s.rows)}</section>`).join("")}</div>`;
       }
       const b = S.data.board;
-      const top = b.rows.length ? `<ol class="rk-list">${b.rows.map((r) => row(r)).join("")}</ol>` : `<p class="rk-state">${t3("ranks.empty")}</p>`;
+      const top = b.rows.length ? `<ol class="rk-list ${S.board === "arena" ? "rk-arena" : ""}">${b.rows.map((r) => row(r)).join("")}</ol>` : `<p class="rk-state">${t3("ranks.empty")}</p>`;
       const more = b.total > b.rows.length ? `<p class="dim rk-more">${t3("ranks.topOf", { n: b.rows.length, total: ctx2.fmt(b.total) })}</p>` : "";
       return ctx2.user() ? `${meBox(b)}${top}${more}` : `${top}${more}${meBox(b)}`;
     }
@@ -35154,6 +36157,488 @@ ${suffix}`;
       },
       actions: actions2,
       state: S
+    };
+  }
+
+  // src/client/arena-core.js
+  var isObj4 = (x) => !!x && typeof x === "object" && !Array.isArray(x);
+  var int3 = (v) => Number.isInteger(v) ? v : null;
+  var str3 = (v, max = 40) => typeof v === "string" ? Array.from(v).slice(0, max).join("") : "";
+  var time2 = (v) => typeof v === "string" && !Number.isNaN(Date.parse(v)) ? v : null;
+  var PID = /^[0-9a-f]{20}$/;
+  var SEASON = /^\d{4}-\d{2}$/;
+  var UUID = /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i;
+  var REASONS = ["banned", "admin", "not_listed", "under_review", "fallen", "low_level", "no_save"];
+  var FIGHT_ERRORS = [
+    "banned",
+    "admin",
+    "not_listed",
+    "under_review",
+    "fallen",
+    "low_level",
+    "no_save",
+    "no_offer",
+    "not_offered",
+    "daily_limit",
+    "too_fast",
+    "pair_limit",
+    "opponent_gone",
+    "engine_outdated",
+    "implausible",
+    "bad_hero",
+    "offline",
+    "auth",
+    "failed"
+  ];
+  function cleanOpponent(o) {
+    if (!isObj4(o) || typeof o.pid !== "string" || !PID.test(o.pid)) return null;
+    return {
+      pid: o.pid,
+      hero: str3(o.hero, 16),
+      classId: CLASSES.includes(o.class) ? o.class : null,
+      level: int3(o.level),
+      rating: int3(o.rating) ?? 1e3,
+      wins: Math.max(0, int3(o.wins) ?? 0),
+      losses: Math.max(0, int3(o.losses) ?? 0),
+      player: o.kind === "nick" ? str3(o.player, 16) : "",
+      kind: o.kind === "nick" ? "nick" : "guest",
+      guestNo: int3(o.guestNo) != null && o.guestNo >= 1 && o.guestNo <= 999999 ? o.guestNo : null
+    };
+  }
+  function cleanHistory(h) {
+    if (!isObj4(h) || typeof h.id !== "string" || !UUID.test(h.id)) return null;
+    const opp = isObj4(h.opp) ? h.opp : {};
+    return {
+      id: h.id,
+      at: time2(h.at),
+      role: h.role === "defense" ? "defense" : "attack",
+      won: h.won === true,
+      delta: int3(h.delta) ?? 0,
+      rating: int3(h.rating),
+      timeout: h.timeout === true,
+      opp: {
+        hero: str3(opp.hero, 16),
+        classId: CLASSES.includes(opp.class) ? opp.class : null,
+        level: int3(opp.level),
+        pid: typeof opp.pid === "string" && PID.test(opp.pid) ? opp.pid : null,
+        player: opp.kind === "nick" ? str3(opp.player, 16) : "",
+        kind: opp.kind === "nick" ? "nick" : "guest",
+        guestNo: int3(opp.guestNo)
+      }
+    };
+  }
+  function cleanHome(json) {
+    const j = isObj4(json) ? json : {};
+    const h = isObj4(j.hero) ? j.hero : null;
+    return {
+      season: typeof j.season === "string" && SEASON.test(j.season) ? j.season : null,
+      seasonEnds: time2(j.seasonEnds),
+      hero: h ? {
+        pid: typeof h.pid === "string" ? h.pid : null,
+        rating: int3(h.rating) ?? 1e3,
+        wins: Math.max(0, int3(h.wins) ?? 0),
+        losses: Math.max(0, int3(h.losses) ?? 0),
+        fights: Math.max(0, int3(h.fights) ?? 0),
+        best: int3(h.best)
+      } : null,
+      reason: REASONS.includes(j.reason) ? j.reason : j.reason == null ? null : "not_listed",
+      today: Math.max(0, int3(j.today) ?? 0),
+      limit: Math.max(0, int3(j.limit) ?? 10),
+      resetAt: time2(j.resetAt),
+      opponents: (Array.isArray(j.opponents) ? j.opponents : []).map(cleanOpponent).filter(Boolean).slice(0, 8),
+      refreshIn: Math.max(0, Math.min(3600, int3(j.refreshIn) ?? 0)),
+      history: (Array.isArray(j.history) ? j.history : []).map(cleanHistory).filter(Boolean).slice(0, 20)
+    };
+  }
+  var EVENT_TYPES = /* @__PURE__ */ new Set(["attack", "skill", "special", "death", "cheatDeath", "stun", "stunned", "poisoned", "poisonTick", "manaBurn", "weakened", "potion", "heal", "summon", "thorns", "marked", "end"]);
+  var UID = /^(hero|merc|foe|foemerc|s\d{1,4})$/;
+  function cleanUnit(u) {
+    if (!isObj4(u) || typeof u.uid !== "string" || !UID.test(u.uid)) return null;
+    const n = (v) => Number.isFinite(v) ? Math.max(0, v) : 0;
+    return {
+      uid: u.uid,
+      side: u.side === "enemies" ? "enemies" : "allies",
+      kind: ["hero", "merc", "summon"].includes(u.kind) ? u.kind : "summon",
+      key: str3(u.key, 40),
+      rank: str3(u.rank, 20),
+      level: int3(u.level) ?? 1,
+      modifiers: [],
+      maxLife: Math.max(1, n(u.maxLife)),
+      life: n(u.life),
+      maxMana: n(u.maxMana),
+      mana: n(u.mana),
+      ...typeof u.weaponKind === "string" ? { weaponKind: str3(u.weaponKind, 12) } : {}
+    };
+  }
+  function cleanFight(json) {
+    const j = isObj4(json) ? json : null;
+    if (!j || j.ok !== true || !Array.isArray(j.events) || !Array.isArray(j.units)) return null;
+    const units = j.units.map(cleanUnit).filter(Boolean);
+    if (!units.some((u) => u.uid === "hero") || !units.some((u) => u.uid === "foe")) return null;
+    const events = j.events.filter((e) => isObj4(e) && EVENT_TYPES.has(e.t)).slice(0, 5e3);
+    const rat = (r) => isObj4(r) ? { before: int3(r.before), after: int3(r.after), delta: int3(r.delta) ?? 0 } : { before: null, after: null, delta: 0 };
+    const foe = isObj4(j.foe) ? j.foe : {};
+    return {
+      matchId: typeof j.matchId === "string" && UUID.test(j.matchId) ? j.matchId : null,
+      outcome: j.outcome === "win" ? "win" : "loss",
+      timeout: j.timeout === true,
+      events,
+      units,
+      me: { ...rat(j.me), name: str3(j.me?.name, 16) },
+      foe: {
+        ...rat(foe),
+        name: str3(foe.name, 16),
+        classId: CLASSES.includes(foe.classId) ? foe.classId : null,
+        level: int3(foe.level),
+        pid: typeof foe.pid === "string" && PID.test(foe.pid) ? foe.pid : null,
+        player: foe.kind === "nick" ? str3(foe.player, 16) : "",
+        kind: foe.kind === "nick" ? "nick" : "guest",
+        guestNo: int3(foe.guestNo)
+      }
+    };
+  }
+  function displayUnits(units, foeName = "") {
+    return units.map((u) => {
+      if (u.side !== "enemies") return { ...u };
+      const kind = u.kind === "hero" ? "rival" : u.kind === "merc" ? "rivalMerc" : "rivalSummon";
+      return { ...u, kind, ...kind === "rival" ? { name: foeName } : {} };
+    });
+  }
+  var SWAP = { hero: "foe", foe: "hero", merc: "foemerc", foemerc: "merc" };
+  var swapId = (id) => typeof id === "string" && Object.hasOwn(SWAP, id) ? SWAP[id] : id;
+  function asDefender(units, events) {
+    const us = units.map((u) => ({ ...u, uid: swapId(u.uid), side: u.side === "allies" ? "enemies" : "allies" }));
+    const es = events.map((e) => {
+      const x = { ...e };
+      for (const k of ["s", "d", "u", "by"]) if (k in x) x[k] = swapId(x[k]);
+      delete x.h;
+      delete x.f;
+      delete x.m;
+      delete x.fm;
+      if (e.f) x.h = e.f;
+      if (e.h) x.f = e.h;
+      if (e.fm != null) x.m = e.fm;
+      if (e.m != null) x.fm = e.m;
+      if (x.t === "end") x.outcome = e.outcome === "win" ? "loss" : "win";
+      return x;
+    });
+    return { units: us, events: es };
+  }
+  function cleanLog(log) {
+    if (!isObj4(log) || !Array.isArray(log.events) || !Array.isArray(log.units)) return null;
+    const units = log.units.map(cleanUnit).filter(Boolean);
+    if (!units.some((u) => u.uid === "hero") || !units.some((u) => u.uid === "foe")) return null;
+    const events = log.events.filter((e) => isObj4(e) && EVENT_TYPES.has(e.t)).slice(0, 5e3);
+    if (!events.length) return null;
+    return { units, events };
+  }
+  function cleanMatch(json) {
+    const j = isObj4(json) ? json : null;
+    if (!j || j.ok !== true || !isObj4(j.attacker) || !isObj4(j.defender)) return null;
+    const seed = Number(j.seed);
+    if (!Number.isInteger(seed) || seed < 0 || seed > 4294967295) return null;
+    return {
+      id: str3(j.id, 40),
+      seed,
+      role: j.role === "defense" ? "defense" : "attack",
+      outcome: j.outcome === "win" ? "win" : "loss",
+      hash: str3(j.hash, 64),
+      timeout: j.timeout === true,
+      log: cleanLog(j.log),
+      rulesVersion: int3(j.rulesVersion),
+      engineVersion: int3(j.engineVersion),
+      attacker: j.attacker,
+      defender: j.defender,
+      attRating: isObj4(j.attRating) ? { before: int3(j.attRating.before), after: int3(j.attRating.after) } : null,
+      defRating: isObj4(j.defRating) ? { before: int3(j.defRating.before), after: int3(j.defRating.after) } : null
+    };
+  }
+  function historyKey(row) {
+    return `arena.hist.${row.role}${row.won ? "Won" : "Lost"}`;
+  }
+  function fightError(e) {
+    if (typeof e === "string") return FIGHT_ERRORS.includes(e) ? e : "failed";
+    const k = e?.kind;
+    if (k === "offline" || k === "timeout" || e?.code === "timeout") return "offline";
+    if (k === "auth") return "auth";
+    return "failed";
+  }
+  function clock(sec) {
+    const s = Math.max(0, Math.round(sec));
+    const h = Math.floor(s / 3600);
+    const m = Math.floor(s % 3600 / 60);
+    return h ? `${h}:${String(m).padStart(2, "0")}` : `${m}:${String(s % 60).padStart(2, "0")}`;
+  }
+  function unseenDefenses(history2, seenAt) {
+    const t0 = seenAt ? Date.parse(seenAt) : 0;
+    return history2.filter((h) => h.role === "defense" && h.at && Date.parse(h.at) > t0);
+  }
+  function capFirst(s) {
+    const str4 = String(s ?? "");
+    return str4 ? str4[0].toLocaleUpperCase() + str4.slice(1) : str4;
+  }
+  function rivalName(name, className, t3, { title = false } = {}) {
+    if (typeof name === "string" && name && nameCharsOk(name)) return name;
+    const cls = String(className || "").toLocaleLowerCase();
+    if (!cls) return "?";
+    return t3(title ? "arena.namelessTitle" : "arena.nameless", { cls });
+  }
+
+  // src/client/arena.js
+  var SEEN_KEY = "cursewake.arena.seen.v1";
+  var SWORDS = '<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M3 3h4l9 9-2 2-9-9V3Zm18 0v4l-6.2 6.2-2-2L19 3h2ZM5.6 14.2l2.1 2.1-2.8 2.8 1 1-1.4 1.4-1-1L2.4 21.6 1 20.2l1.1-1.1-1-1 1.4-1.4 1 1 2.1-3.5Zm12.8 0 2.1 3.5 1-1L22.9 18l-1 1 1.1 1.1-1.4 1.4-1.1-1.1-1 1-1.4-1.4 1-1-2.8-2.8 2.1-2.1Z" fill="currentColor"/></svg>';
+  var SHIELD = '<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 2 4 5v6c0 5 3.4 9.4 8 11 4.6-1.6 8-6 8-11V5l-8-3Zm0 2.2 6 2.2V11c0 3.9-2.5 7.4-6 8.8V4.2Z" fill="currentColor"/></svg>';
+  function initArena(ctx2) {
+    const { t: t3, esc: esc2 } = ctx2;
+    const P = ctx2.content.B.pvp;
+    const S = { heroId: null, data: null, loading: false, err: null, busy: null, fightErr: null, req: 0, at: 0, refreshUntil: 0, tick: null, rulesOpen: false, seenAt: null, fresh: [] };
+    const clsName = (id) => ctx2.loc().class[id]?.name ?? "";
+    const heroId = () => ctx2.hero()?.id ?? null;
+    function readSeen(id) {
+      try {
+        return JSON.parse(localStorage.getItem(SEEN_KEY) ?? "{}")[id] ?? null;
+      } catch {
+        return null;
+      }
+    }
+    function writeSeen(id, at) {
+      try {
+        const all = JSON.parse(localStorage.getItem(SEEN_KEY) ?? "{}");
+        all[id] = at;
+        localStorage.setItem(SEEN_KEY, JSON.stringify(all));
+      } catch {
+      }
+    }
+    async function load({ refresh = false, flush = false } = {}) {
+      const cloud = ctx2.cloud();
+      const id = heroId();
+      if (S.heroId !== id) {
+        S.data = null;
+        S.heroId = id;
+      }
+      if (!cloud || !ctx2.user() || !id) {
+        S.data = null;
+        S.loading = false;
+        S.err = null;
+        ctx2.render();
+        return;
+      }
+      const my = ++S.req;
+      S.loading = true;
+      S.err = null;
+      ctx2.render();
+      try {
+        if (flush) await Promise.race([ctx2.flush(), new Promise((r) => setTimeout(r, 4e3))]).catch(() => {
+        });
+        const raw = await cloud.pvpHome(id, refresh);
+        if (my !== S.req) return;
+        S.data = cleanHome(raw);
+        S.at = Date.now();
+        S.refreshUntil = Date.now() + S.data.refreshIn * 1e3;
+        S.seenAt = readSeen(id);
+        S.fresh = unseenDefenses(S.data.history, S.seenAt).map((h) => h.id);
+        const newest = S.data.history[0]?.at;
+        if (newest) writeSeen(id, newest);
+      } catch (e) {
+        if (my !== S.req) return;
+        S.err = fightError(e) === "offline" ? "offline" : "failed";
+      }
+      S.loading = false;
+      armTick();
+      ctx2.render();
+    }
+    function armTick() {
+      clearInterval(S.tick);
+      S.tick = null;
+      if (S.refreshUntil > Date.now()) {
+        S.tick = setInterval(() => {
+          const el = document.getElementById("arRefresh");
+          if (!el) {
+            clearInterval(S.tick);
+            S.tick = null;
+            return;
+          }
+          const left = Math.ceil((S.refreshUntil - Date.now()) / 1e3);
+          if (left <= 0) {
+            clearInterval(S.tick);
+            S.tick = null;
+            el.disabled = false;
+            el.textContent = t3("arena.refresh");
+            return;
+          }
+          el.textContent = t3("arena.refreshIn", { t: clock(left) });
+        }, 1e3);
+      }
+    }
+    const tierTag = (rating) => {
+      const id = tierOf(P, rating);
+      return `<em class="ar-tier t-${id}">${t3(`arena.tier.${id}`)}</em>`;
+    };
+    const record = (w, l) => t3("arena.record", { w: ctx2.fmt(w), l: ctx2.fmt(l) });
+    function seasonLine(d) {
+      const key = d?.season;
+      if (!key) return "";
+      const n = daysLeft(key);
+      const name = seasonLabel(key, ctx2.lang());
+      const r = d.hero;
+      const best = r?.best != null && r.best > r.rating ? ` \xB7 ${t3("arena.best", { n: ctx2.fmt(r.best) })}` : "";
+      return `<p class="ar-season"><b>${esc2(t3("arena.season", { season: name }))}</b><small>${esc2(n <= 1 ? t3("arena.seasonLastDay") : t3("arena.seasonLeft", { n }))}${esc2(best)}</small></p>`;
+    }
+    function meCard(d) {
+      const h = ctx2.hero();
+      const r = d?.hero ?? { rating: P.startRating, wins: 0, losses: 0, fights: 0, best: null };
+      const left = d ? Math.max(0, d.limit - d.today) : null;
+      return `<div class="ar-me">
+      ${ctx2.art("hero", h.classId, clsName(h.classId), "face")}
+      <div class="ar-me-who"><b class="ar-name">${esc2(ctx2.heroName())}</b><small>${esc2(clsName(h.classId))} \xB7 ${t3("levelN", { n: h.level })}${h.hardcore ? ` \xB7 ${t3("ranks.hardcore")}` : ""}</small>
+        <span class="ar-me-rec">${tierTag(r.rating)}<small>${record(r.wins, r.losses)}</small></span></div>
+      <div class="ar-me-rating"><b>${ctx2.fmt(r.rating)}</b><small>${t3("arena.points")}</small></div>
+      ${seasonLine(d)}
+      ${d ? `<p class="ar-today ${left === 0 ? "none" : ""}">${left === 0 ? t3("arena.noneLeft", { t: ctx2.when(d.resetAt) }) : t3("arena.left", { n: left, max: d.limit })}</p>` : ""}
+    </div>`;
+    }
+    const lvlVars = () => ({ n: P.minLevel, lvl: P.minLevel });
+    function reasonBox(reason) {
+      const signIn = reason === "not_listed" || reason === "no_save";
+      return `<div class="ar-reason r-${reason}" role="status"><b>${t3(`arena.reason.${reason}`)}</b><p>${t3(`arena.reasonInfo.${reason}`, lvlVars())}</p>${signIn ? `<button class="btn ghost mini" data-act="arRetry">${t3("arena.check")}</button>` : ""}</div>`;
+    }
+    function oppRow(o) {
+      const busy = S.busy === o.pid;
+      const who = [playerLabel(o, t3), clsName(o.classId), o.level != null ? t3("levelN", { n: o.level }) : null].filter(Boolean).map(esc2).join(" \xB7 ");
+      const can = !S.busy && S.data && S.data.today < S.data.limit;
+      return `<li class="ar-opp">
+      ${ctx2.art("hero", o.classId ?? "reaver", clsName(o.classId), "face")}
+      <span class="ar-who"><b class="ar-name">${esc2(rivalName(o.hero, clsName(o.classId), t3, { title: true }))}</b><small>${who}</small><span class="ar-rec">${tierTag(o.rating)}<small>${record(o.wins, o.losses)}</small></span></span>
+      <span class="ar-side"><b class="ar-pts">${ctx2.fmt(o.rating)}</b><button class="btn mini ar-go ${busy ? "busy" : ""}" data-act="arFight" data-v="${o.pid}" ${can ? "" : "disabled"}>${busy ? t3("arena.fighting") : t3("arena.fight")}</button></span>
+    </li>`;
+    }
+    function opponents(d) {
+      const left = Math.ceil((S.refreshUntil - Date.now()) / 1e3);
+      const refresh = `<button class="btn ghost mini" id="arRefresh" data-act="arRefresh" ${left > 0 || S.loading || S.busy ? "disabled" : ""}>${left > 0 ? t3("arena.refreshIn", { t: clock(left) }) : t3("arena.refresh")}</button>`;
+      const err = S.fightErr ? `<p class="ar-err bad" role="alert">${t3(`arena.err.${S.fightErr}`)}</p>` : "";
+      const list = d.opponents.length ? `<ol class="ar-opps">${d.opponents.map(oppRow).join("")}</ol>` : `<p class="rk-state">${t3("arena.noOpponents")}</p>`;
+      return `<section class="ar-sec"><div class="ar-sec-head"><h4>${t3("arena.opponents")}</h4>${refresh}</div>${err}${list}</section>`;
+    }
+    function histRow(h) {
+      const name = rivalName(h.opp.hero, clsName(h.opp.classId), t3);
+      const fresh = S.fresh.includes(h.id);
+      const delta = h.delta > 0 ? `+${ctx2.fmt(h.delta)}` : h.delta < 0 ? `\u2212${ctx2.fmt(-h.delta)}` : "\xB10";
+      return `<li class="ar-hist ${h.won ? "won" : "lost"} ${h.role} ${fresh ? "fresh" : ""}">
+      <span class="ar-hmark" aria-hidden="true">${h.role === "defense" ? SHIELD : SWORDS}</span>
+      <span class="ar-htext"><b>${esc2(capFirst(t3(historyKey(h), { name })))}</b><small>${esc2([ctx2.when(h.at), clsName(h.opp.classId), h.timeout ? t3("arena.timeUp") : null].filter(Boolean).join(" \xB7 "))}${fresh ? ` <em class="tag ok">${t3("arena.new")}</em>` : ""}</small></span>
+      <span class="ar-hside"><b class="${h.delta > 0 ? "up" : h.delta < 0 ? "down" : ""}">${delta}</b><button class="btn ghost mini" data-act="arReplay" data-v="${h.id}" ${S.busy ? "disabled" : ""}>${t3("arena.watch")}</button></span>
+    </li>`;
+    }
+    function history2(d) {
+      const n = S.fresh.length;
+      const note = n ? `<p class="ar-fresh" role="status">${t3("arena.attackedMeanwhile", { n })}</p>` : "";
+      const list = d.history.length ? `<ol class="ar-hists">${d.history.map(histRow).join("")}</ol>` : `<p class="dim ar-empty">${t3("arena.noHistory")}</p>`;
+      return `<section class="ar-sec"><h4>${t3("arena.history")}</h4>${note}${list}</section>`;
+    }
+    function rules() {
+      return `<details class="rk-note ar-rules" ${S.rulesOpen ? "open" : ""}><summary data-act="arRules">${t3("arena.rulesHead")}</summary><ul>${["fair", "noLoss", "limit", "rating", "season", "cloud"].map((k) => `<li>${t3(`arena.rules.${k}`, { ...lvlVars(), n: P.dailyLimit, pair: P.pairWeek, cap: P.accountGainWeek, win: P.levelWindow })}</li>`).join("")}</ul></details>`;
+    }
+    function body() {
+      const h = ctx2.hero();
+      if (!h) return "";
+      if (S.heroId !== h.id && !S.loading) setTimeout(() => load({ flush: true }), 0);
+      const state = ctx2.cloudState();
+      if (state === "none") return `<div class="arena-page">${meCard(null)}<div class="rk-state err"><p>${t3("arena.nocloud")}</p></div>${rules()}</div>`;
+      if (!ctx2.user()) {
+        return `<div class="arena-page">${meCard(null)}<div class="rk-state err"><p>${t3("arena.signInFirst")}</p>${state === "local" ? `<button class="btn ghost mini" data-act="cloudSignIn">${t3("ranks.signIn")}</button>` : ""}</div>${rules()}</div>`;
+      }
+      if (h.hardcore && h.dead) return `<div class="arena-page">${meCard(S.data)}${reasonBox("fallen")}${rules()}</div>`;
+      if (S.err && !S.data) return `<div class="arena-page">${meCard(null)}<div class="rk-state err"><p>${t3(`arena.err.${S.err}`)}</p><button class="btn ghost" data-act="arRetry">${t3("ranks.retry")}</button></div>${rules()}</div>`;
+      if (!S.data) return `<div class="arena-page">${meCard(null)}<p class="rk-state" role="status">${t3("arena.loading")}</p></div>`;
+      const d = S.data;
+      return `<div class="arena-page ${S.loading ? "busy" : ""}">${meCard(d)}${d.reason ? reasonBox(d.reason) : opponents(d)}${history2(d)}${rules()}</div>`;
+    }
+    const actions2 = {
+      arRetry: () => load({ flush: true }),
+      arRefresh: () => {
+        S.fightErr = null;
+        load({ refresh: true });
+      },
+      arRules: () => {
+        S.rulesOpen = !S.rulesOpen;
+      },
+      async arFight(pid) {
+        const cloud = ctx2.cloud();
+        const id = heroId();
+        if (!cloud || !id || S.busy || !/^[0-9a-f]{20}$/.test(pid ?? "")) return;
+        S.busy = pid;
+        S.fightErr = null;
+        ctx2.render();
+        let res = null;
+        try {
+          const raw = await cloud.pvpFight(id, pid);
+          if (raw?.ok === false) S.fightErr = fightError(raw.error);
+          else {
+            res = cleanFight(raw);
+            if (!res) S.fightErr = "failed";
+          }
+        } catch (e) {
+          S.fightErr = fightError(e);
+        }
+        S.busy = null;
+        if (res) {
+          ctx2.startFight(res);
+          return;
+        }
+        if (["no_offer", "not_offered", "opponent_gone", "pair_limit", "daily_limit"].includes(S.fightErr)) {
+          load();
+          return;
+        }
+        ctx2.render();
+      },
+      async arReplay(id) {
+        const cloud = ctx2.cloud();
+        if (!cloud || S.busy) return;
+        S.busy = id;
+        S.fightErr = null;
+        ctx2.render();
+        try {
+          const m = cleanMatch(await cloud.pvpMatch(id));
+          S.busy = null;
+          if (!m) {
+            S.fightErr = "failed";
+            ctx2.render();
+            return;
+          }
+          if (!ctx2.replay(m)) {
+            S.fightErr = "engine_outdated";
+            ctx2.render();
+          }
+        } catch (e) {
+          S.busy = null;
+          S.fightErr = fightError(e);
+          ctx2.render();
+        }
+      }
+    };
+    return {
+      body,
+      actions: actions2,
+      state: S,
+      /** The page opens: the save goes up first (the server fights the cloud's copy), then the page is read. */
+      open() {
+        S.fightErr = null;
+        S.rulesOpen = false;
+        load({ flush: true });
+      },
+      /** Back from a fight: the rating, the day's count and the list have changed. */
+      afterFight() {
+        S.fightErr = null;
+        load();
+      },
+      onUser(user) {
+        const id = user?.id ?? null;
+        if (id === S.uid) return;
+        S.uid = id;
+        S.data = null;
+        S.heroId = null;
+        S.err = null;
+      }
     };
   }
 
@@ -35365,7 +36850,7 @@ ${suffix}`;
     <div class="who">${art("hero", hero().classId, cls, "face")}<div><b>${esc(api.state.name || t2("defaultName"))}</b><small>${esc(cls)} \xB7 ${t2("levelN", { n: h.level })}${diffMark()}</small></div></div>
     ${hintKey ? `<button class="guide" data-act="tab" data-v="${hintTab}"><span class="guide-mark">!</span><span>${t2(`hint.${hintKey}`)}</span></button>` : '<span class="top-gap"></span>'}
     <div class="gold" title="${t2("gold")}"><span class="coin"></span>${fmt(h.gold)}</div>
-    ${inCamp ? `<button class="chip ranks-btn ${view.tab === "ranks" ? "on" : ""}" data-act="tab" data-v="ranks" title="${t2("tab.ranks")}" aria-label="${t2("tab.ranks")}">${trophy()}</button><button class="chip menu-btn" data-act="tab" data-v="menu" title="${t2("ux.menu")}" aria-label="${t2("ux.menu")}">\u2699</button>` : soundSwitch()}
+    ${inCamp ? `<button class="chip ranks-btn arena-btn ${view.tab === "arena" ? "on" : ""}" data-act="tab" data-v="arena" title="${t2("tab.arena")}" aria-label="${t2("tab.arena")}">${SWORDS}</button><button class="chip ranks-btn ${view.tab === "ranks" ? "on" : ""}" data-act="tab" data-v="ranks" title="${t2("tab.ranks")}" aria-label="${t2("tab.ranks")}">${trophy()}</button><button class="chip menu-btn" data-act="tab" data-v="menu" title="${t2("ux.menu")}" aria-label="${t2("ux.menu")}">\u2699</button>` : soundSwitch()}
   </header>`;
   }
   function diffMark() {
@@ -35415,6 +36900,14 @@ ${suffix}`;
   }
   function fightBelt() {
     const f = view.fight;
+    if (f.pvp) {
+      const b = beltAfter(f.belt0, f.events, f.shown ?? 0);
+      const dots = [
+        ...Array.from({ length: f.belt0.life }, (_, i) => `<span class="potion ${i < b.life ? "full" : ""}"></span>`),
+        ...Array.from({ length: f.belt0.mana }, (_, i) => `<span class="potion mana ${i < b.mana ? "full" : ""}"></span>`)
+      ].join("");
+      return `<div class="fbelt" id="fbelt"><div class="beltwrap"><div class="belt" title="${esc(t2("arena.belt"))}"><small>${t2("belt")}</small>${dots}</div></div><div class="belt compact"><span class="bc life"><i></i>${b.life}</span><span class="bc mana"><i></i>${b.mana}</span></div></div>`;
+    }
     const s = api.sheet();
     const r = run();
     const live = f.done && r && !r.over;
@@ -35504,7 +36997,7 @@ ${suffix}`;
     const x = Math.max(0, Math.min(100 - w, s.x + s.w / 2 - w / 2));
     return `background-size:${(1e4 / w).toFixed(0)}% auto;background-position:${(x / (100 - w) * 100).toFixed(1)}% ${Math.min(100, s.y + s.h * 0.72).toFixed(1)}%`;
   }
-  var PAGES = { ranks: () => ranks.body(), stash: () => tabStash(), waystone: () => tabWaystone(), gear: () => tabGear(), char: () => tabGear(), skills: () => tabSkills(), order: () => tabOrder(), forge: () => tabForge(), merchant: () => tabMerchant(), merc: () => tabMerc(), menu: () => tabMenu() };
+  var PAGES = { arena: () => arena.body(), ranks: () => ranks.body(), stash: () => tabStash(), waystone: () => tabWaystone(), gear: () => tabGear(), char: () => tabGear(), skills: () => tabSkills(), order: () => tabOrder(), forge: () => tabForge(), merchant: () => tabMerchant(), merc: () => tabMerc(), menu: () => tabMenu() };
   var PAGE_TITLE = (k) => k === "menu" ? t2("ux.menu") : k === "stash" ? t2("ux.stash") : t2(`tab.${k}`);
   var PAGE_SAY = (k) => k === "menu" ? "" : k === "stash" ? t2(hero()?.hardcore ? "ux.sayStashHc" : "ux.sayStash") : t2(`camp.say.${k}`);
   function windowOf(kind, title, say, body, closeAct = 'data-act="tab" data-v="camp"') {
@@ -36644,12 +38137,13 @@ ${suffix}`;
   }
   function unitCard(u) {
     const isHero = u.kind === "hero";
-    const name = isHero ? api.state.name || t2("defaultName") : R.unitTitle(u);
-    const kind = isHero ? "hero" : u.kind === "merc" ? "merc" : u.kind === "summon" ? "summon" : content2.bosses[u.key] ? "boss" : "monster";
+    const isRival = u.kind === "rival";
+    const name = isHero ? u.name ?? (api.state.name || t2("defaultName")) : R.unitTitle(u);
+    const kind = isHero || isRival ? "hero" : u.kind === "merc" || u.kind === "rivalMerc" ? "merc" : u.kind === "summon" || u.kind === "rivalSummon" ? "summon" : content2.bosses[u.key] ? "boss" : "monster";
     const L = locales[lang];
     const tip = (u.modifiers ?? []).filter((m) => L.modifierDesc?.[m]).map((m) => `${L.modifier[m]}: ${L.modifierDesc[m]}`).join("\n");
     return `<div class="unit ${u.rank} ${u.life <= 0 ? "dead" : ""}" id="u-${u.uid}" ${tip ? `title="${esc(tip)}"` : ""}>
-    ${art(kind, u.key, isHero ? locales[lang].class[u.key].name : name)}
+    ${art(kind, u.key, isHero || isRival ? locales[lang].class[u.key]?.name ?? name : name)}
     <b>${esc(name)}</b><small>${t2("levelN", { n: u.level })}</small>
     <div class="bar hp num"><i style="width:${pct(u.life, u.maxLife)}%"></i><span>${barNum(u.life, u.maxLife)}</span></div>
     ${u.maxMana > 0 ? `<div class="bar mp num"><i style="width:${pct(u.mana, u.maxMana)}%"></i><span>${barNum(u.mana, u.maxMana)}</span></div>` : ""}
@@ -36662,7 +38156,7 @@ ${suffix}`;
     const allies = units.filter((u) => u.side === "allies" && !u.gone);
     const enemies = units.filter((u) => u.side === "enemies");
     return `
-  <div class="screen fight">
+  <div class="screen fight ${f.pvp ? "pvp" : ""}">
     <div class="backdrop zone" style="--scene:url(${asset(`zone_${view.fight.zoneId}`)})"></div>
     ${topBar()}
     <div class="arena">
@@ -36670,7 +38164,7 @@ ${suffix}`;
       <div class="side-enemies e${enemies.length}">${enemies.map(unitCard).join("")}</div>
     </div>
     <div class="logbox"><div class="log" id="log">${f.log.slice(-60).map((l) => `<p class="${l.strong ? "strong" : ""}">${esc(l.text)}</p>`).join("")}</div></div>
-    ${f.done ? `<div class="shade soft"></div>${outcomePanel(f.res)}` : ""}
+    ${f.done ? `<div class="shade soft"></div>${f.pvp ? arenaOutcome(f) : outcomePanel(f.res)}` : ""}
     ${hud("fight")}
   </div>`;
   }
@@ -36693,10 +38187,10 @@ ${suffix}`;
     box.appendChild(el);
     setTimeout(() => el.remove(), 420);
     if (crit) {
-      const arena = document.querySelector(".arena");
-      arena?.classList.remove("jolt");
-      void arena?.offsetWidth;
-      arena?.classList.add("jolt");
+      const arena2 = document.querySelector(".arena");
+      arena2?.classList.remove("jolt");
+      void arena2?.offsetWidth;
+      arena2?.classList.add("jolt");
     }
   }
   var SKILL_DEFS = /* @__PURE__ */ new Map();
@@ -36704,22 +38198,22 @@ ${suffix}`;
   for (const m of Object.values(content2.mercs)) if (m.skill) SKILL_DEFS.set(m.skill.id, m.skill);
   var calmMotion = () => window.matchMedia?.("(prefers-reduced-motion: reduce)").matches;
   function fxPoint(uid) {
-    const arena = document.querySelector(".arena");
+    const arena2 = document.querySelector(".arena");
     const el = document.getElementById(`u-${uid}`);
-    if (!arena || !el) return null;
-    const a = arena.getBoundingClientRect();
+    if (!arena2 || !el) return null;
+    const a = arena2.getBoundingClientRect();
     const r = el.getBoundingClientRect();
-    const sc = a.width / arena.offsetWidth || 1;
+    const sc = a.width / arena2.offsetWidth || 1;
     return { x: (r.left + r.width / 2 - a.left) / sc, y: (r.top + r.height * 0.42 - a.top) / sc, w: r.width / sc, h: r.height / sc };
   }
   function fxLayer() {
-    const arena = document.querySelector(".arena");
-    if (!arena) return null;
-    let layer = arena.querySelector(":scope > .fxl");
+    const arena2 = document.querySelector(".arena");
+    if (!arena2) return null;
+    let layer = arena2.querySelector(":scope > .fxl");
     if (!layer) {
       layer = document.createElement("div");
       layer.className = "fxl";
-      arena.appendChild(layer);
+      arena2.appendChild(layer);
     }
     return layer;
   }
@@ -36761,8 +38255,8 @@ ${suffix}`;
   function plainStyle(uid) {
     const u = view.fight?.units[uid];
     if (!u) return "melee";
-    if (u.kind === "hero") return api.sheet().weaponKind === "bow" ? "arrow" : "melee";
-    if (u.kind === "merc") return u.key === "fenstalker" ? "arrow" : u.key === "ashbinder" ? "fire" : "melee";
+    if (u.kind === "hero" || u.kind === "rival") return (u.weaponKind ?? (u.kind === "hero" ? api.sheet().weaponKind : "melee")) === "bow" ? "arrow" : "melee";
+    if (u.kind === "merc" || u.kind === "rivalMerc") return u.key === "fenstalker" ? "arrow" : u.key === "ashbinder" ? "fire" : "melee";
     return "melee";
   }
   function fxSkill(uid, id) {
@@ -36843,7 +38337,7 @@ ${suffix}`;
       case "special":
         return sfx("special");
       case "death":
-        return sfx(U[ev.u]?.kind === "hero" ? "heroDeath" : "death");
+        return sfx(U[ev.u]?.kind === "hero" || U[ev.u]?.kind === "rival" ? "heroDeath" : "death");
       case "summon":
         return sfx("summon");
       case "stun":
@@ -36914,7 +38408,8 @@ ${suffix}`;
       }
     } else if (ev.t === "summon") {
       for (const u of Object.values(U)) if (u.kind === "summon" && u.life <= 0) u.gone = true;
-      U[ev.u] = { uid: ev.u, side: U[ev.by]?.side ?? "allies", kind: "summon", key: ev.key, rank: "summon", level: ev.level, modifiers: [], maxLife: ev.maxLife, life: ev.maxLife, maxMana: 0, mana: 0 };
+      const side = U[ev.by]?.side ?? "allies";
+      U[ev.u] = { uid: ev.u, side, kind: f.pvp && side === "enemies" ? "rivalSummon" : "summon", key: ev.key, rank: "summon", level: ev.level, modifiers: [], maxLife: ev.maxLife, life: ev.maxLife, maxMana: 0, mana: 0 };
     } else if (ev.t === "thorns") {
       if (U[ev.u]) U[ev.u].life = ev.l;
       if (animate) floatText(ev.u, `-${ev.dmg}`, "dmg");
@@ -36944,6 +38439,11 @@ ${suffix}`;
       U.hero.mana = ev.h[1];
     }
     if (ev.m != null && U.merc) U.merc.life = ev.m;
+    if (ev.f && U.foe) {
+      U.foe.life = ev.f[0];
+      U.foe.mana = ev.f[1];
+    }
+    if (ev.fm != null && U.foemerc) U.foemerc.life = ev.fm;
     if (animate && ev.h) {
       for (const [kind, v, max] of [["life", U.hero.life, U.hero.maxLife], ["mana", U.hero.mana, U.hero.maxMana]]) {
         const o = document.getElementById(`orb-${kind}`);
@@ -37211,6 +38711,105 @@ ${suffix}`;
       dropUnseen();
     }
   }
+  var ARENA_ZONE = "chain_fields";
+  function arenaWhen(iso) {
+    const d = iso ? new Date(iso) : null;
+    if (!d || Number.isNaN(d.getTime())) return "";
+    const tz = "Europe/Budapest";
+    const day = (x) => new Intl.DateTimeFormat("en-CA", { timeZone: tz }).format(x);
+    const hm = new Intl.DateTimeFormat(lang === "hu" ? "hu-HU" : "en-GB", { timeZone: tz, hour: "2-digit", minute: "2-digit" }).format(d);
+    const now = /* @__PURE__ */ new Date();
+    if (day(d) === day(now)) return t2("arena.today", { t: hm });
+    if (day(d) === day(new Date(now.getTime() + 864e5))) return t2("arena.tomorrow", { t: hm });
+    return `${new Intl.DateTimeFormat(lang === "hu" ? "hu-HU" : "en-GB", { timeZone: tz, month: "short", day: "numeric" }).format(d)} ${hm}`;
+  }
+  function startArenaFight(f, { replay = false } = {}) {
+    const h = hero();
+    if (!h) return;
+    const P = content2.B.pvp;
+    const units = displayUnits(f.units, rivalName(f.foe.name, locales[lang].class[f.foe.classId]?.name, t2, { title: true }));
+    const me = units.find((u) => u.uid === "hero");
+    if (me && replay) me.name = f.me.name || me.name;
+    view.fight = {
+      pvp: { ...f, replay },
+      res: { events: f.events, units: f.units },
+      pre: { level: h.level, xp: h.xp, gold: h.gold },
+      belt0: { ...P.potions },
+      reserve0: { life: 0, mana: 0 },
+      zoneId: ARENA_ZONE,
+      events: f.events,
+      i: 0,
+      shown: 0,
+      log: [],
+      done: false,
+      units: Object.fromEntries(units.map((u) => [u.uid, { ...u }]))
+    };
+    view.tab = "camp";
+    sfx("shrine");
+    render();
+    view.fight.timer = setTimeout(stepFight, 500);
+  }
+  function replayArenaFight(m) {
+    let units;
+    let events;
+    let timeout = !!m.timeout;
+    let same = true;
+    if (m.log) ({ units, events } = m.log);
+    else {
+      const A2 = cleanSnapshot(content2, m.attacker, CONTENT_VERSION);
+      const D = cleanSnapshot(content2, m.defender, CONTENT_VERSION);
+      if (!A2.ok || !D.ok) return false;
+      const fight = runPvpFight(content2, A2.hero, D.hero, m.seed);
+      ({ units, events } = fight);
+      timeout = !!fight.timeout;
+      same = !m.hash || fight.hash === m.hash;
+    }
+    const mine = m.role === "attack" ? m.attacker : m.defender;
+    const theirs = m.role === "attack" ? m.defender : m.attacker;
+    if (m.role === "defense") ({ units, events } = asDefender(units, events));
+    const myR = m.role === "attack" ? m.attRating : m.defRating;
+    const outcome = events.at(-1)?.outcome === "win" ? "win" : "loss";
+    startArenaFight({
+      matchId: m.id,
+      outcome,
+      timeout,
+      events,
+      units,
+      same,
+      me: { name: typeof mine.name === "string" ? mine.name : "", before: myR?.before ?? null, after: myR?.after ?? null, delta: (myR?.after ?? 0) - (myR?.before ?? 0) },
+      foe: { name: typeof theirs.name === "string" ? theirs.name : "", classId: theirs.classId, level: theirs.level, before: null, after: null, delta: 0 }
+    }, { replay: true });
+    return true;
+  }
+  function arenaOutcome(f) {
+    const r = f.pvp;
+    const fresh = !r.shown;
+    if (fresh) {
+      r.shown = true;
+      r.readyAt = Date.now() + 350;
+      if (gestured) setTimeout(() => sfx(r.outcome === "win" ? "victory" : "defeat"), r.outcome === "win" ? 0 : 400);
+    }
+    const P = content2.B.pvp;
+    const foe = rivalName(r.foe.name, locales[lang].class[r.foe.classId]?.name, t2);
+    const head2 = r.replay ? t2("arena.replayHead") : t2(r.outcome === "win" ? "arena.won" : "arena.lost");
+    const delta = r.me.delta ?? 0;
+    const sign = delta > 0 ? `+${fmt(delta)}` : delta < 0 ? `\u2212${fmt(-delta)}` : "\xB10";
+    let extra = "";
+    if (r.me.before != null && r.me.after != null) {
+      extra += `<div class="ar-result ${delta > 0 ? "up" : delta < 0 ? "down" : ""}"><span>${t2("arena.points")}</span><b>${fmt(r.me.before)} \u2192 ${fmt(r.me.after)}</b><em>${sign}</em></div>`;
+      const was = tierOf(P, r.me.before);
+      const now = tierOf(P, r.me.after);
+      if (was !== now && !r.replay) extra += `<p class="ar-newtier ${r.me.after > r.me.before ? "ok" : "bad"}">${t2(r.me.after > r.me.before ? "arena.tierUp" : "arena.tierDown", { tier: t2(`arena.tier.${now}`) })}</p>`;
+    }
+    if (r.replay) extra += `<p class="dim">${capFirst(t2(r.outcome === "win" ? "arena.replayWon" : "arena.replayLost", { name: esc(foe) }))}${r.same === false ? ` ${t2("arena.replayDiffers")}` : ""}</p>`;
+    else extra += `<p class="dim">${t2("arena.nothingLost")}</p>`;
+    const burst = fresh && !r.replay && r.outcome === "win" && !calmMotion() ? `<div class="burst clr"><b>${t2("arena.won")}</b></div>` : "";
+    return `${burst}<section class="win outcome o-arena ${fresh ? "fresh" : ""} o-${r.outcome}" role="dialog">
+    <header class="win-head"><h2>${head2}</h2><p class="xp-line ar-vs">${capFirst(t2("arena.vs", { name: esc(foe) }))}</p></header>
+    <div class="win-body" id="winbody" data-keep="outcome">${extra}${fightSummary({ events: r.events, units: r.units })}</div>
+    <footer class="win-foot"><button class="btn big" data-act="afterFight" id="go">${t2("arena.back")}</button></footer>
+  </section>`;
+  }
   function renderModal() {
     const zone = run()?.zoneId ?? view.lastZone;
     return `
@@ -37263,6 +38862,7 @@ ${suffix}`;
   function render() {
     admin.onUser(acct.state === "on" ? acct.user : null);
     ranks.onUser(acct.state === "on" ? acct.user : null);
+    arena.onUser(acct.state === "on" ? acct.user : null);
     if (hero()) view.ranksOpen = false;
     const opened = !!view.opening && !!hero() && !(run() && !run().over);
     let html;
@@ -37467,6 +39067,7 @@ ${suffix}`;
       view.skTab = null;
       view.confirm = null;
       if (v === "ranks") ranks.open();
+      if (v === "arena") arena.open();
       render();
     },
     pickDiff(v) {
@@ -37797,6 +39398,12 @@ ${suffix}`;
       const readyAt = (view.fight?.res ?? view.modal)?.readyAt;
       if (readyAt && Date.now() < readyAt) return;
       if (view.fight) clearTimeout(view.fight.timer);
+      if (view.fight?.pvp) {
+        view.fight = null;
+        view.tab = "arena";
+        arena.afterFight();
+        return render();
+      }
       view.fight = null;
       view.modal = null;
       dropUnseen();
@@ -38076,6 +39683,25 @@ ${suffix}`;
     return !!(acct.choice || acct.dialog);
   }
   var ranks = initRanks({ t: t2, esc, fmt, lang: () => lang, loc: () => locales[lang], cloud: () => acct.cloud, user: () => acct.state === "on" ? acct.user : null, cloudState: () => acct.state, hero: () => hero(), render: () => render() });
+  var arena = initArena({
+    t: t2,
+    esc,
+    fmt,
+    content: content2,
+    lang: () => lang,
+    loc: () => locales[lang],
+    cloud: () => acct.cloud,
+    user: () => acct.state === "on" ? acct.user : null,
+    cloudState: () => acct.state,
+    hero: () => hero(),
+    heroName: () => api.state.name || t2("defaultName"),
+    art,
+    render: () => render(),
+    flush: () => sync?.flush() ?? Promise.resolve(),
+    when: (iso) => arenaWhen(iso),
+    startFight: (f) => startArenaFight(f),
+    replay: (m) => replayArenaFight(m)
+  });
   var admin = initAdmin({ api, t: t2, esc, fmt, fmtWhen, lang: () => lang, loc: () => locales[lang], R: () => R, cloud: () => acct.cloud, sync: () => sync, user: () => acct.state === "on" ? acct.user : null, render: () => render() });
   var statusKey = () => acct.state === "on" ? acct.status : acct.state === "local" ? "local" : acct.state === "none" ? "browser" : "off";
   function avatarOf(u, cls = "") {
@@ -38377,7 +40003,7 @@ ${suffix}`;
       render();
     }
   }
-  Object.assign(actions, ranks.actions, {
+  Object.assign(actions, ranks.actions, arena.actions, {
     ranksOpen() {
       view.ranksOpen = true;
       view.opening = "ranks";
